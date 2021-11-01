@@ -3,8 +3,8 @@
 // use this for Vanilla Javascript
 'use strict';
 
-// 2. Variable
-// 2-1. let ( added in ES6 )
+// 2. Variable rw(Read/Write)
+// let ( added in ES6 )
 // mutable
 let globalName = 'global name';
 {
@@ -27,15 +27,19 @@ console.log(globalName);
 console.log(age); // 4가 출력됌 ㄷㄷ
 
 
-// 2-2. Const
+// 3. Constant, r(Read Only)
 // favor immutable data type always for a few reasons:
 // - security
 // - thread safety
 // - reduce human mistakes
 
-// 3. Variable Types
-// - primitive, single item : Number, string, boolean, null, undefined, symbol
-// - object, box container 
+// Note!
+// Immutable data types : primitive types, frozen objects (i.e. object.freeze())
+// Mutable data types : all objects by default are mutable in JS
+
+// 4. Variable Types
+// - primitive, single item : Number, string, boolean, null, undefined, symbol 값 자체가 메모리에 저장
+// - object, box container object를 가리키는 레퍼런스가 메모리에 저장
 // - function, first-class function
 
 const count = 17;
@@ -101,7 +105,7 @@ console.log(ellie.age);
 ellie.age = 21;
 console.log(ellie.age);
 
-// 4. Dynamic typing : dynamically typed language
+// 5. Dynamic typing : dynamically typed language
 let text = 'hello';
 console.log(text.charAt(0)); // h
 console.log(`value: ${text}, type: ${typeof text}`); // string
