@@ -210,3 +210,27 @@ const calculate = function(command, a, b) {
 	}
 }
 calculate('add', 500, 500);
+
+// ellie 의 방법
+function calc(command, a, b) {
+	switch(command) {
+		case 'add':
+			return a + b;
+		break;
+		case 'substract':
+			return a - b;
+		break;
+		case 'divide':
+			return a / b;
+		break;
+		case 'multiply':
+			return a * b;
+		break;
+		case 'remainder':
+			return a % b;
+		break;
+		default:
+      throw Error('unknown command');
+	}
+}
+console.log(calc('add', 2, 5));
