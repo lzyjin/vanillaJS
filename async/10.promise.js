@@ -2,7 +2,7 @@
 
 // Promise is a JavaScript object for asynchronous aperation.
 // 프로미스는 비동기적인 것을 수행할 때 콜백함수 대신 사용
-// State: pending -> fulfilled or rejected
+// State: pending -> fulfilled(성공) or rejected(실패)
 // Producer vs Consumer
 
 // 2가지 포인트를 잡고 공부하기
