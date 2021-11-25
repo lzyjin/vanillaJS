@@ -65,3 +65,7 @@ const b = 1;
 // 즉 ref를 바꾸는게 아니기 때문 == object 자체를 바꾸는것이 아님
 
 // https://hyunseob.github.io/2016/11/21/misunderstanding-about-const/
+
+// 1. 기본적으로는 const를 사용한다.
+// 2. 재할당이 필요한 경우에만 let을 사용한다.
+// 3. var은 ES2015에서는 쓰지 않는다..
