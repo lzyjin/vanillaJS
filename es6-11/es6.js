@@ -141,6 +141,9 @@
 
 
 // 👉 Default parameters
+// 🚨 Default parameter is only for undefined
+// 주의) undefined이 전달되면 default parameter로 할당되지만
+// null이 전달되면 default parameter로 할당되지 않는다
 {
   // 💩
   {
