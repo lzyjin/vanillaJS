@@ -1,324 +1,207 @@
-// 9장 타입 변환과 단축 평가
-```
-// 👉 9.1 타입변환이란? 
-// 개발자가 의도적으로 값의 타입을 변환함 
-// 명시적 타입 변환(타입개스팅)
-var x = 10;
-var str = x.toString();
-console.log(x, str); // 10, '10'
-console.log(typeof x, typeof str); // number string
-// x의 값이 변경된 것은 아니다 
+  11장 원시 값과 객체의 비교 
 
-// 개발자 의도와 상관없이 자바스크립트 엔진에 의해 타입이 자동으로 변함 
-// 암묵적 타입 변환 (강제 타입 변환)
-var x = 10;
-var str = x + '';
-console.log(x, str); // 10, '10'
-console.log(typeof x, typeof str); // number string
+  자바스크립트가 제공하는 7가지 데이터 타입은 크게 원시 타입(primitive type)과 객체 타입(object type)으로 나뉜다.
 
-// 👉 9.2 암묵적 타입 변환
-// 📌 9.2.1 문자열 타입으로 변환
-// +연산자는 피연산자 중 하나 이상이 문자열일 때 문자열 연결 연산자로 동작한다
-// +문자열 연결 연산자의 역할은 문자열 값을 만드는 것
-// 자바스크리브 엔진은 문자열 연결 연산자의 피연산자 중 문자열 타입이 아닌 피연산자를 문자열 타입으로 암묵적 타입 변환한다
-console.log(1 + '2'); // '12'
-
-// 📌 9.2.2 숫자 타입으로 변환
-// 산술연산자의 역할은 숫자 값을 만드는 것.
-// 그래서 숫자타입이 아닌 피연산자는 숫자 타입으로 암묵적 타입변환 한다
-// 09-07 
-console.log(1 - '1'); // 0 
-console.log(1 * '10'); // 10
-console.log(1 / 'one'); // NaN
-
-// 비교연산자의 역할은 불리언 값을 만드는 것
-// 09-08
-console.log('1' > 0); // true
-// > 비교연산자는 피연산자의 크기를 비교하므로 피연산자는 코드 문맥상 숫자 타입이어야한다. 
-// 따라서 숫자타입이 아닌 피연산자를 암묵적 타입변환한다
-
-// 09-09
-// + 단항연산자는 숫자타입이 아닌 피연산자를 숫자타입으로 암묵적 타입변환한다
-// 문자열타입 -> 숫자타입
-console.log(+''); // 0
-console.log(+'0'); // 0
-console.log(+'5'); // 5
-console.log(+'string'); // NaN
-// 불리언타입 -> 숫자타입
-console.log(+true); // 1
-console.log(+false); // 0
-// null타입 -> 숫자타입
-console.log(+null); // 0
-// undefined타입 -> 숫자타입
-console.log(+undefined); // NaN
-// 심벌타입 -> 숫자타입
-// console.log(+Symbol()); // TypeError
-// 객체타입 -> 숫자타입
-console.log(+{}); // NaN
-console.log(+[]); // 0
-console.log(+[10,20]); // NaN
-console.log(+(function(){})); // NaN
-
-// 빈 배열 +[] -> 0
-// +null -> 0
-// +'' -> 0
-// +false -> 0
-
-// +true -> 1
-
-// +undefined -> NaN
-// 값을 가진 배열 +[1, 2, 4] -> NaN
-// 객체 +{} -> NaN
+  두 타입은 크게 세 가지 측면에서 다르다.
+  1. 원시 타입의 값은 변경 불가능한 값(immutable value)이다.
+  이에 반해 객체(참조) 타입의 값은 변경 가능한 값(mutable value)이다.
+  2. 원시 값을 변수(확보된 메모리 공간)에 할당하면 변수에는 실제 값이 저장된다.
+  객체를 변수에 할당하면 변수(..)에는 참조 값이 저장된다. 
+  3. 원시 값을 닺는 변수를 다른 변수에 할당하면 원본의 원시 값이 복사되어 전달된다. = 값에 의한 전달(pass by value)
+  객체를 가리키는 변수를 다른 변수에 할당하면 원본의 참조 값이 복사되어 전달된다. = 참조에 의한 전달(pass by reference)
 
 
-// 📌 9.2.3 불리언 타입으로 변환
-if('') {
-  console.log(x); // 아무것도 출력 안됌
-}
+  👉 11.1 원시 값
+  📌 11.1.1 변경 불가능한 값
+  원시 타입의 값, 즉 원시 값은 변경 불가능한 값(immutable value)이다.
+  즉 한번 생성된 원시 값은 읽기 전용(read only)값으로서 변경할 수 없다.
 
-// 자바스크립트 엔진은 불리언타입이 아닌 값을 Truthy 값(참으로 평가되는 값) 또는 Falsy 값(거짓으로 평가되는 값)으로 구분한다
-// 불리언 값으로 평가되어야 할 문맥에서 Truthy 값은 true로,
-// Falsy값은 false로 암묵적 타입변환된다 
-
-// Falsy 값: false, 0, -0, null, undefined, NaN
-// Falsy 값 외의 모든 값은 모두 true로 평가되는 Truthy 값이다
-
-// 아래의 조건문은 모두 코드 블록을 실행한다
-if(!false) console.log(false + ' is falsy value'); 
-if(!undefined) console.log(undefined + ' is falsy value'); 
-if(!null) console.log(null + ' is falsy value'); 
-if(!0) console.log(0 + ' is falsy value'); 
-if(!NaN) console.log(NaN + ' is falsy value'); 
-if(!'') console.log('' + ' is falsy value'); 
-
-console.clear();
-// 👉 9.3 명시적 타입 변환
-// 📌 9.3.1 문자열 타입으로 변환
-// 방법 1. String 생성자 함수를 new 연산자 없이 호출하는 방법
-// 방법 2. Object.prototype.toString 메서드를 사용하는 방법
-// 방법 3. 문자열 연결 연산자를 이용하는 방법
-
-// 방법 1 사용
-console.log( String(1) ); // '1'
-console.log( String(NaN) ); // 'NaN'
-console.log( String(Infinity) ); // 'Infinity'
-console.log( String(true) ); // 'true'
-console.log( String(false) ); // 'false'
-// 방법 2 사용
-console.log( (1).toString() ); // '1'
-console.log( (NaN).toString() ); // 'NaN'
-console.log( (Infinity).toString() ); // 'Infinity'
-console.log( (true).toString() ); // 'true'
-console.log( (false).toString() ); // 'false'
-// 방법 3 사용
-console.log( 1 + '' ); // '1'
-console.log( NaN + '' ); // 'NaN'
-console.log( Infinity + '' ); // 'Infinity'
-console.log( true + '' ); // 'true'
-console.log( false + '' ); // 'false'
-
-// 📌 9.3.2 숫자 타입으로 변환
-// 방법 1. Number 생성자 함수를 new 연산자 없이 호출하는 방법
-// 방법 2. parseInt, parseFloat 함수를 사용하는 방법 (문자열만 숫자타입으로 변환 가능)
-// 방법 3. 단항 산술 연산자를 이용하는 방법
-// 방법 4. * 연산자를 이용하는 방법
-
-// 방법 1 사용
-console.log( Number('0') ); // 0
-console.log( Number('-1') ); // -1
-console.log( Number('10.53') ); // 10.53
-console.log( Number(true) ); // 1
-console.log( Number(false) ); // 0
-// 방법 2 사용
-console.log( parseInt('0') ); // 0
-console.log( parseInt('-1') ); // -1
-console.log( parseFloat('10.53') ); // 10.53
-// 방법 3 사용
-console.log( +'0' ); // 0
-console.log( +'-1' ); // -1
-console.log( +'10.53' ); // 10.53
-console.log( +true ); // 1
-console.log( +false ); // 0
-// 방법 4 사용
-console.log( '0' * 1 ); // 0
-console.log( '-1' * 1 ); // -1
-console.log( '10.53' * 1 ); // 10.53
-console.log( true * 1 ); // 1
-console.log( false * 1 ); // 0
-
-console.clear();
-// 📌 9.3.3 불리언 타입으로 변환
-// 방법 1. Boolean 생성자 함수를 new 연산자 없이 호출하는 방법
-// 방법 2. ! 부정 논리 연산자를 두 번 사용하는 방법
-
-// 방법 1 사용
-console.log( Boolean('x') ); // true
-console.log( Boolean('') ); // false
-console.log( Boolean('false') ); // true
-console.log( Boolean(0) ); // false
-console.log( Boolean(1) ); // true
-console.log( Boolean(NaN) ); // false
-console.log( Boolean(Infinity) ); // true
-console.log( Boolean(null) ); // false
-console.log( Boolean(undefined) ); // false
-console.log( Boolean({}) ); // true
-console.log( Boolean([]) ); // true
-// 방법 2 사용
-console.log( !!'x' ); // true
-console.log( !!'' ); // false
-console.log( !!'false' ); // true
-console.log( !!0 ); // false
-console.log( !!1 ); // true
-console.log( !!NaN ); // false
-console.log( !!Infinity ); // true
-console.log( !!null ); // false
-console.log( !!undefined ); // false
-console.log( !!{} ); // true
-console.log( !![] ); // true
+  값을 변경할 수 없다는게 무슨 뜻일까?
+  먼저 변수와 값은 구분해서 생각해야 한다.
+  변수는 하나의 값을 저장하기 위해 확보한 메모리 공간 자체 또는 그 메모리 공간을 식별하기 위해 붙은 이름이다.
+  값은 변수에 저장된 데이터로서 표현식이 평가되어 생성된 결과를 말한다.
+  변경 불가능하다는 것은 변수가 아니라 값에 대한 진술이다. 
+  '원시 값은 변경 불가능하다'라는 말은 원시 값 자체를 변경할 수 없다는 말이지, 변수 값을 변경할 수 없다는 말이 아니다.
 
 
-console.clear();
-// 👉 9.4 단축평가
-// 📌 9.4.1 논리 연산자를 사용한 단축 평가
-// 논리합(||) 또는 논리곱(&&) 연산자 표현식의 평가 결과는 불리언 값이 아닐 수도 있다. 
-// 논리합(||) 또는 논리곱(&&) 연산자 표현식은 언제나 2개의 피연산자 중 어느 한쪽으로 평가된다
-// 둘 모두 좌항에서 우항으로 평가가 진행된다
+  const 키워드를 사용해 선언한 변수는 재할당이 금지된다.
+const o = {};
+console.log(o);   {}
 
-console.log( 'Cat' && 'Dog' ); // 'Dog'
-// 논리곱(&&) 연산자는 두 개의 피연산자가 모두 true로 평가될 때 true를 반환한다
-// 'Cat'은 Truthy 값이므로 true로 평가된다 
-// 두 번째 피연산자가 논리곱 연산자 표현식의 평가 결과를 결정한다
-// 이 때 논리곱 연산자는 논리 연산의 결과를 결정하는 두 번째 피연산자, 즉 문자열 'Dog'를 그대로 반환한다
-
-console.log( 'Cat' || 'Dog'  ); // 'Cat'
-// 논리합(||) 연산자는 두 개의 피연산자 중 하나만 true로 평가되어도 true를 반환한다
-// 'Cat'은 Truthy 값이므로 true로 평가된다.
-// 이 시점에서 두 번째 피연산자까지 평가해보지 않아도 표현식을 평가할 수 있다
-// 이때 논리합연산자는 논리 연산의 결과를 결정한 첫 번째 피연산자, 즉 문자열 'Cat'을 그대로 반환한다
-
-// 이처럼 논리 연산의 결과를 결정하는 피연산자를 타입 변환하지 않고 그대로 변환한다
-// 이를 단축 평가(short-curcuit evaluation)라 한다
-
-// 단축 평가란?
-// 표현식을 평가하는 도중에 평가 결과가 확정된 경우 나머지 평가 과정을 생략하는 것
-// 
-
-// 단축 평가의 규칙
-// 단축 평가 표현식        평가 결과 
-// true || anything    true 
-// false || anything   anything
-// true && anything    anything
-// false && anything   false
+  const 키워드를 사용해 선언한 변수에 할당한 원시 값은 변경할 수 없다.
+  하지만 .. 할당한 객체는 변경할 수 있다.
+o.a = 1;
+console.log(o);   {a: 1}
 
 
-// 논리합(||)연산자
-console.log( 'Cat' || 'Dog'); // 'Cat'
-console.log( false || 'Dog'); // 'Dog'
-console.log( 'Cat' || false); // 'Cat'
-// 논리곱(&&)연산자
-console.log( 'Cat' && 'Dog' ); // 'Dog'
-console.log( false && 'Dog' ); // false
-console.log( 'Cat' && false ); // false
+  원시 값은 어떤 일이 있어도 불변하다.
+  이러한 원시 값의 특성은 데이터의 신뢰성을 보장한다.
 
-// 단축 평가를 사용하면 if문을 대체할 수 있다
-// 조건이 Truthy 값일 때 무언가를 해야한다면 논리곱(&&)연산자 표현식을 사용
-var done = true;
-var message = '';
-// if문 사용
-if(done) {
-  message = '완료';
-}
-console.log(message); // '완료'
-// 단축 평가 사용
-// done이 true이면 message에 '완료'를 할당
-message = done && '완료';
-console.log(message); // '완료'
+  원시 값을 할당한 변수에 새로운 원시 값을 재할당하면 메모리 공간에 저장되어 있는 재할당 이전의 원시 값을 변경하는 것이 아니라! 
+  새로운 메모리 공간을 확보하고 재할당한 원시 값을 저장한 후, 변수는 새롭게 재할당한 원시 값을 가리킨다. 
+  변수가 참조하던 메모리 공간의 주소가 변경된 이유는 변수에 할당된 원시 값이 변경 불가능한 값이기 때문이다.
+  값의 이러한 특성을 불변성(immutability)이라 한다.
 
-// 조건이 Truthy 값일 때 무언가를 해야한다면 논리곱(&&)연산자 표현식을 사용
-var done = false;
-var message = '';
-// if문 사용
-if(!done) message = '미완료';
-console.log(message);
-// 단축 평가 사용
-// done이 false이면 message에 '미완료'를 할당
-message = done || '미완료';
-console.log(message); // 미완료
+  불변성을 갖는 원시 값을 할당한 변수는 재할당 이외에 변수 값을 변경할 수 있는 방법이 없다. 
 
-// 삼항 조건 연산자는 if...else문을 대체할 수 있다
-var done = true;
-var message = '';
-// if...else 문 사용
-if(done) message = '완료';
-else message = '미완료';
-console.log(message); // 완료
-// 삼항 조건 연산자 사용
-message = done ? '완료' : '미완료';
-console.log(message);
+  📌 11.1.2 문자열과 불변성
+  원시 값을 저장하려면 먼저 확보해야 하는 메모리 공간의 크기를 결정해야 한다.
+  이를 위해 원시 타입별로 메모리 공간의 크기가 미리 정해져 있다. 
+  원시 값인 문자열은 0개 이상의 문자(character)로 이뤄진 집합을 말한다. 
+  1개의 문자는 2바이트의 메모리 공간에 저장된다. 따라서 문자열은 몇 개의 문자로 이뤄졌느냐에 따라 필요한 메모리 공간의 크기가 결정된다.
+
+var str1 = '';   0개의 문자로 이뤄진 문자열(빈 문자열)
+var str2 = 'Hello';   5개의 문자로 이뤄진 문자열
 
 
-console.clear();
-// 단축 평가는 다음과 같은 상황에서 유용하게 사용된다 
-// : 객체를 가리키기를 기대하는 변수가 null 또는 undefined가 아닌지 확인하고 프로퍼티를 참조할 때
-// 객체는 키와 값으로 구성된 프로퍼티의 집합이다. 만약 객체를 가리키기를 기대하는 변수의 값이 객체가 아니라 null 또는 undefined인 경우 객체의 프로퍼티를 참조하면 타입 에러가 발생한다.
-var elem = null;
-// var value = elem.value; // TypeError
+  자바스크립트의 문자열은 원시 타입이며, 변경 불가능하다. 
+  이것은 자바스크립트의 장점 중 하나다.
+var str = 'Hello';
+str = 'world';
+  문자열 'Hello'와 'world'는 모두 메모리에 존재한다.
+  식별자 str은 문자열 'Hello'를 가리키고 있다가 문자열 'world'를 가리키도록 변경되었을 뿐이다.
 
-// 단축 평가를 사용하면 에러를 발생시키지 않는다
-// elem이 null이나 undefined과 같은 Falsy값이면 elem으로 평가되고
-// elem이 Truthy 값이면 elem.value로 평가된다
-var elem = null;
-var value = elem && elem.value; // null
-console.log(value); // null
+  문자열은 유사 배열 객체이면서 이터러블이므로 배열과 유사하게 각 문자에 접근할 수 있다.
 
-// : 함수 매개변수에 기본값을 설정할 때
-// 함수를 호출할 때 인수를 전달하지 않으면 매개변수에는 undefined가 할당된다
-// 이때 단축 평가를 사용해 매개변수의 기본값을 설정하면 undefined로 인해 발생할 수 있는 에러를 방지할 수 있다
+  유사 배열 객체 (array-like object)
+  유사 배열 객체란 마치 배열처럼 인덱스로 프로퍼티 값에 접근할 수 있고 length 프로퍼티를 갖는 객체를 말한다.
+var str = 'apple';
+  문자열은 유사 배열 객체이므로 배열과 유사하게 인덱스를 사용해 각 문자에 접근할 수 있다.
+console.log(str[0]);   a
+  원시 값인 문자열이 객체처럼 동작한다.
+console.log(str.length);   5
+console.log(str.toUpperCase());   APPLE
 
-// 단축 평가를 사용한 매개변수의 기본값 설정
-function getStringLength(str) {
-  // str이 Falsy값이면 ''를 할당함
-  str = str || '';
-  return str.length;
-}
-console.log( getStringLength() ); // 0
-console.log( getStringLength('hi') ); // 2
+console.log(str);   apple
+  문자열은 유사 배열이므로 배열과 유사하게 인덱스를 사용해 각 문자에 접근할 수 있다.
+  하지만 문자열은 원시 값이므로 변경할 수 없다. 
+  이때 에러가 발생하지 않는다!
+str[0] = 'A';
+console.log(str);   apple
 
-// ES6의 매개변수의 기본값 설정
-function getStringLength2( str = '' ) {
-  return str.length;
-}
-console.log( getStringLength2() ); // 0
-console.log( getStringLength2('hi') ); // 2
+  📌 11.1.3 값에 의한 전달
+var score = 80;
+var copy = score;
 
-// 📌 9.4.2 옵셔널 체이닝 연산자
-// ES11(ECMAScript2020)에 도입된 옵셔널 체이닝 연산자 ?.는 좌항의 피연산자가 null 또는 undefined인 경우 undefined를 반환한다. 그렇지 않으면 우항의 프로퍼티 참조를 이어간다
-var elem = null;
-var value = elem?.value;
-console.log(value); // undefined
+console.log(score);   80
+console.log(copy);   80
+console.log(score === copy);   true
 
-// 옵셔널 체이닝 연산자 ?.가 도입되기 이전에는 논리 연산자 &&를 사용한 단축 평가를 통해 변수가 null 또는 undefined인지 확인했다
-var elem = null;
-// elem이 Falsy 값이면 elem, Truthy 값이면 elem.value로 평가된다 
-var value = elem && elem.value;
-console.log(value); // null
+  변수 score과 copy의 값 80은 다른 메모리 공간에 저장된 별개의 값이다.
+  따라서 score의 값을 변경해도 copy의 값에는 어떠한 영향도 주지 않는다.
+score = 100;
 
-// 논리 연산자 &&는 좌항 피연산자가 false로 평가되는 Falsy 값(false, undefined, null, 0, -0, NaN, '')이면 좌항 피연산자를 그대로 반환한다.
-// 하지만 옵셔널 체이닝 연산자 ?.는 좌항 피연산자가 false로 평가되는 Falsy 값(false, undefined, null, 0, -0, NaN, '')이라도 null 또는 undefined이 아니면 우항의 프로퍼티 참조를 이어간다
-var str = '';
-var length = str?.length;
-console.log(length); // 0
+console.log(score);   100
+console.log(copy);   ?? 내 예상은 100이었는데 80이다
+console.log(score === copy);   false
 
-// 📌 9.4.3 null 병합 연산자
-// ES11(ECMAScript2020)에 도입된 null병합 연산자 ??는 좌항의 피연산자가 null 또는 undefined인 경우 우항의 피연산자를 반환하고, 그렇지 않으면 좌항의 피연산자를 반환한다
-// null 병합 연산자 ??는 변수에 기본값을 설정할 때 유용하다
-var foo = null ?? 'default string';
-console.log(foo); // 'default string'
+  "값에 의한 전달"이라는 용어는 자바스크립트를 위한 용어가 아니므로 사실 오해가 있을 수도 있다.
+  엄격하게 표현하면 변수에는 값이 전달되는 것이 아니라 메모리 주소가 전달되기 때문이다.
+  이는 변수와 같은 식별자는 값이 아니라 메모리 주소를 기억하고 있기 때문이다
 
-// null 병합 연산자 ??가 도입되기 이전에는 논리 연산자 ||를 사용한 단축 평가를 통해 변수에 기본값을 설정했다
-var foo = '' || 'default string';
-console.log(foo); // 'default string'
+  식별자는 어떤 값을 구별해서 식별해낼 수 있는 이름.
+  값은 메모리에 저장되어 있다
+  -> 변수와 같은 식별자는 값이 아니라 메모리 주소를 기억하고 있다
+  = 식별자는 메모리 주소에 붙인 이름
 
-// 하지만 null 병합 연산자 ??는 좌항의 피연산자가 false로 평가되는 Falsy 값(false, undefined, null, 0, -0, NaN, '')이라도 null 또는 undefined가 아니면 좌항의 피연산자를 그대로 반환한다
-var foo = '' ?? 'default string';
-console.log(foo); // ''
+  "값에 의한 전달"도 사실은 값을 전달하는 것이 아니라 메모리 주소를 전달한다. 
+  단, 전달된 메모리 주소를 통해 메모리 공간에 접근하면 값을 참조할 수 있다. 
+
+  중요한 것은 변수에 원시 값을 갖는 변수를 할당하면
+  변수 할당 시점이든, 두 변수 중 어느 하나의 변수에 값을 재할당하는 시점이든
+  결국은 두 변수의 원시 값은 서로 다른 메모리 공간에 저장된 별개의 값이 되어 
+  어느 한쪽에서 재할당을 통해 값을 변경하더라도 서로 간섭할 수 없다는 것이다.
+
+  👉 11.2 객체
+  객체는 프로퍼티의 개수가 정해져 있지 않으며, 동적으로 추가되고 삭제할 수 있다
+  또한 프로퍼티 값에도 제약이 없다. 
+  따라서 객체는 원시 값과 같이 확보해야 할 메모리 공간의 크기를 사전에 정해둘 수 없다.
+
+  📌 11.2.1 변경 가능한 값
+  객체(참조) 타입의 값, 즉 객체는 변경 가능한 값(mutable value)이다.
+  객체를 할당한 변수가 기억하는 메모리 주소를 통해 메모리 공간에 접근하면 참조 값(reference value)에 접근할 수 있다.
+  참조 값은 생성된 객체가 저장된 메모리 공간의 주소 그 자체다.
+  변수는 참조 값을 통해 객체에 접근할 수 있다.
+
+  할당이 이뤄지는 시점에 객체 리터럴이 해석되고, 그 결과 객체가 생성된다.
+var person = {
+  name: 'Lee'
+};
+  person 변수에 저장되어 있는 참조 값으로 실제 객체에 접근한다
+console.log(person);   {name: 'Lee'}
+
+  일반적으로 원시 값은 할당한 변수의 경우 "변수는 *값을 갖는다" 또는 "변수의 값은 *다"라고 표현한다
+  하지만 객체를 할당한 변수의 경우 "변수는 객체를 참조하고 있다" 또는 "변수는 객체를 가리키고(point) 있다"라고 표현한다
+
+  위 예제에서 person 변수는 객체 {name: 'Lee'}를 가리키고(참조하고) 있다. 
+
+  객체를 할당한 변수는 재할당 없이 객체를 직접 변경할 수 있다.
+  즉, 재할당 없이 프로퍼티를 동적으로 추가할 수도 있고 프로퍼티 값을 갱신할 수도 있으며 프로퍼티 자체를 삭제할 수도 있다. 
+
+var person = {
+  name: 'Lee'
+};
+  프로퍼티 값 갱신
+person.name = 'Kim';
+  프로퍼티 동적 생성
+person.address = 'Seoul';
+
+console.log(person);   {name: 'Kim', address: 'Seoul'}
+
+  객체는 변경 가능한 값이므로 메모리에 저장된 객체를 직접 수정할 수 있다
+  객체를 할당한 변수에 재할당을 하지 않았으므로 객체를 할당한 변수의 참조 값은 변경되지 않는다
+
+  객체를 생성하고 관리하는 방식은 매우 복잡하고 비용이 많이 드는 일이기 때문에 
+  메모리를 효율적으로 사용하기 위해, 객체를 복사해 생성하는 비용을 절약하여 성능을 향상시키기 위해 객체는 변경 가능한 값으로 설계되어있다.
+  하지만 객체는 원시 값과는 다르게 여러개의 식별자가 하나의 객체를 공유할 수 있다.
+
+  📌 11.2.2 참조에 의한 전달
+  여러 개의 식별자가 하나의 객체를 공유할 수 있다는 것이 무슨 의미일까?
+
+var person = {
+  name: 'Lee'
+};
+  참조 값을 복사(얕은 복사)
+var copy = person;
+
+  객체를 가리키는 변수(원본, person)을 다른 변수(사본, copy)에 할당하면 원본의 참조 값이 복사되어 전달된다. 이를 참조에 의한 전달이라 한다. 
+
+  원본 person과 사본 copy는 저장된 메모리 주소는 다르지만 동일한 참조 값을 갖는다.
+  = 원본 person과 사본 copy 모두 동일한 객체를 가리킨다
+  = 두 개의 식별자가 하나의 객체를 공유한다 
+  -> 원본 또는 사본 중 어느 한쪽에서 객체를 변경하면 서로 영향을 주고받는다.
+
+var person = {
+  name: 'Lee'
+};
+  참조 값을 복사(얕은 복사)
+var copy = person;
+
+  copy와 person은 동일한 객체를 참조한다
+console.log(copy === person);   true
+
+copy.name = 'Kim';
+person.address = 'Seoul';
+
+console.log(person);   {name: 'Kim', address: 'Seoul'}
+console.log(copy);   {name: 'Kim', address: 'Seoul'}
+
+  "값에 의한 전달"과 "참조에 의한 전달"은 식별자가 기억하는 메모리 공간에 저장되어 있는 값을 복사해서 전달한다는 면에서 동일하다.
+  따라서 자바스크립트에는 "참조에 의한 전달"은 존재하지 않고 "값에 의한 전달"만이 존재한다고 말할 수 있다.
+  이 책에서는 전달되는 값의 종류가 원시 값인지 구별해서 강조하는 의미에서 "값에 의한 전달"과 "참조에 의한 전달"로 구분하여 부르기로 한다.
+
+var person1 = {
+  name: 'Lee'
+};
+var person2 = {
+  name: 'Lee'
+};
+  === 일치 비교 연산자는 변수에 저장되어 있는 값을 타입 변환 하지 않고 비교한다.
+  객체 리터럴은 평가될 때마다 객체를 생성한다. 
+  따라서 person1과 person2가 가리키는 객체는 내용은 같지만 다른 메모리에 저장된 별개의 객체다.
+  즉, person1과 person2의 참조 값은 전혀 다른 값이다.
+console.log(person1 === person2);   false
+
+  person1.name과 person2.name은 모두 값으로 평가될 수 있는 표현식이다. 
+  두 표현식 모두 원시 값 'Lee'로 평가된다.
+console.log(person1.name === person2.name);   true
