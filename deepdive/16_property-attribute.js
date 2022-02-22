@@ -1,3 +1,5 @@
+// 'use strict';
+
 // 16장 프로퍼티 어트리뷰트
 // 16.1 내부 슬롯과 내부 메서드
 // 내부 슬롯과 내부 메서드는 자바스크립트 엔진의 구현 알고리즘을 설명하기 위해 ECMAScript 사양에서 사용하는 의사 프로퍼티pseudo property와 의사 메서드pseudo method다. 
@@ -173,3 +175,243 @@ console.log('lastName', descriptor2); // lastName {value: 'Lee', writable: false
 // 해당 프로퍼티는 for...in문이나 Object.keys 등으로 열거할 수 없다.
 // lastName 프로퍼티는 [[Enumerable]]의 값이 false이므로 열거되지 않는다.
 console.log( Object.keys(person5) ); // ['firstName']
+
+// [[Writable]]의 값이 false인 경우 해당 프로퍼티의 [[Value]]의 값을 변경할 수 없다.
+// lastName 프로퍼티는 [[Writable]]의 값이 false이므로 값을 변경할 수 없다.
+// 이때 값을 변경하면 에러는 발생하지 않고 무시된다.
+// person5.lastName = 'Kim'; // strict mode일 경우 에러 발생: TypeError: Cannot assign to read only property 'lastName' of object '#<Object>'
+
+// [[Configurable]]의 값이 false인 경우 해당 프로퍼티를 재정의할 수 없다.
+// Object.defineProperty(person5, 'lastName', {enumerable: true}); // TypeError: Cannot redefine property: lastName at Function.defineProperty (<anonymous>)
+
+descriptor2 = Object.getOwnPropertyDescriptor(person5, 'lastName');
+console.log('lastName', descriptor2); // lastName {value: 'Lee', writable: false, enumerable: false, configurable: false}
+
+// 접근자 프로퍼티 정의
+Object.defineProperty(person5, 'fullName', {
+  // getter 함수
+  get() {
+    return `${this.firstName} ${this.lastName}`;
+  },
+  // setter 함수
+  set(name) {
+    // [this.firstName, this.lastName] = name.split(' ');
+  },
+  enumerable: true,
+  configurable: true
+});
+
+descriptor2 = Object.getOwnPropertyDescriptor(person5, 'fullName');
+console.log('fullName', descriptor2); // fullName {enumerable: true, configurable: true, get: ƒ, set: ƒ}
+
+person5.fullName = 'Heegun Lee';
+console.log(person5); // {firstName: 'Heegun', lastName: 'Lee'}
+
+
+// Object.defineProperty 메서드로 프로퍼티를 정의할 때 프로퍼티 디스크립터 객체의 프로퍼티를 일부 생략할 수 있다.
+// 프로퍼티 디스크립터 객체에서 생략된 어트리뷰트는 다음과 같이 기본값이 적용된다.
+// 프로퍼티 디스크립터 객체의 프로퍼티        대응하는 프로퍼티 어트리뷰트        생략했을 때의 기본값
+// value                             [[Value]]                     undefined
+// get                               [[get]]                       undefined
+// set                               [[set]]                       undefined
+// writable                          [[writable]]                  false
+// enumerable                        [[enumerable]]                false
+// configurable                      [[configurable]]              false
+
+// Object.defineProperty 메서드는 한번에 하나의 프로퍼티만 정의할 수 있다.
+// Object.defineProperties 메서드를 사용하면 여러개의 프로퍼티를 한 번에 정의할 수 있다.
+
+const person6 = {};
+
+Object.defineProperties(person6, {
+  // 데이터 프로퍼티 정의
+  firstName: {
+    value: 'Ungmo',
+    writable: true,
+    enumerable: true,
+    configurable: true
+  },
+  lastName: {
+    value: 'Lee',
+    writable: true,
+    enumerable: true,
+    configurable: true
+  },
+  // 접근자 프로퍼티 정의
+  fullName: {
+    // getter 함수
+    get() {
+      // return ${this.firstName} ${this.lastName};
+    },
+    // setter 함수
+    set(name) {
+      [this.firstName, this.lasName] = name.split(' ');
+    },
+    enumerable: true,
+    configurable: true
+  }
+});
+person6.fullName = 'Heegun Lee';
+console.log(person6); // {firstName: 'Heegun', lastName: 'Lee', lasName: 'Lee'}
+
+// 16.5 객체 변경 방지
+// 객체는 변경 가능한 값이므로 재할당 없이 직접 변경할 수 있다.
+// 즉, 프로퍼티를 추가하거나 삭제할 수 있고, 프로퍼티 값을 갱신할 수 있으며, Object.defineProperty 또는 Object.defineProperties 메서드를 사용하여 프로퍼티 어트리뷰트를 재정의할 수도 있다.
+
+
+// ❕ 자바스크립트는 객체의 변경을 방지하는 다양한 메서드를 제공한다.
+// 구분           메서드                      프로퍼티 추가  프로퍼티 삭제  프로퍼티 값 읽기  프로퍼티 값 쓰기  프로퍼티 어트리뷰트 재정의
+// 객체 확장 금지   Object.preventExtensions   x           o           o             o             o
+// 객체 밀봉       Object.seal                x           x           o             o             x
+// 객체 동겨       Object.freeze              x           x           o             x             x
+
+// 16.5.1 객체 확장 금지
+// Object.preventExtensions 메서드: 객체의 확장을 금지한다.
+// Object.isExtensible 메서드: 확장이 가능한 객체인지 여부 판별
+// 객체 확장 금지 = 프로퍼티 추가 금지
+// 프로퍼티는 프로퍼티 동적 추가와 Object.defineProperty 메서드로 추가할 수 있으므로, 두 가지 방법 모두 금지된다.
+
+const person7 = { name: 'Lee' };
+
+// person7 객체는 확장이 금지된 객체가 아니다.
+console.log( Object.isExtensible(person7) ); // true
+
+// person7 객체의 확장을 금지하여 프로퍼티 추가를 금지한다.
+Object.preventExtensions(person7);
+
+// person7 객체는 확장이 금지된 객체다.
+console.log( Object.isExtensible(person7) ); // false
+
+// 프로퍼티 추가가 금지된다
+// 무시. strict mode에서는 에러 발생
+// person7.age = 20; // TypeError: Cannot assign to read only property 'lastName' of object '#<Object>'
+console.log(person7); // {name: 'Lee'}
+
+// 프로퍼티 추가는 금지되지만 삭제는 가능하다.
+delete person7.name;
+console.log(person7); // {}
+
+// 프로퍼티 정의에 의한 프로퍼티 추가도 금지된다.
+// Object.defineProperty(person7, 'age', { value: 20 }); // TypeError: Cannot define property age, object is not extensible at Function.defineProperty (<anonymous>)
+
+
+// 16.5.2 객체 밀봉
+// Object.seal 메서드: 객체를 밀봉한다.
+// Object.isSealed 메서드: 밀봉된 객체인지 여부 판별하는
+// 객체 밀봉seal이란 프로퍼티 추가 및 삭제와 프로퍼티 어트리뷰트 재정의 금지를 의미한다
+// 즉 밀봉된 객체는 읽기와 쓰기만 가능하다.
+
+
+const person8 = { name: 'Lee' };
+
+// person8 객체는 밀봉된 객체가 아니다.
+console.log( Object.isSealed(person8) ); // false
+
+// 객체를 미봉하여 프로퍼티 추가, 삭제, 재정의를 금지한다.
+Object.seal(person8);
+
+// peron8 객체는 밀봉된 객체다.
+console.log( Object.isSealed(person8) ); // true
+
+// 밀봉된 객체는 configurable이 fales다.
+console.log( Object.getOwnPropertyDescriptors(person8) ); //{name: {value: 'Lee', writable: true, enumerable: true, configurable: false}}
+
+// 프로퍼티 추가가 금지된다.
+// person8.age = 20; // 무시. strict mode에서는 에러 발생: TypeError: Cannot assign to read only property 'lastName' of object '#<Object>'
+
+// 프로퍼티 삭제가 금지된다.
+// delete person8.name; // 무시. strict mode에서는 에러 발생: TypeError: Cannot assign to read only property 'lastName' of object '#<Object>'
+
+// 프로퍼티 값 갱신은 가능하다.
+person8.name = 'Kim';
+console.log(person8); // {name: 'Kim'}
+
+// 프로퍼티 어트리뷰트 재정의가 금지된다 
+// Object.defineProperty(person8, 'name', { configurable: true }); // TypeError: Cannot redefine property: name at Function.defineProperty (<anonymous>)
+
+
+// 16.5.3 객체 동결
+// Object.freeze 메서드: 객체를 동결한다.
+// Object.isFrozen 메서드: 동결된 객체인지 여부 판별
+// 객체 동결freeze란 프로퍼티 추가 및 삭제와 프로퍼티 어트리뷰트 재정의 금지, 프로퍼티 값 갱신 금지를 의미한다.
+// 즉, 동결된 객체는 읽기만 가능하다.
+
+const person9 = { name: 'Lee' };
+
+// person9 객체는 동결된 객체가 아니다.
+console.log( Object.isFrozen(person9) ); // false
+
+// person9 객체를 동결하여 프로퍼티 추가, 삭제, 재정의, 쓰기를 금지한다.
+Object.freeze(person9);
+
+// person9 객체는 동결된 객체다.
+console.log( Object.isFrozen(person9) ); // true
+
+// 동결된 객체는 writable과 configurable이 false다.
+console.log( Object.getOwnPropertyDescriptors(person9) ); // {name: {value: 'Lee', writable: false, enumerable: true, configurable: false}}
+
+// 프로퍼티 추가가 금지된다.
+// person9.age = 20; // 무시. strict mode에서는 에러 발생: TypeError: Cannot add property age, object is not extensible
+console.log(person9); // {name: 'Lee'}
+
+// 프로퍼티 삭제가 금지된다.
+// delete person9.name; // 무시. strict mode에서는 에러 발생: TypeError: Cannot delete property 'name' of #<Object>
+console.log(person9); // {name: 'Lee'}
+
+// 프로퍼티 값 갱신이 금지된다.
+person9.name = 'Kim'; // 무시. strict mode에서는 에러 발생: TypeError: Cannot assign to read only property 'name' of object '#<Object>'
+console.log(person9); // {name: 'Lee'}
+
+// 프로퍼티 어트리뷰트 재정의가 금지된다.
+// Object.defineProperty(person9, 'name', { configurable: true }); // TypeError: Cannot redefine property: name at Function.defineProperty (<anonymous>)
+
+
+// 16.5.4 불변 객체
+// 지금까지 살펴본 변경 방지 메서드들은 얕은 변경 방지로, 직속 프로퍼티만 변경이 방지되고 중처 객체까지는 영향을 주지는 못한다.
+// 따라서 Object.freeze 메서드로 객체를 동결하여도 중첩 객체까지 동결할 수는 없다.
+const person10 = {
+  name: 'Lee',
+  address: { city: 'Seoul' }
+};
+
+// 얕은 객체 동결
+Object.freeze(person10);
+
+// 직속 프로퍼티만 동결한다.
+console.log( Object.isFrozen(person10) ); // true
+// 중첩 객체까지 동결하지 못한다.
+console.log( Object.isFrozen(person10.address) ); // false
+
+person10.address.city = 'Busan';
+console.log(person10); // {name: 'Lee', address: {city: 'Busan'}}
+
+// ❕ 객체의 중첩 객체까지 동결하여 변경이 불가능한 읽기 전용의 불변 객체를 구현하려면 
+// 객체를 값으로 갖는 모든 프로퍼티에 대해 재귀적으로 Object.freeze 메서드를 호출해야 한다.
+
+function deepFreeze(target) {
+  // 객체가 아니거나 동결된 객체는 무시하고, 동결되지 않은 객체만 동결한다.
+  if( target && typeof target === 'object' && !Object.isFrozen(target) ) {
+    Object.freeze(target);
+    // 모든 프로퍼티를 순회하며 재귀적으로 동결한다.
+    // Object.keys 메서드는 객체 자신의 열거 가능한 프로퍼티 키를 배열로 반환한다. - 9.14.2절 참고
+    // forEach 메서드는 배열을 순회하며 배열의 각 요소에 대하여 콜백함수를 실행한다.- 27.9.2절 참고
+    Object.keys(target).forEach(key => deepFreeze(target[key]));
+  }
+  return target;
+}
+
+const person11 = {
+  name: 'Lee',
+  address: { city: 'Seoul' }
+};
+
+// 깊은 객체 동결
+deepFreeze(person11);
+
+console.log( Object.isFrozen(person11) ); // true
+// 중첩 객체까지 동결한다.
+console.log( Object.isFrozen(person11.address) ); // true
+
+person11.address = 'Busan';
+// address도 동결되어서 재정의 되지 않는다.
+console.log( person11 ); // {name: 'Lee', address: {city: 'Seoul'}}
