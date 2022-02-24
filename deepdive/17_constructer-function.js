@@ -159,10 +159,239 @@ console.log(this.radius); // 15
 // 생성자 함수가 인스턴스를 생성하는 것은 필수이고, 생성된 인스턴스를 초기화 하는 것은 옵션이다.
 
 // 생성자 함수
-function Circle(radius) {
+function Circle2(radius) {
   // 인스턴스 초기화
   this.radius = radius;
   this.getDiameter = function() {
     return 2 * this.radius;
   };
 }
+// 인스턴스 생성
+const circle4 = new Circle2(5); // 반지름이 5인 Circle 객체를 생성
+
+// 생성자 함수 내부의 코드를 살펴보면 this에 프로퍼티를 추가하고 필요에 따라 전달된 인수를 프로퍼티에 초기값으로서 할당하여 인스턴스를 초기화한다.
+// 하지만 인스턴스를 생성하고 반환하는 코드는 보이지 않는다.
+// 자바스크립트 엔진은 암묵저인 처리를 통해 인스턴스를 생성하고 반환한다.
+// new 연산자와 함께 생성자 함수를 호출하면 자바스크립트 엔진은 다음과 같은 과정을 거쳐 암묵적으로 인스턴스를 생성하고 인스턴스를 초기화 한 후 암묵적으로 인스턴스를 반환한다.
+
+// 1. 인스턴스 생성과 this 바인딩
+// 암묵적으로 빈 객체가 생성된다. 이 빈객체가 바로 (아직 완성되지는 않았지만) 생성자 함수가 생성한 인스턴스다.
+// 그리고 암묵적으로 생성된 빈 객체, 즉 인스턴스는 this에 바인딩된다. 생성자 함수 내부의 this가 생성자 함수가 생성할 인스턴스를 가리키는 이유가 바로 이것이다.
+// 이 처리는 함수 몸체의 코드가 한 줄씩 실행되는 런타임 이전에 실행된다. 
+
+// 바인딩name binding이란?
+// 바인딩이란 식별자와 값을 연결하는 과정을 의미한다.
+// 예를 들어, 변수 선언은 변수 이름(식별자)과 확보된 메모리 공간의 주소를 바인딩하는 것이다. 
+// this 바인딩은 this(키워드로 분류되지만 식별자 역할을 한다)와 this가 가리킬 객체를 바인딩하는 것이다.
+
+function Circle3(raius) {
+  // 1. 암묵적으로 인스턴스가 생성되고 this에 바인딩된다
+  console.log(this); // Circle3 {}
+
+  this.radius = raius;
+  this.getDiameter = function() {
+    return 2 * this.raius;
+  };
+}
+// const circle5 = new Circle3();
+
+
+
+// 2. 인스턴스 초기화
+// 생성자 함수에 기술되어 있는 코드가 한 줄씩 실행되어 this에 바인딩되어 있는 인스턴스를 초기화한다.
+// 즉, this에 바인딩되어 있는 인스턴스에 프로퍼티나 메서드를 추가하고, 생성자 함수가 인수로 전달받은 초기값을 인스턴스 프로퍼티에 할당하여 초기화하거나 고정값을 할당한다.
+// 이 처리는 개발자가 기술한다.
+
+function Circle4(raius) {
+  // 1. 암묵적으로 인스턴스가 생성되고 this에 바인딩된다
+
+  // 2. this에 바인딩되어 있는 인스턴스를 초기화한다.
+  this.radius = raius;
+  this.getDiameter = function() {
+    return 2 * this.raius;
+  };
+}
+
+
+// 3. 인스턴스 반환
+// 생성자 함수 내부의 모든 처리가 끝나면 완성된 인스턴스가 바인딩된 this가 암묵적으로 반환된다.
+
+function Circle5(raius) {
+  // 1. 암묵적으로 인스턴스가 생성되고 this에 바인딩된다
+
+  // 2. this에 바인딩되어 있는 인스턴스를 초기화한다.
+  this.radius = raius;
+  this.getDiameter = function() {
+    return 2 * this.raius;
+  };
+
+  // 3. 완성된 인스턴스가 바인딩된 this가 암묵적으로 반환된다.
+}
+
+// 인스턴스 생성. Circle5 생성자 함수는 암묵적으로 this를 반환한다.
+const circle5 = new Circle5(1);
+console.log(circle5); // Circle5 {radius: 1, getDiameter: ƒ}
+
+// ❕ 만약 this가 아닌 다른 객체를 명시적으로 반환하면 this가 반환되지 못하고 return 문에 명시한 객체가 반환된다.
+function Circle6(raius) {
+  // 1. 암묵적으로 인스턴스가 생성되고 this에 바인딩된다
+
+  // 2. this에 바인딩되어 있는 인스턴스를 초기화한다.
+  this.radius = raius;
+  this.getDiameter = function() {
+    return 2 * this.raius;
+  };
+
+  // 3. 암묵적으로 this를 반환한다.
+  // 명시적으로 객체를 반환하면 암묵적인 this 반환이 무시된다.
+  return {};
+}
+
+// 인스턴스 생성. Circle 생성자 함수는 명시적으로 반환한 객체를 반환한다.
+const circle6 = new Circle6(1);
+console.log(circle6); // {}
+
+// ❕ 하지만 명시적으로 원시 값을 반환하면 원시 값 반환은 무시되고 암묵적으로 this가 반환된다.
+function Circle7(raius) {
+  // 1. 암묵적으로 인스턴스가 생성되고 this에 바인딩된다
+
+  // 2. this에 바인딩되어 있는 인스턴스를 초기화한다.
+  this.radius = raius;
+  this.getDiameter = function() {
+    return 2 * this.raius;
+  };
+
+  // 3. 암묵적으로 this를 반환한다.
+  // 명시적으로 원시 값을 반환하면 원시 값 반환은 무시되고 암묵적으로 this가 반환된다.
+  return 100;
+}
+const circle7 = new Circle7(1);
+console.log(circle7); // Circle7 {radius: 1, getDiameter: ƒ}
+
+// 이처럼 생성자 함수 내부에서 명시적으로 this가 아닌 다른 값을 반환하는 것은 생성자 함수의 기본 동작을 훼손한다.
+// 따라서 생성자 함수 내부에서 return문은 반드시 생략해야 한다.
+
+
+// 17.2.4 내부 메서드 [[Call]]과 [[Construct]]
+// 함수 선언문 또는 함수 표현식으로 정의한 함수는 일반적인 함수로서 호출할 수 있는 것은 물론 생성자 함수로서 호출할 수 있다.
+// 생성자 함수로서 호출한다는 것은 new 연산자와 함께 호출하여 객체를 생성하는 것을 의미한다.
+
+// 함수는 객체이므로 일반 객체ordinary object와 동일하게 동작할 수 있다.
+// 함수 객체는 일반 객체가 가지고 있는 내부 슬롯과 내부 메서드를 모두 가지고 있기 때문이다.
+
+// 함수는 객체다.
+function foo2() {}
+
+// 함수는 객체이므로 프로퍼티를 소유할 수 있다.
+foo2.prop = 10;
+
+// 함수는 객체이므로 메서드를 소유할 수 있다.
+foo2.method = function() {
+  console.log(this.prop);
+};
+foo2.method(); // 10
+
+// 함수는 객체이지만 일반 객체와는 다르다.
+// 일반 객체는 호출할 수 없지만 함수는 호출할 수 있다.
+// 따라서 함수 객체는 일반 객체가 가지고 있는 내부 슬롯과 내부 메서드는 물론, 
+// 함수로서 동작하기 위해 함수 객체만을 위한 [[Environment]], [[FormalParameters]] 등의 내부 슬롯과
+// [[Call]], [[Contruct]] 같은 내부 메서드를 추가로 가지고 있다.
+
+function foo3() {}
+
+// 일반적인 함수로서 호출: [[Call]]이 호출된다.
+foo3();
+
+// 생성자 함수로서 호출: [[Construct]]가 호출된다.
+new foo3();
+
+// callable: 내부 메서드 [[Call]]을 갖는 함수 객체 = 호출할 수 있는 객체
+// constructor: 내부 메서드 [[Construct]]를 갖는 함수 객체 = 생성자 함수로서 호출할 수 있는 함수
+// non-constructor: [[Construct]]를 갖지 않는 함수 객체 = 객체를 생성자 함수로서 호출할 수 없는 함수
+
+// 호출할 수 없는 객체는 함수 객체가 아니므로 함수로서 기능하는 객체, 즉 함수 객체는 반드시 callabl이어야 한다.
+// 따라서 모든 함수 객체는 내부 메서드 [[Call]]을 갖고 있으므로 호출할 수 있다. 
+// 하지만 모든 함수 객체가 [[Construc]]를 갖는 것은 아니다.
+// 다시 말해, 함수 객체는 constructor일 수도 있고 non-constructor일 수도 있다.
+
+// 결론적으로 함수 객체는 callable이면서 constructor이거나, callable이면서 non-constructor다.
+// 즉 모든 함수 객체는 호출할 수 있지만 모든 함수 객체를 생성자 함수로서 호출할 수 있는 것은 아니다.
+
+
+// 17.2.5 construtor와 non-constructor의 구분
+
+// 자바스크립트 엔진은 함수 정의를 평가하여 함수 객체를 생성할 때 함수 정의 방식에 따라 함수를 constructor와 non-constructor로 구분한다.
+
+// - constructor: 함수 선언문, 함수 표현식, 클래스(클래스도 함수다)
+// - non-constructor: 메서드(ES6 메서드 축약표현), 화살표 함수
+
+// 이때 주의할 것은 ECMAScript 사양에서 메서드로 인정하는 범위가 일반적인 의미의 메서드보다 좁다는 것이다.
+
+
+// 일반 함수 정의: 함수 선언문, 함수 표현식
+function fooo() {}
+const bar = function() {};
+const baz = {  
+  // 프로퍼티 x의 값으로 할당된 것은 일반 함수로 정의된 함수다. 이는 메서드로 인정하지 않는다.
+  x: function() {}
+};
+// 일반 함수로 정의된 함수만이 constructor다.
+new fooo();
+new bar();
+new baz.x();
+
+// 화살표 함수 정의
+const arrow = () => {};
+// new arrow(); // TypeError: arrow is not a constructor
+
+// 메서드 정의: ES6의 메서드 축약 표현만 메서드로 인정한다
+const objec = {
+  x() {}
+};
+// new objec.x(); // TypeError: objec.x is not a constructor
+
+// 메서드 축약 표현이란???
+// 📌 10.9.3 메서드 축약 표현
+// ES5
+// var obj = {
+//   name: 'Lee',
+//   sayHi: function() {
+//     console.log('Hi! ' + this.name);
+//   }
+// };
+// obj.sayHi(); // Hi! Lee
+// ES6에서는 메서드를 정의할 때 function 키워드를 생략한 축약 표현을 사용할 수 있다
+// ES6
+// const obj3 = {
+//   name: 'Lee',
+//   sayHi() {
+//     console.log('Hi! ' + this.name);
+//   }
+// }
+// obj3.sayHi(); // Hi! Lee
+// ES6의 메서드 축약 표현으로 정의한 메서드는 프로퍼티에 할당한함수와 다르게 동작한다
+
+
+// 함수르 프로퍼티 값으로 사용하면 일반적으로 메서드로 통칭한다.
+// 하지만 ECMAScript 사양에서 메서드란 ES6의 메서드 축약 표현만을 의미한다.
+// ❕ 다시 말해 함수가 어디에 할당되어 있는지에 따라 메서드인지를 판단하는 것이 아니라 함수 정의 방식에 따라 constructor와 non-constructor를 구분한다.
+// 따라서 위 예제와 같이 일반함수(함수 선언문과 함수 표현식으로 정의된 함수)만이 constructor이고, ES6의 화살표 함수와 메서드 축약 표현으로 정의된 함수는 non-constructor다.
+
+// 함수를 일반 함수로서 호출하면 함수 객체 내부의 메서드 [[Call]]이 호출되고, new 연산자와 함께 생성자 함수로서 호출하면 내부 메서드 [[Construct]]가 호출된다.
+// non-constructor인 함수 객체는 내부 메서드 [[Construct]]를 갖지 않는다.
+// 따라서 non-constructor인 함수 객체를 생성자 함수로서 호출하면 에러가 발생한다.
+
+function foo3() {}
+
+// 일반 함수로서 호출
+// [[Call]]이 호출된다. 모든 함수 객체는 [[Call]]이 구현되어 있다.
+foo3();
+
+// 생성자 함수로서 호출
+// [[Construct]]가 호출된다. 이때 [[Construct]]를 갖지 않는다면 에러가 발생한다
+new foo3();
+
+// ❕ 주의할 것은 생성자 함수로서 호출될 것을 기대하고, 정의하지 않은 일반 함수(callable이면서 constructor)에 new를 붙여 호출하면, 생성자 함수처럼 동작할 수 있다는 것이다.
+
+
+// 17.2.6 new 연산자
