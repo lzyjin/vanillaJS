@@ -395,3 +395,150 @@ new foo3();
 
 
 // 17.2.6 new 연산자
+// 일반 함수와 생성자 함수에 특별한 형식적 차이는 없다.
+// new 연산자와 함께 호출하면 해당 함수는 생성자 함수로 동작한다.
+// 다시 말해 함수 객체의 내부 메서드 [[Call]]이 아니라 [[Constructor]]가 호출된다.
+// 단, new 연산자와 함께 호출되는 함수는 non-constructor가 아닌 constructor이어야한다.
+
+// 생성자 함수로서 정의하지 않은 일반 함수
+function add(x, y) {
+  return x + y;
+}
+
+// 생성자 함수로서 정의하지 않은 함수를 new 연산자와 함께 호출
+let inst2 = new add();
+
+// 함수가 객체를 반환하지 않았으므로 반환문이 무시된다. 따라서 빈 객체가 생성되어 반환된다.
+console.log(inst2); // add {}
+
+// 객체를 반환하는 일반 함수
+function createUser(name, role) {
+  return {name, role};
+}
+
+// 일반 함수를 new 연산자와 함께 호출
+inst2 = new createUser('Lee', 'admin');
+// 함수가 생성한 객체를 반환한다.
+console.log( inst2 ); // {name: 'Lee', role: 'admin'}
+
+
+// 반대로 new 연산자 없이 생성자 함수를 호출하면 일반 함수로 호출된다.
+// 다시 말해 함수 객체의 내부 메서드 [[Construct]]가 호출되는 것이 아니라 [[Call]]이 호출된다.
+
+// 생성자 함수 
+function Circle8(radiussss) {
+  this.radiussss = radiussss;
+  this.getDiameterrrr = function() {
+    return 2 * this.radiussss;
+  };
+}
+
+// new 연산자 없이 생성자 함수를 호출하면 일반 함수로서 호출된다.
+const circle8 = Circle8(5);
+console.log(circle8); // undefined
+
+// 일반 함수 내부의 this는 전역 객체 window를 가리킨다.
+console.log(radiussss); // 5
+console.log(getDiameterrrr()); // 10
+
+// circle8.getDiameterrrr(); // TypeError: Cannot read properties of undefined (reading 'getDiameterrrr')
+
+// Circle8 함수를 new 연산자와 함께 생성자 함수로서 호출하면 함수 내부의 this는 Circle8 생성자 함수가 생성할 인스턴스를 가리킨다.
+// 하지만 Circle8 함수를 일반적인 함수로서 호출하면 함수 내부의 this는 전역 객체 window를 가리킨다.
+
+// 위 예제의 Circle8 함수는 일반 함수로서 호출되었기 때문에 Circle8 함수 내부의 this는 전역 객체 window를 가리킨다.
+// 따라서 radiussss 프로퍼티와 getDiameterrrr 메서드는 전역 개체의 프로퍼티와 메서드가 된다. 
+
+// 일반 함수와 생성자 함수에 특별한 형식적 차이는 없다.
+// ❕ 따라서 생성자 함수는 일반적으로 첫 문자를 대문자로 기술하는 파스칼 케이스로 명명하여 일반 함수로 구별할 수 있도록 노력한다. 
+
+
+// 17.2.7 new.target
+// 생성자 함수가 new 연산자 없이 호출되는 것을 방지하기 위해 파스칼 케이스 컨벤션을 사용한다 하더라도 실수는 언제나 발생할 수 없다.
+// 이러한 위험성을 회피하기 위해 ES6에서는 new.target을 지원한다.
+
+// new.target은 this와 유사하게 constructor인 모든 함수 내부에서 암묵적인 지역 변수와 같이 사용되며 메타 프로퍼티라고 부른다.
+// IE는 new.target을 지원하지 않는다.
+
+// ❕ 함수 내부에서 new.target을 사용하면 new 연산자와 함께 생성자 함수로서 호출되었는지 확인할 수 있다.
+// new 연산자와 함께 생성자 함수로서 호출되면 함수 내부의 new.target은 함수 자신을 가리킨다.
+// new 연산자 없이 일반 함수로서 노출된 함수 내부의 new.target은 undefined이다.
+
+// 따라서 함수 내부에서 new.target을 사용하여 new 연산자와 생성자 함수로서 호출했는지 확인하여 
+// 그렇지 않은 경우 new 연산자와 함께 재귀 호출을 통해 생성자 함수로서 호출할 수 있다.
+
+// 생성자 함수
+function Circle9(radius) {
+  // 이 함수가 new 연산자와 함께 호출되지 않았다면 new.target은 undefined이다.
+  if(!new.target) {
+    // new 연산자와 함께 생성자 함수를 재귀 호출하여 생성된 인스턴스를 반환한다.
+    return new Circle9(radius);
+    // alert(1);
+  }
+  this.radius = radius;
+  this.getDiameter = function() {
+    return 2 * this.radius;
+  };
+}
+// const circle9 = new Circle9(3);
+
+// new 연산자 없이 생성자 함수를 호출하여도 new.target을 통해 생성자 함수로서 호출된다.
+const circle9 = Circle9(3); 
+console.log(circle9.getDiameter()); // 6
+
+// - 스코프 세이브 생성자 패턴 scope-safe constructor
+// new.target은 ES6에서 도입된 최신 문법으로 IE에서는 지원하지 않는다. 
+// new.target을 사용할 수 없는 상황이라면 스코프 세이프 생성자 패턴을 사용할 수 있다.
+function Circle10(radius) {
+  // 생성자 함수가 new 연산자와 함께 호출되면 함수의 선두에서 빈 객체를 생성하고
+  // this에 바인딩한다. 이때 this와 Circle은 프로토타입에 의해 연결된다.
+
+  // 이 함수가 new 연산자와 함께 호출되지 않았다면 이 시점의 this는 전역 객체 window를 가리킨다.
+  // 즉 this와 Circle10은 프로토타입에 의해 연결되지 않는다.
+  if( !(this instanceof Circle10) ) {
+    return new Circle10(radius);
+  }
+
+  this.radius = radius;
+  this.getDiameter = function () {
+    return 2 * this.radius;
+  };
+}
+
+// new 연산자 없이 생성자 함수를 호출하여도 생성자 함수로서 호출된다
+const circle10 = Circle10(5);
+console.log( circle10.getDiameter() ); // 10
+
+// new 연산자와 함께 생성자 함수에 의해 생성된 객체(인스턴스)는 프로토타입에 의해 생성자 함수와 연결된다.
+// 이를 이용해 new 연산자와 함께 호출되었는지 확인할 수 있다.
+// 프로토타입과 instanceof 연산자에 대해서는 19장 "프로토타입"에서 살펴볼 것이다.
+
+// 참고로 대부분의 빌트인 생성자 함수(Object, String, Number, Boolean, Function, Array, Date, RegExp, Promise 등)는 new 연산자와 함께 호출되었는지를 확인한 후 적절한 값을 반환한다.
+
+// 예를들어, Object와 Function 생성자 함수는 new 연산자 없이 호출해도 new 연산자와 함께 호출했을 때와 동일하게 동작한다.
+
+let obj2 = new Object();
+console.log(obj2); // {}
+
+obj2 = Object();
+console.log(obj2); // {}
+
+let f = new Function('x', 'return x ** x');
+console.log(f); // ƒ anonymous(x) { return x ** x }
+f = Function('x', 'return x ** x');
+console.log(f); // ƒ anonymous(x) { return x ** x }
+
+// 하지만 String, Number, Boolean 생성자 함수는 new 연산자와 함께 호출했을 때 String, Number, Boolean 객체를 생성하여 반환하지만 new 연산자 없이 호출하면 문자열, 숫자, 불리언 값을 반환한다. 
+// ❕ 이를 통해 데이터 타입을 변환하기도 한다.
+// -> 실제로 내가 이렇게 타입변환했었음...
+
+const str = String(123);
+console.log(str, typeof str); // 123 string
+
+const numbe = Number('123');
+console.log(numbe, typeof numbe); // 123 'number'
+
+const boolea = Boolean('true');
+console.log(boolea, typeof boolea); // true boolean
+
+
