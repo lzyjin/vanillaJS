@@ -162,3 +162,176 @@ console.log(date, typeof date); // Mon Mar 21 2022 21:52:00 GMT+0900 (한국 표
 // 전역 객체의 특징
 // - 전역 객체는 개발자가 의도적으로 생성할 수 없다. 즉, 전역 객체를 생성할 수 있는 생성자 함수가 제공되지 않는다.
 // - 전역 객체의 프로퍼티를 참조할 때 window(또는 global)를 생략할 수 있다.
+{
+  // 문자열 'F'를 16진수로 해석하여 10진수로 변환하여 반환한다.
+  console.log( window.parseInt('F', 16) ); // 15
+
+  // window.parseInt는 parseInt로 호출할 수 있다.
+  console.log( parseInt('F', 16) );
+
+  console.log( window.parseInt('F', 16) === parseInt('F', 16) ); // true
+}
+
+// - 전역 객체는 Object, String, Number, Boolean, Function, Array, RegExp, Date, Math, Promise 같은 모든 표준 빌트인 객체를 프로퍼티로 가지고 있다. 
+// - 자바스크립트 실행 환경(브라우저 환경 또는 Node.js 환경)에 따라 추가적으로 프로퍼티와 메서드를 갖는다.
+// 브라우저 환경에서는 DOM, BOM, XMLHttpRequest, fetch, requestAnimationFrame, SVG, Storage, Web Component, Web Worker 같은 클라이언트 사이드 Web API를 호스트 객체로 제공하고, Node.js 환경에서는 Node.js 고유의 API를 호스트 객체로 제공한다.
+// - var 키워드로 선언한 전여 변수와 선언하지 않은 변수에 값을 할당한 암묵적 전역, 그리고 전역 함수는 전역 객체의 프로퍼티가 된다.
+{
+  // var 키워드로 선언한 전역 변수
+  var foo = 1;
+  console.log( window.foo ); // 1
+
+  // 선언하지 않은 변수에 값을 암묵적 전역. bar는 전역 변수가 아니라 전역 객체의 프로퍼티다.
+  bar = 2; // window.bar = 2
+  console.log( window.bar ); // 2 
+
+  {
+    var whatIsThis = 100;
+    function test() {
+      var whatIsThis2 = 200;
+    }
+  }
+  console.log( window.whatIsThis ); // 100
+  console.log( window.whatIsThis2 ); // undefined
+
+  // 전역 함수
+  function baz() { return 3; }
+  console.log( window.baz() ); // 3
+}
+
+// - let이나 const 키워드로 선언한 전역 변수는 전역 객체의 프로퍼티가 아니다. ❕ 즉, window.foo와 같이 접근할 수 없다. let이나 const 키워드로 선언한 전역 변수는 보이지 않는 개념적인 블록(전역 렉시컬 환경의 선언적 환경 레코드)내에 존재하게 된다.
+{
+  let variable = 123;
+  console.log( window.variable ); // undefined
+}
+
+// - ❕브라우저 환경의 모든 자바스크립트 코드는 하나의 전역 객체 window를 공유한다. 여러 개의 script 태그를 통해 자바스크립트 코드를 분리해도 하나의 전역 객체 window를 공유하는 것은 변함이 없다. 이는 분리되어 있는 자바스크립트 코드가 하나의 전역을 공유한다는 의미다.
+
+// 전역 객체는 몇 가지 프로퍼티와 메서드를 가지고 있다. 전역 객체의 프로퍼티와 메서드는 전역 객체를 가리키는 식별자, 즉 window나 global을 생략하여 참조/호출 할 수 있으므로 전역 변수와 전역 함수처럼 사용할 수 있다.
+
+// 👉 21.4.1 빌트인 전역 프로퍼티
+// ❕ 빌트인 전역 프로퍼티(built-in global property)는 전역 객체의 프로퍼티를 의미한다.
+// 주로 애플리케이션 전역에서 사용하는 값을 제공한다.
+
+// - Infinity
+// Infinity 프로퍼티는 무한대를 나타내는 숫자값 Infinity를 갖는다.
+{
+  // 전역 프로퍼티는 window를 생략하고 참조할 수 있다.
+  console.log( window.Infinity === Infinity ); // true
+  
+  // 양의 무한대
+  console.log( 3/0 ); // Infinity
+  // 음의 무한대
+  console.log( -3/0 ); // -Infinity
+  // Infinity는 숫자값이다.
+  console.log( typeof Infinity ); // number
+}
+
+// - NaN
+// NaN 프로퍼티는 숫자가 아님(Not-a-Number)을 나타내는 숫자값NaN을 갖는다.
+// NaN 프로퍼티 Number.NaN 프로퍼티와 같다.
+{
+  console.log( window.NaN ); // NaN
+  console.log( Number.NaN ); // NaN
+  console.log( window.NaN === Number.NaN ); // false
+  console.log( window.NaN === Number('xyz') ); // false
+  console.log( Number('xyz') ); // NaN
+  console.log( 1  * 'string' ); // NaN
+  console.log( typeof NaN ); // number            
+}
+
+// - undefined
+// undefined 프로퍼티는 원시 타입 undefined를 값으로 갖는다.
+{
+  console.log( window.undefined ); // undefined
+  console.log( window.undefined === undefined ); // true
+
+  var vari;
+  console.log( vari ); // undefined
+  console.log( typeof vari ); // undefined
+}
+
+// - eval
+// eval 함수는 자바스크립트 코드를 나타내는 문자열을 인수로 전달받는다. 전달받은 문자열 코드가 표현식이라면 eval 함수는 문자열 콬드를 런타임에 평가하여 값을 생성하고, 전달받은 인수가 표현식이 아닌 문이라면 eval 함수는 문자열 코드를 런타임에 실행한다. 문자열 코드가 여러 개의 문으로 이루어져 있다면 모든 문을 실행한다.
+{
+  // 표현식인 문
+  console.log( eval('1+2;') ); // 3
+  // 표현식이 아닌 문
+  console.log( eval('var varr = 5;') ); // undefined
+
+  // eval 함수에 의해 런타임에 변수 선언문이 실행되어 varr 변수가 선언되었다.
+  console.log( varr ); // 5
+
+  // 객체 리터럴은 반드시 괄호로 둘러싼다.
+  const o = eval('({ a: 1 })');
+  console.log( o ); // {a: 1}
+
+  // 함수 리터럴은 반드시 괄호로 둘러싼다.
+  const f = eval('(function() { return 10; })');
+  console.log( f() ); // 10
+}
+
+// 인수로 전달받은 문자열 코드가 여러 개의 문으로 이루어져 있다면 모든 문을 실행한 다음, 마지막 결과값을 반환한다.
+{
+  console.log( eval('1+2; 3+4;') ); // 7
+}
+
+// eval 함수는 자신이 호출된 위치에 해당하는 기존의 스코프를 런타임에 동적으로 수정한다.
+{
+  const z = 1;
+
+  function zoo() {
+    // eval 함수는 런타임에 zoo 함수의 스코프를 동적으로 수정한다.
+    eval('var z = 2;');
+    console.log(z); // 2
+  }
+
+  zoo();
+  console.log(z); // 1
+}
+
+// 위 예제의 eval 함수는 새로운 z 변수를 선언하면서 zoo 함수의 스코프에 선언된 z 변수를 동적으로 추가한다. 함수가 호출되면 런타임 이전에 먼저 함수 몸체 내부의 모든 선언문을 먼저 실행하고 그 결과를 스코프에 등록한다. 따라서 위 예제의 eval 함수가 호출되는 시점에는 이미 zoo 함수의 스코프가 존재한다. 하지만 eval 함수는 기존의 스코프를 런타임에 동적으로 수정한다. ❕ 그리고 eval 함수에 전달된 코드는 이미 그 위치에 존재하던 코드처럼 동작한다. 즉, eval 함수가 호출된 zoo 함수의 스코프에서 실행된다.
+// 단, strict mode(엄격 모드)에서 eval 함수는 기존의 스코프를 수정하지 않고 eval 함수 자신의 자체적인 스코프를 생성한다.
+console.clear();
+{
+  const t = 1;
+
+  function too() {
+    'use strict';
+
+    // strict mode에서 eval 함수는 기존의 스코프를 수정하지 않고 eval 함수 자신의 자체적인 스코프를 생성한다.
+    eval('var t = 2; console.log(t);'); // 2
+    console.log(t); // 1
+  }
+  too();
+  console.log(t); // 1
+}
+
+// 또한 인수로 전달받은 문자열 코드가 let, const 키워드를 사용한 변수 선언문이라면 암묵적으로 strict mode가 적용된다.
+{
+  const s = 1;
+
+  function soo() {
+    eval('var s = 2; console.log(s);'); // 2
+    // let, const 키워드를 사용한 변수 선언문은 strict mode가 적용된다.
+    eval('const s = 3; console.log(s);'); // 3
+    console.log(s); // 2
+  }
+  soo();
+  console.log(s); // 1
+}
+
+// eval 함수를 통해 사용자로부터 입력받은 콘텐츠(untrusted data)를 실행하는 것은 보안에 매우 취약하다. 또한 eval 함수를 통해 실행되는 코드는 자바스크립트 엔진에 의해 최적화가 수행되지 않으므로 일반적인 코드 실행에 비해 처리 속도가 느리다.
+// 따라서 eval 함수의 사용은 금지해야한다!!
+
+// - isFinite
+// 전달받은 인수가 정상적인 유한수인지 검사하여 유한수이면 true를 반환하고, 무한수이면 false를 반환한다. 전달받은 인수의 타입이 숫자가 아닌 경우, 숫자로 타입을 변환한 후 검사를 수행한다. 이때 인수가 NaN으로 평가되는 값이라면 false를 반환한다.
+{
+  // 인수가 유한수이면 true를 반환한다.
+  console.log( isFinite(0) ); // true
+  console.log( isFinite(2e64) ); // true
+  console.log( isFinite('10') ); // true ('10' -> 10)
+  console.log( isFinite(null) ); // true (null -> 0)
+
+  // 인수가 무한수 또는 NaN으로 평가되는 값이라면 false를 반환한다. 
+}
