@@ -446,6 +446,7 @@ console.log( foo2.constructor === Function ); // true
 // 1. 사용자가 직접 정의한 사용자 정의 생성자 함수,
 // 2. 자바스크립트가 기본 제공하는 빌트인 생성자 함수로 구분할 수 있다.
 
+
 // 📌 19.5.1 사용자 정의 생성자 함수와 프로토타입 생성 시점
 // [[Construct]]를 갖는 함수 객체, 즉 화살표 함수나 ES6의 메서드 축약 표현으로 정의하지 않고 일반 함수(함수 선언문, 함수 표현식)으로 정의한 함수 객체는 new 연산자와 함께 생성자 함수로서 호출할 수 있다.
 
@@ -475,6 +476,7 @@ console.log( Lime.prototype ); // undefined
 // 생성된 프로토타입의 프로토타입은 Object.prototype이다.
 
 // ❕ 이처럼 빌트인 생성자 함수가 아닌 사용자 정의 생성자 함수는 자신이 평가되어 함수 객체로 생성되는 시점에 프로토타입도 더불어 생성되며, 생성된 프로토타입의 프로토타입은 언제나 Object.prototype이다.
+
 
 // 📌 19.5.2 빌트인 생성자 함수와 프로토타입 생성 시점
 // Object, String, Number, Boolean, Function, Array, Date, RegExp, Promise 등과 같은 빌트인 생성자 함수도 일반 함수와 마찬가지로 빌트인 생성자 함수가 생성되는 시점에 프로토타입이 생성된다.
@@ -510,6 +512,7 @@ console.log( Lime.prototype ); // undefined
 // 즉, 프로토타입은 추상 연산 OrdinaryObjectCreate에 전달되는 인수에 의해 결정된다.
 // 이 인수는 객체가 생성되는 시점에 객체 생성 방식에 의해 결정된다.
 
+
 // 📌 19.6.1 객체 리터럴에 의해 생성된 객체의 프로토타입
 // 자바스크립트 엔진은 객체 리터럴을 평가하여 객체를 생성할 때 추상 연산 OrdinaryObjectCreate를 호출한다.
 // 이때 추상 연산 OrdinaryObjectCreate에 전달되는 프로토타입은 Object.prototype이다.
@@ -525,6 +528,7 @@ const obj6 = { x: 1 };
 console.log( obj6.constructor === Object ); // true
 console.log( obj6.hasOwnProperty('x') ); // true
 
+
 // 📌 19.6.2 Object 생성자 함수에 의해 생성된 객체의 프로토타입
 // Object 생성자 함수를 인수 없이 호출하면 빈 객체가 생성된다.
 // Object 생성자 함수를 호출하면 객체 리터럴과 마찬가지로 추상 연산 OrdinaryObjectCreate가 호출된다.
@@ -539,6 +543,7 @@ console.log( obj7.hasOwnProperty('x') ); // true
 
 // 객체 리터럴과 Object 생성자 함수에 의한 객체 생성 방식의 차이는 프로퍼티를 추가하는 방식에 있다.
 // 객체 리터럴 방식은 객체 리터럴 내부에 프로퍼티를 추가하지만, Object 생성자 함수 방식은 일단 빈 객체를 생성한 이후 프로퍼티를 추가해야한다.
+
 
 // 📌 19.6.3 생성자 함수에 의해 생성된 객체의 프로토타입
 // new 연산자와 함께 생성자 함수를 호출하여 인스턴스를 생성하면 다른 객체 생성 방식과 마찬가지로 추상 연산 OrdinaryObjectCreate가 호출된다.
@@ -721,6 +726,7 @@ lee.sayHello(); // Hi! My name is Lee
   // 이러한 특징을 활용하여 객체 간의 상속 관계를 동적으로 변경할 수 있다.
   // 프로토타입은 생성자 함수 또는 인스턴스에 의해 교체될 수 있다.
 
+  
   // 📌 19.9.1 생성자 함수에 의한 프로토타입의 교체
   // 즉시 실행 함수
   const Person = (
