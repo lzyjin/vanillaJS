@@ -68,6 +68,7 @@ for (let i = 0; i < array.length; i++ ) {
 // 가능한 이유: 값의 순서(인덱스)와 length 프로퍼티를 갖기 때문에
 
 
+
 // 👉 자바스크립트 배열은 배열이 아니다
 // 자료구조에서 말하는 배열은 동일한 크기의 메모리 공간이 빈틈없이 연속적으로 나열된 자료구조를 말한다.
 // 즉, 배열의 요소는 하나의 데이터 타입으로 통일되어 있으며 서로 연속적으로 인접해 있다.
@@ -130,6 +131,7 @@ for (let i = 0; i < 10000000; i++) {
 console.timeEnd('객체 성능 테스트'); // 400ms대
 
 // 위와 같이 배열과 일반 객체의 성능을 테스트해 보면 배열이 일반 객체보다 약 2배 빠르다는 것을 알 수 있다.
+
 
 
 // 👉 length 프로퍼티와 희소 배열
@@ -217,6 +219,7 @@ console.log(Object.getOwnPropertyDescriptors(sparse));
 // 배열에는 같은 타입의 요소를 연속적으로 위치시키는 것이 최선이다.
 
 
+
 // 👉 배열 생성
 // 📌 배열 리터럴
 // 객체와 마찬가지로 배열도 다양한 생성 방식이 있다.
@@ -301,3 +304,442 @@ console.log(Object.getOwnPropertyDescriptors(sparse));
     console.log(Array.of(1, 2, 3)); // [1, 2, 3]
     console.log(Array.of('string')); // ['string']
 }
+
+// 📌 Array.from
+// Array.from(arrayLike[, mapFn[, thisArg]])
+// 매개변수 arrayLike: 배열로 변환하고자 하는 유사 배열 객체나 반복 가능한 객체
+// 매개변수 mapFn: 배열의 모든 요소에 대해 호출할 맵핑 함수
+// 매개변수 thisArg: mapFn 실행 시에 this로 사용할 값
+// 유사배열객체 또는 이터러블 객체를 인수로 전달받아 배열로 변환하여 반환한다.
+{
+    console.clear();
+    console.log(Array.from({ length: 2, 0: 'a', 1: 'b' })); // ['a', 'b']
+
+    // 문자열은 이터러블이다.
+    console.log(Array.from('hello')); // ['h', 'e', 'l', 'l', 'o']
+
+    // Array.from을 사용하면 두 번째 인수로 전달한 콜백 함수를 통해 값을 만들면서 요소를 채울 수 있다.
+    // Array.from 메서드는 두 번째 인수로 전달한 콜백 함수에 첫 번째 인수에 의해 생성된 배열의 요소값과 인덱스를 순차적으로 전달하면서 호출하고, 콜백 함수의 반환값으로 구성된 배열을 반환한다.
+
+    // Array.from에 length만 존재하는 유사 배열 객체를 전달하면 undefined를 요소로 채운다.
+    console.log(Array.from({length: 3})); // [undefined, undefined, undefined]
+
+    // Array.from은 두 번째 인수로 전달한 콜백 함수의 반환값으로 구성된 배열을 반환한다.
+    console.log(Array.from({length: 3}, (v, i) => i)); // [0, 1, 2]
+    console.log(Array.from({length: 3}, (v, i) => v)); // [undefined, undefined, undefined]
+}
+
+// 유사 배열 객체와 이터러블 객체
+// 유사 배열 객체(array-like object)는 마치 배열처럼 인덱스로 프로퍼티 값에 접근할 수 있고, length 프로퍼티를 갖는 객체를 말한다.
+// 유사 배열 객체는 배열처럼 for문으로 순회할 수 있다.
+{
+    const arrayLike = {
+        0: 'apple',
+        1: 'banana',
+        2: 'cherry',
+        length: 3
+    };
+
+    for (let i = 0; i < arrayLike.length; i++) {
+        console.log(arrayLike[i]); // apple banana cherry
+    }
+}
+// 이터러블 객체(iterable object)는 Symbol.iterator 메서드를 구현하여 for...of 문으로 순회할 수 있으며,
+// 스프레드 문법과 배열 디스트럭처링 할당의 대상으로 사용할 수 있는 객체를 말한다.
+
+
+
+// 👉 배열 요소의 참조
+// 배열의 요소를 참조할 때에는 대괄호[] 표기법을 사용한다.
+// 대괄호 안에는 인덱스가 있어야 한다.
+// 정수로 평가되는 표현식이라면 인덱스 대신 사용할 수 있다.
+// 인덱스는 값을 참조할 수 있다는 의미에서 객체의 프로퍼티 키와 같은 역할을 한다.
+{
+    const arr = [1, 2];
+
+    // 인덱스가 0인 요소를 참조
+    console.log(arr[0]); // 1
+    // 인덱스가 1인 요소를 참조
+    console.log(arr[1]); // 2
+
+    // 존재하지 않는 요소에 접근하면 undefined를 반환한다.
+    console.log(arr[2]); // undefined
+
+    // 배열은 사실 인덱스를 나타내는 문자열을 프로퍼티 키로 갖는 객체다.
+    // 따라서 존재하지 않는 프로퍼티 키로 객체에 접근했을 때 undefined를 반환하는 것처럼, 배열도 존재하지 않는 요소를 참조하면 undefined를 반환한다.
+    // 같은 이유로 희소 배열의 존재하지 않는 요소를 참조해도 undefined를 반환한다.
+    const sparseArr = [1, , 3];
+    // 배열 sparseArr에는 인덱스가 1인 요소가 존재하지 않는다.
+    console.log(Object.getOwnPropertyDescriptors(sparseArr));
+    // {
+    //     0: {value: 1, writable: true, enumerable: true, configurable: true}
+    //     2: {value: 3, writable: true, enumerable: true, configurable: true}
+    //     length: {value: 3, writable: true, enumerable: false, configurable: false}
+    //     [[Prototype]]: Object
+    // }
+
+    // 존재하지 않는 요소를 참조하면 undefined가 반환된다.
+    console.log(sparseArr[1]); // undefined
+    console.log(sparseArr[5]); // undefined
+}
+
+
+// 👉 배열 요소의 추가와 갱신
+// 객체에 프로퍼티를 동적으로 추가할 수 있는 것처럼 배열에도 요소를 동적으로 추가할 수 있다.
+// 배열에 존재하지 않는 인덱스를 사용해 값을 할당하면 새로운 요소가 추가된다.
+// 이때 length 프로퍼티는 자동으로 갱신된다.
+{
+    const arr = [0];
+
+    console.log(arr); // [0]
+    console.log(arr.length); // 1
+
+    // 배열 요소의 추가
+    arr[1] = 2;
+
+    console.log(arr); // [0, 2]
+    console.log(arr.length); // 2
+}
+
+// 만약 현재 배열의 length 프로퍼티의 값보다 큰 인덱스로 새로운 요소를 추가하면 희소 배열이 된다.
+{
+    const arr = [0];
+
+    arr[100] = 100;
+
+    console.log(arr); // [0, 비어 있음 × 99, 100]
+    console.log(arr.length) // 101
+
+    // 인덱스로 요소에 접근하여 명시적으로 값을 할당하지 않은 요소는 생성되지 않는다.
+    console.log(Object.getOwnPropertyDescriptors(arr));
+    //  {
+    //      0: {value: 0, writable: true, enumerable: true, configurable: true}
+    //      100: {value: 100, writable: true, enumerable: true, configurable: true}
+    //      length: {value: 101, writable: true, enumerable: false, configurable: false}
+    //      [[Prototype]]: Object
+    //  }
+
+    // 이미 요소가 존재하는 요소에 값을 재할당하면 요소값이 갱신된다.
+    arr[0] = 5;
+    console.log(arr); // [5, 비어 있음 × 99, 100]
+}
+
+// 인덱스는 요소의 위치를 나타내므로 반드시 0 이상의 정수(또는 정수 형태의 문자열)를 사용해야 한다.
+// 만약 정수 이외의 값을 인덱스처럼 사용하면 요소가 생성되는 것이 아니라 프로퍼티가 생성된다.
+// 이때 추가된 프로퍼티는 length 프로퍼티 값에 영향을 주지 않는다.
+{
+    const arr = [];
+
+    // 배열 요소 추가
+    arr[0] = 1;
+    arr['1'] = 2;
+
+    // 프로퍼티 추가
+    arr['foo'] = 3;
+    arr.bar = 4;
+    arr[1.1] = 5;
+    arr[-1] = 6;
+
+    console.log(arr); //  [1, 2, foo: 3, bar: 4, 1.1: 5, -1: 6]
+
+    // 프로퍼티는 배열의 length에 영향을 주지 않는다.
+    console.log(arr.length); // 2
+}
+
+
+// 👉 배열 요소의 삭제
+// 배열은 사실 객체이기 때문에 배열의 특정 요소를 삭제하기 위해 delete 연산자를 사용할 수 있다.
+{
+    const arr = [1, 2, 3];
+
+    // 배열 요소의 삭제
+    delete arr[1];
+    console.log(arr); // [1, 비어 있음, 3]
+
+    // length 프로퍼티에 영향을 주지 않는다. 즉, 희소 배열이 된다.
+    console.log(arr.length); // 3
+}
+
+// delete 연산자는 객체의 프로퍼티를 삭제한다.
+// 따라서 delete arr[1]은 arr에서 프로퍼티 키가 '1'인 프로퍼티를 삭제한다.
+// 이때 배열은 희소 배열이 되며 length 프로퍼티 값은 변하지 않는다.
+// 희소 배열을 만드는 delete 연산자는 사용하지 않는 것이 좋다.
+
+// 희소 배열을 만들지 않으면서 배열의 특정 요소를 완전히 삭제하려면 Array.prototype.splice 메서드를 사용한다.
+{
+    const arr = [1, 2, 3];
+
+    // Array.prototype.splice(삭제를 시작할 인덱스, 삭제할 요소 개수)
+    // arr[1]부터 1개의 요소를 제거
+    arr.splice(1, 1);
+
+    console.log(arr); // [1, 3]
+    console.log(arr.length); // 2
+}
+
+
+// 👉 배열 메서드
+// 자바스크립트는 배열을 다룰 때 유용한 다양한 빌트인 메서드를 제공한다.
+// Array 생성자 함수는 정적 메서드를 제공하며,
+// Array.prototype은 프로토타입 메서드를 제공한다.
+
+// ❕ 배열 메서드는 결과물을 반환하는 패턴이 두 가지이므로 주의가 필요하다.
+// 원본 배열(배열 메서드를 호출한 배열)을 직접 변경하는 메서드(mutator mathod)와
+// 원본 배열을 직접 변경하지 않고 새로운 배열을 생성하여 반환하는 메서드(accessor method)가 있다.
+
+// 원본 배열 변경하는 메서드:
+// Array.prototype.push, Array.prototype.pop, Array.prototype.shift, Array.prototype.unshift, Array.prototype.splice, Array.prototype.reserve, Array.prototype.fill,
+// 원본 배열 변경하지 않는 메서드:
+// Array.isArray, Array.prototype.indexOf, Array.prototype.concat, Array.prototype.slice, Array.prototype.join, Array.prototype.includes, Array.prototype.flat
+
+{
+    const arr = [1];
+
+    // push 메서드는 원본 배열(arr)을 직접 변경한다.
+    arr.push(2);
+    console.log(arr); // [1, 2]
+
+    // concat 메서드는 원본 배열(arr)을 직접 변겨앟지 않고 새로운 배열을 생성하여 반환한다.
+    const result = arr.concat(3);
+    console.log(arr); // [1, 2]
+    console.log(result); // [1, 2, 3]
+}
+
+// 📌 Array.isArray
+// Array 생성자 함수의 정적 메서드
+// 전달된 인수가 배열이면 true, 배열이 아니면 false를 반환한다.
+{
+    console.log(Array.isArray([])); // true
+    console.log(Array.isArray([1, 2])); // true
+    console.log(Array.isArray(new Array())); // true
+
+
+    console.log(Array.isArray()); // false
+    console.log(Array.isArray({})); // false
+    console.log(Array.isArray(null)); // false
+    console.log(Array.isArray(undefined)); // false
+    console.log(Array.isArray(1)); // false
+    console.log(Array.isArray('Array')); // false
+    console.log(Array.isArray(true)); // false
+    console.log(Array.isArray(false)); // false
+    console.log(Array.isArray({0: 1, length: 1})); // false
+}
+
+// 📌 Array.prototype.indexOf
+// 원본 배열에서 인수로 전달된 요소를 검색하여 인덱스를 반환한다.
+// 인수로 전달된 요소가 여러 개 있다면 첫 번째로 검색된 요소의 인덱스를 반환한다.
+// 인수로 전달된 요소가 존재하지 않으면 -1을 반환한다.
+// 두 번째 인수는 검색을 시작할 인덱스다. 두 번째 인덱스를 생략하면 처음부터 검색한다.
+{
+    const arr = [1, 2, 2, 3];
+
+    console.log(arr.indexOf(3)); // 3
+    console.log(arr.indexOf(2)); // 1
+    console.log(arr.indexOf(10)); // -1
+    console.log(arr.indexOf(2, 2)); // 2
+}
+
+// indexOf 메서드는 배열에 특정 요소가 존재하는지 확인할 때 유용하다.
+{
+    const foods = ['apple', 'banana', 'cherry'];
+
+    if (foods.indexOf('cherry') === -1) {
+        foods.push('cherry');
+    }
+
+    console.log(foods); // ['apple', 'banana', 'cherry']
+}
+
+// indexOf 메서드 대신 ES7에서 도입된 Array.prototype.includes 메서드를 사용하면 가독성이 더 좋다.
+{
+    const foods = ['apple', 'banana', 'cherry'];
+
+    if (!foods.includes('blueberry')) {
+        foods.push('blueberry');
+    }
+
+    console.log(foods); // ['apple', 'banana', 'cherry', 'blueberry']
+}
+
+
+// 📌 Array.prototype.push
+// push 메서드는 인수로 전달받은 모든 값을 원본 배열의 마지막 요소로 추가하고, 변경된 length 프로퍼티 값을 반환한다.
+// 원본 배열을 직접 변경한다.
+{
+    const arr = [1, 2];
+
+    let result = arr.push(3, 4);
+    console.log(result); // 4
+
+    // push 메서드는 원본 배열을 직접 변경한다.
+    console.log(arr); // [1, 2, 3, 4]
+}
+
+// push 메서드는 성능 면에서 좋지 않다.
+// 마지막 요소로 추가할 요소가 하나뿐이라면 push 메서드를 사용하지 않고 length 프로퍼티를 사용하여 배열의 마지막에 요소를 직접 추가할 수도 있다.
+// 이 방법이 push 메서드보다 빠르다.
+{
+    const arr = [1, 2];
+
+    // arr.push(3)과 동일한 처리를 한다.
+    arr[arr.length] = 3;
+
+    console.log(arr); // [1, 2, 3]
+}
+
+// push 메서드는 원본 배열을 직접 변경하는 부수 효과가 있다.
+// 따라서 push 메서드보다는 ES6의 스프레드 문법을 사용하는 편이 좋다.
+{
+    const arr = [1, 2];
+
+    // ES6 스프레드 문법
+    const newArr = [...arr, 3];
+
+    console.log(newArr); // [1, 2, 3]
+    console.log(arr); // [1, 2]
+}
+
+
+// 📌 Array.prototype.pop
+// pop 메서드는 배열의 마지막 요소를 제거하고, 제거한 요소를 반환한다.
+// 원본 배열이 빈 배열이면 undefined를 반환한다.
+// 원본 배열을 직접 변경한다.
+{
+    const arr = [1, 2];
+
+    let result = arr.pop();
+
+    console.log(result); // 2
+    console.log(arr); // [1]
+}
+
+// 📌 Array.prototype.unshift
+// unshift 메서드는 인수로 전달받은 모든 값을 원본 배열의 선두에 요소로 추가하고, 변경된 length 프로퍼티 값을 반환한다.
+// 원본 배열을 직접 변경한다.
+{
+    const arr = [1, 2];
+
+    let result = arr.unshift(4, 5);
+
+    console.log(result); // 4
+    console.log(arr); // [4, 5, 1, 2]
+}
+
+// unshift 메서드는 원본 배열을 직접 변경하는 부수 효과가 있다.
+// 따라서 unshift 메서드보다는 ES6의 스프레드 문법을 사용하는 편이 좋다.
+{
+    const arr = [1, 2];
+
+    // ES6 스프레드 문법
+    const newArr = [4, 5, ...arr];
+
+    console.log(newArr); // [4, 5, 1, 2]
+    console.log(arr); // [1, 2]
+}
+
+// 📌 Array.prototype.shift
+// shift 메서드는 원본 배열에서 첫 번째 요소를 제거하고, 제거한 요소를 반환한다.
+// 원본 배열이 빈 배열이면 undefined를 반환한다.
+// 원본 배열을 직접 변경한다.
+{
+    const arr = [1, 2];
+
+    let result = arr.shift();
+
+    console.log(result); // 1
+    console.log(arr); // [2]
+}
+
+// 📌 Array.prototype.concat
+// concat 메서드는 인수로 전달된 값들(배열 또는 원시값)을 원본 배열의 마지막 요소로 추가한 새로운 배열을 반환한다.
+// 인수로 전달한 값이 배열인 경우 배열을 해체하여 새로운 배열의 요소로 추가한다.
+// 원본 배열을 변경하지 않는다.
+{
+    const arr1 = [1, 2];
+    const arr2 = [3, 4];
+
+    // 새로운 배열을 만들어 arr1의 마지막 요소로 arr2를 추가한다.
+    let result = arr1.concat(arr2);
+    console.log(result); // [1, 2, 3, 4]
+
+    // 새로운 배열을 만들어 arr1의 마지막 요소로 3를 추가한다.
+    result = arr1.concat(3);
+    console.log(result); // [1, 2, 3]
+
+    // 새로운 배열을 만들어 arr1의 마지막 요소로 arr2와 5를 추가한다.
+    result = arr1.concat(arr2, 5);
+    console.log(result); // [1, 2, 3, 4, 5]
+
+    // 원본 배열은 변경되지 않는다.
+    console.log(arr1); // [1, 2]
+}
+
+// push와 unshift 메서드는 concat 메서드로 대체할 수 있다.
+// push와 unshift 메서드는 concat 메서드와 유사하게 동작하지만 다음과 같이 미묘한 차이가 있다.
+// push와 unshift 메서드는 원본배열을 직접 변경한다. -> 원본 배열을 반드시 변수에 저장해 두어야한다.
+// concat 메서드는 원본 배열을 변경하지 않고 새로운 배열을 반환한다. -> 반환값을 반드시 변수에 할당받아야 한다.
+{
+    const arr1 = [3, 4];
+
+    // unshift 메서드는 원본 배열을 직접 변경한다.
+    // 따라서 원본 배열을 변수에 저장해 두지 않으면 변경된 배열을 사용할 수 없다.
+    arr1.unshift(1, 2);
+    // unshift 메서드를 사용할 경우 원본 배열을 반드시 변수에 저장해 두어야 결과를 확인할 수 있다.
+    console.log(arr1); // [1, 2, 3, 4]
+
+    // push 메서드는 원본 배열을 직접 변경한다.
+    // 따라서 원본 배열을 변수에 저장해 두지 않으면 변경된 배열을 사용할 수 없다.
+    arr1.push(5, 6);
+    // push 메서드를 사용할 경우 원본 배열을 반드시 변수에 저장해 두어야 결과를 확인할 수 있다.
+    console.log(arr1); // [1, 2, 3, 4, 5, 6]
+
+
+    // unshift와 push 메서드는 concat 메서드로 대체할 수 있다.
+    const arr2 = [3, 4];
+
+    // concat 메서드는 원본 배열을 변경하지 않고 새로운 배열을 반환한다.
+    // arr1.unshift(1, 2)는 다음과 같이 대체할 수 있다.
+    let result = [1, 2].concat(arr2);
+    console.log(result); // [1, 2, 3, 4]
+
+    // arr1.push(5, 6)를 다음과 같이 대체할 수 있다.
+    result = result.concat(5, 6);
+    console.log(result); // [1, 2, 3, 4, 5, 6]
+}
+
+// 인수로 전달받은 값이 배열인 경우 push와 unshift 메서드는 배열을 그대로 원본 배열의 마지막/첫번째 요소로 추가하지만,
+// concat 메서드는 인수로 전달받은 배열을 해체하여 새로운 배열의 마지막 요소로 추가한다.
+{
+    const arr = [3, 4];
+
+    // push와 unshift 메서드는 배열을 그대로 원본 배열의 마지막/첫번째 요소로 추가한다
+    arr.unshift([1, 2]);
+    arr.push([5, 6]);
+    console.log(arr); // [[1, 2], 3, 4, [5, 6]]
+
+    // concat 메서드는 인수로 전달받은 배열을 해체하여 새로운 배열의 요소로 추가한다.
+    let result = [1, 2].concat([3, 4]);
+    result = result.concat([5, 6]);
+    console.log(result); // [1, 2, 3, 4, 5, 6]
+}
+
+// concat 메서드는 ES6의 스프레드 문법으로 대체할 수 있다.
+{
+    let result = [1, 2].concat([3, 4]);
+    console.log(result); // [1, 2, 3, 4]
+
+    result = [...[1, 2], ...[3,4]];
+    console.log(result); // [1, 2, 3, 4]
+}
+// ❕ 결론적으로 push/unshift 메서드와 concat 메서드를 사용하는 대신 ES6의 스프레드 문법을 일관성 있게 사용하는 것을 권장한다.
+
+
+
+
+
+
+
+
+
+
+
