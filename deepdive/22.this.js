@@ -17,11 +17,11 @@
     }
   };
   console.log(circle.getDiameter()); // 10
-} 
+}
 
 // getDiameter 메서드 내에서 메서드 자신이 속한 객체를 가리키는 식별자 circle을 참조하고 있다.
 // 이 참조 표현식이 평가되는 시점은 getDiameter 메서드가 호출되어 함수 몸체가 실행되는 시점이다.
-// 위 예제의 객체 리터럴은 circle 변수에 할당되기 직전에 평가된다. 
+// 위 예제의 객체 리터럴은 circle 변수에 할당되기 직전에 평가된다.
 // 따라서 getDiameter 메서드가 호출되는 시점에는 이미 객체 리터럴의 평가가 완료되어 객체가 생성되었고 circle 식별자에 생성된 객체가 할당된 이후다. 따라서 메서드 내부에서 circle 식별자를 참조할 수 있다.
 
 // 하지만 자기 자신이 속한 객체를 재귀적으로 참조하는 방식은 일반적이지 않으며 바람적이지 않다.
@@ -31,8 +31,8 @@
     // 이 시점에는 생성자 함수 자신이 생성할 인스턴스를 가리키는 식별자를 알 수 없다.
     // ????.radius = radius;
   }
-  
-  Circle.prototype.getDiameter = function() { 
+
+  Circle.prototype.getDiameter = function() {
     // 이 시점에는 생성자 함수 자신이 생성할 인스턴스를 가리키는 식별자를 알 수 없다
     // return 2 * ????.radius;
   };
@@ -44,7 +44,7 @@
 // 생성자 함수 내부에서는 프로퍼티 또는 메서드를 추가하기 위해 자신이 생성할 인스턴스를 참조할 수 있어야 한다.
 // 하지만 생성자 함수에 의한 객체 생성 방식은 먼저 생성자 함수를 정의한 이후 new 연산자와 함께 생성자 함수를 호출하는 단계가 추가로 필요하다. 다시 말해 생성자 함수로 인스턴스를 생성하려면 먼저 생성자 함수가 존재해야 한다.
 
-// ❕ 생성자 함수를 정의하는 시점에는 아직 인스턴스를 생성하기 이전이므로 생성자 함수가 생성할 인스턴스를 가리키는 식별자를 알 수 없다. 
+// ❕ 생성자 함수를 정의하는 시점에는 아직 인스턴스를 생성하기 이전이므로 생성자 함수가 생성할 인스턴스를 가리키는 식별자를 알 수 없다.
 // 따라서 자신이 속한 객체 또는 자신이 생성할 인스턴스를 가리키는 특수한 식별자가 필요하다.
 // 이를 위해 자바스크립트는 this라는 특수한 식별자를 제공한다.
 
@@ -130,7 +130,7 @@ console.log(this); // Window
 
 // 하지만 this는 객체의 프로퍼티나 메서드를 참조하기 위한 자기 참조 변수이므로 일반적으로 객체의 메서드 내부 또는 생성자 함수 내부에서만 의미가 있다.
 // ❕ 따라서 strict mode가 적용된 일반 함수 내부의 this에는 undefined가 바인딩 된다.
-// 일반 함수 내부에서 this를 사용할 필요가 없기 때문이다. 
+// 일반 함수 내부에서 this를 사용할 필요가 없기 때문이다.
 {
   function square(number) {
     'use strict';
@@ -141,10 +141,10 @@ console.log(this); // Window
 }
 
 // 👉 22.2 함수 호출 방식과 this 바인딩
-// this 바인딩(this에 바인딩 될 값)은 함수 호출 방식, 즉 함수가 어떻게 호출되었는지에 따라 동적으로 결정된다.
+// ❕ this 바인딩(this에 바인딩 될 값)은 함수 호출 방식, 즉 함수가 어떻게 호출되었는지에 따라 동적으로 결정된다.
 
 // 렉시컬 스코프와 this 바인딩은 결정 시기가 다르다
-// 함수의 상위 스코프를 결정하는 방식인 렉시컬 스코프는 함수 정의가 평가되어 함수 객체가 생성되는 시점에 상위 스코프를 결정한다. 
+// 함수의 상위 스코프를 결정하는 방식인 렉시컬 스코프는 함수 정의가 평가되어 함수 객체가 생성되는 시점에 상위 스코프를 결정한다.
 // 하지만 this 바인딩은 함수 호출 시점에 결정된다.
 
 // 주의할 것은 동일한 함수도 다양한 방식으로 호출될 수 있다는 것이다.
@@ -202,8 +202,8 @@ console.clear();
 }
 
 // 위 예제처럼 전역 함수는 물론이고 중첩 함수를 일반 함수로 호출하면 함수 내부의 this에는 전역 객체가 바인딩된다.
-// 다만 this는 객체의 프로퍼티나 메서드를 참조하기 위한 자기 참조 변수이므로 객첼를 생성하지 않는 일반 함수에서 this는 의미가 없다.
-// 따라서 다음 예제처럼 strict mode가 적용된 일반 함수 내부의 this에는 undefined가 바인딩된다.
+// ❕ 다만 this는 객체의 프로퍼티나 메서드를 참조하기 위한 자기 참조 변수이므로 객체를 생성하지 않는 일반 함수에서 this는 의미가 없다.
+// ❕ 따라서 다음 예제처럼 strict mode가 적용된 일반 함수 내부의 this에는 undefined가 바인딩된다.
 {
   function foo() {
     'use strict';
@@ -233,11 +233,11 @@ console.clear();
 
       // 메서드 내에서 정의한 중첩 함수
       function bar() {
-        console.log("bar's this: ", this); // bar's this:  Window 
+        console.log("bar's this: ", this); // bar's this:  Window
         console.log("bar's this.value: ", this.value); // bar's this.value:  1
       }
 
-      // 메서드 내에서 정의한 중첩 함수도 일반 함수로 호출되면 중첩 함수 내부의 this에는 
+      // 메서드 내에서 정의한 중첩 함수도 일반 함수로 호출되면 중첩 함수 내부의 this에는
       // 전역 객체가 바인딩된다.
       bar();
     }
@@ -271,7 +271,7 @@ console.clear();
 
 // 이처럼 일반함수로 호출된 모든 함수(중첩 함수, 콜백 함수 포함) 내부의 this에는 전역 객체가 바인딩된다.
 
-// 하지만 메서드 내에서 정의한 중첩 함수 또는 메서드에게 전달한 콜백 함수가 일반 함수로 호출될 때
+// ❕ 하지만 메서드 내에서 정의한 중첩 함수 또는 메서드에게 전달한 콜백 함수가 일반 함수로 호출될 때
 // 메서드 내의 중첩 함수 또는 콜백 함수의 this가 전역 객체를 바인딩하는 것은 문제가 있다.
 // 중첩 함수 또는 콜백 함수는 외부 함수를 돕는 헬퍼 함수의 역할을 하므로 외부 함수의 일부 로직을 대신하는 경우가 대부분이다.
 // 하지만 외부 함수인 메서드와 중첩 함수 또는 콜백 함수의 this가 일치하지 않는 다는 것은 중첩 함수 또는 콜백 함수를 헬퍼 함수로 동작하기 어렵게 만든다.
@@ -295,7 +295,7 @@ console.clear();
   obj.foo();
 }
 
-// 이 방법 이외에도 자바스크립트는 this를 명시적으로 바인딩 할 수 있는 
+// 이 방법 이외에도 자바스크립트는 this를 명시적으로 바인딩 할 수 있는
 // Function.prototype.apply, Function.prototype.call, Function.prototype.bind 메서드를 제공한다.
 {
   var value = 1;
@@ -339,7 +339,7 @@ console.clear();
   const person = {
     name: 'Lee',
     getName() {
-      // 메서드 내부의 this는 메서드를 호출한 객체에 바인딩된다. 
+      // 메서드 내부의 this는 메서드를 호출한 객체에 바인딩된다.
       return this.name;
     }
   };
@@ -351,7 +351,7 @@ console.clear();
 // 메서드는 프로퍼티에 바인딩된 함수다.
 // 즉, person 객체의 getName 프로퍼티가 가리키는 함수 객체는 person 객체에 포함된것이 아니라 독립적으로 존재하는 별도의 객체다.
 // getName 프로퍼티가 함수 객체를 가리키고 있을 뿐이다.
-// = 메서드는 객체에 포함된 것이 아니라 독립적으로 존재하는 별도의 객체다. 
+// = 메서드는 객체에 포함된 것이 아니라 독립적으로 존재하는 별도의 객체다.
 
 // ❕ 따라서 getName 프로퍼티가 가리키는 함수 객체, 즉 getName 메서드는 다른 객체의 프로퍼티에 할당하는 것으로
 // 다른 객체의 메서드가 될 수 있고 일반 변수에 할당하여 일반 함수로 호출될 수도 있다.
@@ -414,7 +414,7 @@ console.clear();
 
 
 // 22.2.3 생성자 함수 호출
-// 생성자 함수 내부의this에는 생성자 함수가 (미래에) 생성할 인스턴스가 바인딩된다.
+// 생성자 함수 내부의 this에는 생성자 함수가 (미래에) 생성할 인스턴스가 바인딩된다.
 {
   // 생성자 함수
   function Circle(radius) {
@@ -460,14 +460,14 @@ console.clear();
 // Function.prototype.apply, Function.prototype.call 메서드는 this로 사용할 객체와 인수 리스트를 인수로 전달받아 함수를 호출한다.
 
 // 주어진 this 바인딩과 인수 리스트 배열을 사용하여 함수를 호출한다.
-// Function.prototype.apply(thisArg[, argArray]) 
-// thisArg: this로 사용할 객체, 
+// Function.prototype.apply(thisArg[, argArray])
+// thisArg: this로 사용할 객체,
 // argsArray: 함수에게 전달할 인수 리스트의 배열 또는 유사 배열 객체
 
 // 주어진 this 바인딩과 ,로 구분된 인수 리스트를 사용하여 함수 호출한다.
 // thisArg: this로 사용할 객체
-// arg1, arg2, ... : 함수에게 전달할 인수 리스트 
-// Function.prototype.call(thisArg[, arg1[, arg2[, ...]]) 
+// arg1, arg2, ... : 함수에게 전달할 인수 리스트
+// Function.prototype.call(thisArg[, arg1[, arg2[, ...]])
 
 {
   function getThisBinding() {
@@ -497,7 +497,7 @@ console.clear();
 
   // getThisBinding 함수를 호출하면서 인수로 전달한 객체를 getThisBinding 함수의 this에 바인딩한다.
   // apply 메서드는 호출할 함수의 인수를 배열로 묶어 전달한다.
-  console.log( getThisBinding.apply(thisArg, [1,2,3]) ); // Arguments(3) [1, 2, 3, callee: ƒ, Symbol(Symbol.iterator): ƒ] 
+  console.log( getThisBinding.apply(thisArg, [1,2,3]) ); // Arguments(3) [1, 2, 3, callee: ƒ, Symbol(Symbol.iterator): ƒ]
   // {a: 1}
 
   // call 메서드는 호출할 함수의 인수를 쉼표로 구분한 리스트 형식으로 전달한다.
@@ -516,7 +516,7 @@ console.clear();
 {
   function convertArgsToArray() {
     console.log( arguments );
-  
+
     // arguments 개체를 배열로 변환
     // Array.prototype.slice를 인수 없이 호출하면 배열의 복사본을 생성한다.
     // const arr = Array.prototype.slice.call(arguments);
@@ -525,7 +525,7 @@ console.clear();
     return arr;
   }
 
-  convertArgsToArray(1, 2, 3); 
+  convertArgsToArray(1, 2, 3);
   // Arguments(3) [1, 2, 3, callee: ƒ, Symbol(Symbol.iterator): ƒ]
   // (3) [1, 2, 3]
 }
@@ -566,7 +566,7 @@ console.clear();
 // 그러나 person.foo의 콜백함수가 일반 함수로서 호출된 2)의 시점에서 this는 전역 객체 window를 가리킨다.
 // 따라서 person.foo의 콜백함수 내부에서 this.name은 window.name과 같다.
 
-// 이때 위 예제에서 person.foo의 콜백 함수는 외부 함수 person.foo를 돕는 헬퍼 함수(보조 함수) 역할을 하기 때문에 
+// 이때 위 예제에서 person.foo의 콜백 함수는 외부 함수 person.foo를 돕는 헬퍼 함수(보조 함수) 역할을 하기 때문에
 // 외부 함수 person.foo 내부의 this와 콜백 함수 내부의 this가 상이하면 문맥상 문제가 발생한다.
 // 따라서 콜백 함수 내부의 this를 외부 함수 내부의 this와 일치시켜야한다.
 // 이때 bind 메서드를 사용하여 this를 일치시킬 수 있다.
@@ -588,7 +588,8 @@ console.clear();
 // 지금까지 함수 호출 방식에 따라 this 바인딩이 동적으로 결정되는 것에 대해 살펴보았다.
 
 // 함수 호출 방식                                          | this 바인딩
+// ---------------------------------------------------------------------------------------------------------------------
 // 일반 함수 호출                                          | 전역 객체
 // 메서드 호출                                             | 메서드를 호출한 객체
 // 생성자 함수 호출                                          | 생성자 함수가 (미래에) 생성할 인스턴스
-// Function.prototype.apply/call/bind 메서드에 의한 간접 호출 | Function.prototype.apply/call/bind 메서드에 첫번째 인수로 전달한 객체 
+// Function.prototype.apply/call/bind 메서드에 의한 간접 호출 | Function.prototype.apply/call/bind 메서드에 첫번째 인수로 전달한 객체
