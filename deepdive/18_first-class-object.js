@@ -24,7 +24,7 @@ const predicates = { increase, decrease };
 // 3. 함수의 매개변수에 전달할 수 있다.
 // 4. 함수의 반환값으로 사용할 수 있다.
 function makeCounter(predicate) {
-  let num = 0; 
+  let num = 0;
 
   return function() {
     num = predicate(num);
@@ -58,15 +58,15 @@ function square() {
   return number * number;
 }
 console.dir(square);
-/* 
+/*
   arguments: null
   caller: null
   length: 0
   name: "square"
   prototype: {constructor: ƒ}
-*/ 
+*/
 
-// square 함수의 모든 프로퍼티의 프로퍼티 어트리뷰트를 확인해보면 다음과 같다 
+// square 함수의 모든 프로퍼티의 프로퍼티 어트리뷰트를 확인해보면 다음과 같다
 console.log(Object.getOwnPropertyDescriptors(square));
 /*
   arguments: {value: null, writable: false, enumerable: false, configurable: false}
@@ -86,7 +86,8 @@ console.log(Object.getOwnPropertyDescriptor(Object.prototype, '__proto__')); // 
 
 // 이처럼 arguments, caller, length, name, prototype 프로퍼티는 모두 함수 객체의 데이터 프로퍼티다.
 
-// 18.2.1 arguments 프로퍼티
+
+// 📌 18.2.1 arguments 프로퍼티
 // 함수 객체의 arguments 프로퍼티 값은 arguments 객체다.
 // arguments 객체는 함수 호출시 전달된 인수argument들의 정보를 담고 있는 순회 가능한iterable 유사 배열 객체이며, 함수 내부에서 지역 변수처럼 사용된다.
 // 즉, 함수 외부에서는 참조할 수 없다.
@@ -136,7 +137,7 @@ function multiply2(x, y) {
 
 multiply2(1, 2, 3);
 
-// 선언된 매개변수의 개수와 함수를 호출할 때 전달하는 인수의 개수를 확인하지 않는 자바스크립트의 특성 때문에 함수가 호출되면 인수 개수를 확인하고, 이에 따라 함수의 동작을 달리 정의할 필요가 있을 수 있다. 
+// 선언된 매개변수의 개수와 함수를 호출할 때 전달하는 인수의 개수를 확인하지 않는 자바스크립트의 특성 때문에 함수가 호출되면 인수 개수를 확인하고, 이에 따라 함수의 동작을 달리 정의할 필요가 있을 수 있다.
 // 이때 유용하게 사용되는 것이 arguments 객체다.
 
 // arguments 객체는 매개변수 개수를 확정할 수 없는 가변 인자 함수를 구현할 때 유용하다.
@@ -228,7 +229,7 @@ console.log(baz.length); // 2
 // ❕ 익명 함수 표현식의 경우 ES5에서 name 프로퍼티는 빈 문자열을 값으로 갖는다.
 // 하지만 ES6에서는 함수를 가리키는 식별자를 값으로 갖는다.
 
-// 기명 함수 표현식 
+// 기명 함수 표현식
 var namedFunc = function foo() {};
 console.log(namedFunc.name); // foo
 
@@ -258,7 +259,7 @@ const obj = { a: 1 };
 // 객체 리터럴 방식으로 생성한 객체의 프로토타입 객체는 Object.prototype이다.
 console.log(obj.__proto__ === Object.prototype); // true
 
-// 객체 리터럴 방식으로 생성한 객체는 프로토타입 객체인 Object.prototype의 프로퍼티를 상속받는다. 
+// 객체 리터럴 방식으로 생성한 객체는 프로토타입 객체인 Object.prototype의 프로퍼티를 상속받는다.
 // hasOwnProperty 메서드는 Object.prototype의 메서드다.
 console.log(obj.hasOwnProperty('a')); // true
 console.log(obj.hasOwnProperty('__proto__')); // false
