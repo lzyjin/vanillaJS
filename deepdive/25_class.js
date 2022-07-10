@@ -793,7 +793,6 @@ console.log( Object.getOwnPropertyNames(Object.getPrototypeOf(me)) ); // (2) ['c
 
 // 자바스크립트의 클래스 몸체에는 메서드만 선언할 수 있다.
 // 따라서 클래스 몸체에 자바와 유사하게 클래스 필드를 선언하면 문법 에러가 발생한다.
-
 {
   class Person {
     // 클래스 필드 정의
@@ -803,4 +802,387 @@ console.log( Object.getOwnPropertyNames(Object.getPrototypeOf(me)) ); // (2) ['c
 
   const me = new Person('Lee');
 }
-//
+//  하지만 위 예제를 최신 브라우저 또는 최신 node.js에서 실행하면 문법 에러가 발생하지 않고 정상 동작한다.
+
+// 자바스크립트에서도 인스턴스 프로퍼티를 마치 클래스 기반 객체지향 언어의 클래스 필드처럼 정의할 수 있는 새로운 표준 사양인 "Class field declarations"가 2021년 1월 TC39 프로세스의 stage3에 제안되어 있다.
+
+// 클래스 몸체에서 클래스 필드를 정의할 수 있는 클래스 필드 정의 제안은 아직 ECMA Script의 정식 표준 사양으로 승급되지 않았다.
+// 하지만 최신 브라우저(Chrome 72 이상)와 최신 node.js(버전 12 이상)는 표준 사양으로 승급이 확실시되는 이 제안을 선제적으로 미리 구현해 놓았다.
+// 따라서 최신 브라우저와 최신 node.js에서는 다음 예제와 같이 클래스 필드를 클래스 몸체에 정의할 수 있다.
+
+{
+  class Person {
+    // 클래스 필드 정의
+    name = 'Lee';
+  }
+
+  const me = new Person();
+  console.log(me); // Person {name: "Lee"}
+}
+
+// ❕ 클래스 몸체에서 클래스 필드를 정의하는 경우 this에 클래스 필드를 바인딩해서는 안 된다.
+// this는 클래스의 constructor와 메서드에서만 유효하다.
+{
+  class Person {
+    // this에 클래스 필드를 바인딩해서는 안 된다.
+    // this.name = ''; // SyntaxError: Unexpected token '.'
+  }
+}
+
+// 클래스 필드를 참조하는 경우 자바와 같은 클래스 기반 객체지향 언어에서는 this를 생략할 수 있으나 자바스크립트에서는 this를 반드시 사용해야 한다.
+{
+  class Person2 {
+    // 클래스 필드
+    name = 'Lee';
+
+    constructor() {
+      console.log(name); // '' 책에서는 ReferenceError: name is not defined 라고 써있다
+    }
+  }
+
+  new Person2();
+}
+
+// 클래스 필드에 초기값을 할당하지 않으면 undefined를 갖는다.
+{
+  class Person {
+    // 클래스 필드
+    name;
+  }
+
+  const me = new Person();
+  console.log(me); // Person {name: undefined}
+}
+
+// 인스턴스를 생성할 때 외부의 초기값으로 클래스 필드를 초기화해야 할 필요가 있다면 constructor에서 클래스 필드를 초기화해 한다.
+{
+  class Person {
+    name;
+
+    constructor(name) {
+      // 클래스 필드 초기화
+      this.name = name;
+    }
+  }
+
+  const me = new Person('Lee');
+  console.log(me); // Person {name: 'Lee'}
+}
+
+// 이처럼 인스턴스를 생성할 때 클래스 필드를 초기화 할 필요가 있다면 constructor 밖에서 클래스 필드를 정의할 필요가 없다.
+// 클래스 필드를 초기화할 필요가 있다면 어차피 constructor 내부에서 클래스 필드를 참조하여 초기값을 할당해야 한다.
+// 이때 this, 즉 클래스가 생성한 인스턴스에 클래스 필드에 해당하는 프로퍼티가 없다면 자동 추가되기 때문이다.
+{
+  class Person {
+    constructor(name) {
+      this.name = name;
+    }
+  }
+
+  const me = new Person('Lee');
+  console.log(me);
+}
+
+// 함수는 일급 객체이므로 함수를 클래스 필드에 할당할 수 있다.
+// 따라서 클래스 필드를 통해 메서드를 정의할 수도 있다.
+{
+  class Person {
+    // 클래스 필드에 문자열을 할당
+    name = 'Lee';
+
+    // 클래스 필드에 함수를 할당
+    getName = function () {
+      return this.name;
+    };
+
+    // 화살표 함수로 정의할 수도 있다.
+    // getName = () => this.name;
+  }
+
+  const me = new Person();
+  console.log(me); // Person {name: 'Lee', getName: ƒ}
+  console.log(me.getName()); // Lee
+}
+
+// ❕ 이처럼 클래스 필드에 함수를 할당하는 경우, 이 함수는 프로토타입 메서드가 아닌 인스턴스 메서드가 된다.
+// ❕ 모든 클래스 필드는 인스턴스 프로퍼티가 되기 때문이다.
+// ❕ 따라서 클래스 필드에 함수를 할당하는 것은 권장하지 않는다.
+
+// 클래스 필드 정의 제안으로 인해 인스턴스 프로퍼티를 정의하는 방식은 두 가지가 되었다.
+// 1. 인스턴스를 생성할 때 외부 초기값으로 클래스 필드를 초기화할 필요가 있다면 constructor에서 인스턴스 프로퍼티를 정의하는 기존 방식을 사용하고,
+// 2. 인스턴스를 생성할 때 외부 초기값으로 클래스 필드를 초기화할 필요가 없다면 기존의 constructor에서 인스턴스 프로퍼티를 정의하는 방식과 클래스 필드 정의 제안 모두 사용할 수 있다.
+
+
+// 📌 25.7.4 private 필드 정의 제안
+// 24.5절 "캡슐화와 정보 은닉"에서 살펴보았듯이 자바스크립트는 캡슐화를 완전하게 지원하지 않는다.
+// ES6의 클래스도 생성자 함수와 마찬가지로 다른 클래스 기반 객체지향 언어에서는 지원하는 private, public, protected 키워드와 같은 접근 제한자를 지원하지 않는다.
+// 따라서 인스턴스 프로퍼티는 인스턴스를 통해 클래스 외부에서 언제나 참조할 수 있다.
+// 즉, 언제나 public이다.
+{
+  class Person {
+    constructor(name) {
+      this.name = name;
+    }
+  }
+
+  const me = new Person('Lee');
+  console.log(me); // Person {name: 'Lee'}
+}
+
+// 클래스 필드 정의 제안을 사용하더라도 클래스 필드는 기본적으로 public하기 때문에 외부에 그대로 노출된다.
+{
+  class Person {
+    name = 'Lee';
+  }
+
+  // 인스턴스 생성
+  const me = new Person();
+  console.log(me.name); // Lee
+}
+
+// 2021년 1월 현재, TC39 프로세스의 stage 3에는 private 필드를 정의할 수 있는 새로운 표준 사양이 제안되어 있다.
+// 표준 사양으로 승급이 확실시되는 이 제안도 최신 브라우저(Chrome 74 이상)와 최신 Node.js(버전 12 이상)에 이미 구현되어 있다.
+
+
+// private 필드의 선두에는 #을 붙여준다.
+// private 필드를 참조할 대도 #를 붙여주어야 한다.
+{
+  class Person {
+    // private 필드 정의
+    #name = '';
+
+    constructor(name) {
+      this.#name = name;
+    }
+  }
+
+  const me = new Person('Lee');
+  // private 필드 #name은 클래스 외부에서 참조할 수 없다.
+  // console.log(me.#name); // SyntaxError: Private field '#name' must be declared in an enclosing class
+}
+
+// 타입스크립트
+// 자바스크립트의 상위 확장인 타입스크립트는 클래스 기반 객체지향 언어가 지원하는 접근 제한자인 public, private, protected를 모두 지원하며 의미 또한 기본적으로 동일하다.
+
+
+// public 필드는 어디서든 참조할 수 있지만 private 필드를 클래스 내부에서만 참조할 수 있다.
+// 접근 가능성                 |   public   |    private
+// -----------------------------------------------------
+// 클래스 내부                 |     O      |      O
+// 자식 클래스 내부             |     O      |      X
+// 클래스 인스턴스를 통한 접근     |     O      |      X
+
+
+// 이처럼 클래스 외부에서 private 필드에 직접 접근할 수 있는 방법은 없다.
+// 다만 접근자 프로퍼티를 통해 간접적으로 접근하는 방법은 유효하다.
+{
+  class Person {
+    // private 필드 정의
+    #name = '';
+
+    constructor(name) {
+      this.#name = name;
+    }
+
+    // name은 접근자 프로퍼티다.
+    get name() {
+      // private 필드를 참조하여 trim한 다음 반환한다.
+      return this.#name.trim();
+    }
+  }
+
+  const me = new Person(' Lee ');
+  console.log(me.name); // Lee
+}
+
+// private 필드는 반드시 클래스 몸체에 정의해야 한다.
+// private 필드를 직접 constructor에 정의하면 에러가 발생한다.
+{
+  class Person {
+    constructor(name) {
+      // this.#name = name; // SyntaxError: Private field '#name' must be declared in an enclosing class
+    }
+  }
+}
+
+
+// 📌 25.7.5 static 필드 정의 제안
+// 25.5.3절 "정적 메서드"에서 살펴보았듯이 클래스에는 static 키워드를 사용하여 정적 메서드를 정의할 수 있다.
+// 하지만 static 키워드를 사용하여 정적 필드를 정의할 수는 없었다.
+// 하지만 static public 필드, static private 필드, static private 메서드를 정의할 수 있는 새로운 표준 사양인 "Static class features"가 2021년 1월 TC39 프로세스의 stage 3에 제안되어 있다.
+// 이 제안 중에서 static public/private 필드는 2021년 1월 최신브라우저와 최신 Node.js에 이미 구현되어 있다.
+{
+  class MyMath {
+    // static public 필드 정의
+    static PI = 22 / 7;
+
+    // static private 필드 정의
+    static #num = 10;
+
+    // static 메서드
+    static increment() {
+      return ++MyMath.#num;
+    }
+  }
+
+  console.log(MyMath.PI); // 3.142857142857143
+  console.log(MyMath.increment()); // 11
+}
+
+
+// 👉 25.8 상속에 의한 클래스 확장
+// 📌 25.8.1 클래스 상속과 생성자 함수 상속
+// 상속에 의한 클래스 확장은 지금까지 살펴본 프로토타입 기반 상속과는 다른 개념이다.
+// 프로토타입 기반 상속은 프로토타입 체인을 통해 다른 객체의 자산을 상속받는 개념이지만,
+// 상속에 의한 클래스 확장은 기존 클래스를 상속받아 새로운 클래스를 확장extend하여 정의하는 것이다.
+
+// 클래스와 생성자 함수는 인스턴스를 생성할 수 있는 함수라는 점에서 매우 유사하다.
+// 하지만 클래스는 상속을 통해 기존 클래스를 확장할 수 있는 문법이 기본적으로 제공되지만 생성자 함수는 그렇지 않다.
+
+// 예를 들어, 동물을 추상화한 Animal 클래스와 새와 사자를 추상화한 Bird, Lion 클래스를 각각 정의한다고 생각해보자.
+// 새와 사자는 동물에 속하므로 동물의 속성을 갖는다.
+// 하지만 새와 사자는 자신만의 고유한 속성도 갖는다.
+// 이때 Animal 클래스는 동물의 속성을 표현하고 Bird, Lion 클래스는 상속을 통해 Animal 클래스의 속성을 그대로 사용하면서 자신만의 고유한 속성만 추가하여 확장할 수 있다.
+
+// 상속을 통해 Animal 클래스를 확장한 Bird 클래스를 구현해 보자.
+{
+  class Animal {
+    constructor(age, weight) {
+      this.age = age;
+      this.weight = weight;
+    }
+
+    eat() {
+      return 'eat';
+    }
+
+    move() {
+      return 'move';
+    }
+  }
+
+  // 상속을 통해 Animal 클래스를 확장한 Bird 클래스
+  class Bird extends Animal {
+    fly() {
+      return 'fly';
+    }
+  }
+
+  const bird = new Bird(1, 5);
+
+  console.log(bird); // Bird {age: 1, weight: 5}
+  console.log(bird instanceof Bird); // true
+  console.log(bird instanceof Animal); // true
+
+  console.log(bird.eat()); // eat
+  console.log(bird.move()); // move
+  console.log(bird.fly()); // fly
+}
+
+// 클래스는 상속을 통해 다른 클래스를 확장할 수 있는 문법인 extends 키워드가 기본적으로 제공된다.
+// extends 키워드를 사용한 클래스 확장은 간편하고 직관적이다.
+// 하지만 생성자 함수는 클래스와 같이 상속을 통해 다른 생성자 함수를 확장할 수 있는 문법이 제공되지 않는다.
+
+// 자바스크립트는 클래스 기반 언어가 아니므로 생성자 함수를 사용하여 클래스를 흉내 내려는 시도를 권장하지는 않지만
+// 의사 클래스 상속(pseudo classical inheritance)패턴을 사용하여 상속에 의한 클래스 확장을 흉내 내기도 했다.
+// 클래스의 등장으로 다음 예제와 같은 의사 클래스 상속 패턴은 더는 필요하지 않다.
+
+
+// 📌 extends 키워드
+// 상속을 통해 클래스를 확장하려면 extends 키워드를 사용하여 상속받을 클래스를 정의한다.
+{
+  // 수퍼(베이스/부모) 클래스
+  class Base {}
+
+  // 서브(파생/자식) 클래스
+  class Derived extends Base {}
+}
+
+// 상속을 통해 확장된 클래스 = subclass = derived class = child class
+// 서브클래스에게 상속된 클래스 = super-class = base class = parent class
+
+// extends 키워드의 역할은 수퍼클래스와 서브클래스 간의 상속 관계를 설정하는 것이다.
+// 클래스도 프로토타입을 통해 상속 관계를 구현한다.
+
+// 수퍼클래스와 서브클래스는 인스턴스의 프로토타입 체인뿐 아니라 클래스 간의 프로토타입 체인도 생성한다.
+// 이를 통해 프로토타입 메서드, 정적 메서드 모두 상속이 가능하다.
+
+
+// 📌 25.8.3 동적 상속
+// extends 키워드는 클래스뿐만 아니라 생성자 함수를 상속받아 클래스를 확장할 수도 있다.
+// 단, extends 키워드 앞에는 반드시 클래스가 와야 한다.
+{
+  // 생성자 함수
+  function Base(a) {
+    this.a = a;
+  }
+
+  // 생성자 함수를 상속받는 서브클래스
+  class Derived extends Base {}
+
+  const derived = new Derived(1);
+  console.log(derived); // Derived {a: 1}
+}
+
+// extends 키워드 다음에는 클래스뿐만이 아니라 [[Construct]] 내부 메서드를 갖는 함수 객체로 평가될 수 있는 모든 표현식을 사용할 수 있다.
+// 이를 통해 동적으로 상속받은 대상을 결정할 수 있다.
+{
+  function Base1() {}
+
+  class Base2 {}
+
+  let condition = true;
+
+  // 조건에 따라 동적으로 상속 대상을 결정하는 서브클래스
+  class Derived extends (condition ? Base1 : Base1) {}
+
+  const derived = new Derived();
+  console.log(derived); // Derived {}
+
+  console.log(derived instanceof Base1); // true
+  console.log(derived instanceof Base2); // false
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
