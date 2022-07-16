@@ -93,7 +93,7 @@ console.log( circle1.getArea ); // ƒ () { return Math.PI * this.radius ** 2; }
 console.log( circle1.getArea() ); // 3.141592653589793
 console.log( circle2.getArea() ); // 12.566370614359172
 
-// 17.2절 생성자 함수에서 살펴본 바와 같이 생성자 함수는 동일한 프로퍼티(메서드 포함) 구조를 갖는 객체를 여러 개 생성할 때 유용하다. 
+// 17.2절 생성자 함수에서 살펴본 바와 같이 생성자 함수는 동일한 프로퍼티(메서드 포함) 구조를 갖는 객체를 여러 개 생성할 때 유용하다.
 // 하지만 위 예제의 생성자 함수는 문제가 있다.
 
 // Circle 생성자가 생성하는 모든 객체(인스턴스)는 radius 프로퍼티와 getAera 메서드를 갖는다.
@@ -141,14 +141,14 @@ console.log( circle4.getArea() ); // 12.566370614359172
 
 // 👉 19.3 프로토타입 객체
 // 프로토타입 객체란 객체지향 프로그래밍의 근간을 이루는 객체 간 상속을 구현하기 위해 사용된다.
-// 프로토타입은 어떤 객체의 상위(부모) 객체의 역할을 하는 객체로서 다른 객체에 공유 프로퍼티(메서드 포함)를 제공한다. 
+// 프로토타입은 어떤 객체의 상위(부모) 객체의 역할을 하는 객체로서 다른 객체에 공유 프로퍼티(메서드 포함)를 제공한다.
 // ❕ 프로토타입을 상속받은 하위(자식) 객체는 상위 객체의 프로퍼티를 자신의 프로퍼티처럼 자유롭게 사용할 수 있다.
 
 // 모든 객체는 [[Prototype]]이라는 내부 슬롯을 가지며, 이 내부 슬롯의 값은 프로토타입의 참조다.
-// [[Prototype]]에 저장되는 프로토타입은 객체 생성 방식에 의해 결정된다. 
+// [[Prototype]]에 저장되는 프로토타입은 객체 생성 방식에 의해 결정된다.
 // 즉, 객체가 생성될 때 객체 생성 방식에 따라 프로토타입이 결정되고 [[Prototype]]에 저장된다.
 
-// 예를들어, 객체 리터럴에 의해 생성된 객체의 프로토타입은 Object.prototype이고 
+// 예를들어, 객체 리터럴에 의해 생성된 객체의 프로토타입은 Object.prototype이고
 // 생성자 함수에 의해 생성된 객체의 프로토타입은 생성자 함수의 prototype 프로퍼티에 바인딩되어 있는 객체다.
 
 // ❕ 모든 객체는 하나의 프로토타입을 갖는다.
@@ -163,7 +163,7 @@ console.log( circle4.getArea() ); // 12.566370614359172
 // ❕ 모든 객체는 __proto__ 접근자 프로퍼티를 통해 자신의 프로토타입, 즉 [[Prototype]] 내부 슬롯에 간접적으로 접근할 수 있다.
 // 다음 예제를 크롬 브라우저의 콘솔에서 출력해보자
 const person2 = {name: 'Kim'};
-console.log(person2); 
+console.log(person2);
 
 // 빨간 박스로 표시한 것이 person2 객체의 프로토타입인 Object.prototype이다.
 // 이는 __proto__ 접근자 프로퍼티를 통해 person2 객체의 [[Prototype]] 내부 슬롯이 가리키는 객체인 Object.prototype에 접근한 결과를 크롬 브라우저가 콘솔에 표시한 것이다.
@@ -201,7 +201,7 @@ const apple = { color: 'red' };
 // apple 객체는 __proto__ 프로퍼티를 소유하지 않는다.
 console.log( apple.hasOwnProperty('__proto__') ); // false
 
-// __proto__ 프로퍼티는 모든 객체의 프로토타입 객체인 Object.prototyp의 접근자 프로퍼티다. 
+// __proto__ 프로퍼티는 모든 객체의 프로토타입 객체인 Object.prototyp의 접근자 프로퍼티다.
 console.log( Object.getOwnPropertyDescriptor(Object.prototype, '__proto__') ); // { configurable: true,enumerable: false, get: ƒ __proto__(), set: ƒ __proto__() }
 
 // ❕ 모든 객체는 Object.prototype의 접근자 프로퍼티 __proto__를 상속받아 사용할 수 있다.
@@ -259,7 +259,7 @@ Object.setPrototypeOf(objjj, parenttt);
 
 console.log(objjj.x); // 1
 
-// Object.getPrototypeOf 메서드와 get Object.prototype.__proto__, 
+// Object.getPrototypeOf 메서드와 get Object.prototype.__proto__,
 // Object.setPrototypeOf 메서드와 set Object.prototype.__proto__는 처리 내용이 정확히 일치한다.
 // Object.getPrototypeOf: ES5에서 도입, Object.setPrototypeOf: ES6에 도입
 
@@ -280,7 +280,7 @@ console.log( ({}).hasOwnProperty('prototype') ); // false
 const Banana = color => {
   this.color = color;
 };
-// non-constructor는 prototype 프로퍼티를 소유하지 않는다 
+// non-constructor는 prototype 프로퍼티를 소유하지 않는다
 console.log( Banana.hasOwnProperty('prototype') ); // false
 
 // non-constructor는 프로토타입을 생성하지 않는다
@@ -442,7 +442,7 @@ console.log( foo2.constructor === Function ); // true
 // 프로토타입은 생성자 함수가 생성되는 시점에 더불어 생성된다.
 // 프로토타입과 생성자 함수는 단독으로 존재할 수 없고 언제나 쌍로 존재하기 때문이다.
 
-// 생성자 함수는 
+// 생성자 함수는
 // 1. 사용자가 직접 정의한 사용자 정의 생성자 함수,
 // 2. 자바스크립트가 기본 제공하는 빌트인 생성자 함수로 구분할 수 있다.
 
@@ -471,7 +471,7 @@ console.log( Lime.prototype ); // undefined
 // 이때 프로토타입도 더불어 생성된다. ( 프로토타입은 생성자 함수가 생성되는 시점에 더불어 생성된다)
 // 생성된 프로토타입은 Lemon 생성자 함수의 prototype 프로퍼티에 바인딩된다.
 
-// 생성된 프로토타입은 오직 constructor 프로퍼티만을 갖는 객체다. 
+// 생성된 프로토타입은 오직 constructor 프로퍼티만을 갖는 객체다.
 // 프로토타입도 객체이고 모든 객체는 프로토타입을 가지므로 프로토타입도 자신의 프로토타입을 갖는다.
 // 생성된 프로토타입의 프로토타입은 Object.prototype이다.
 
@@ -486,8 +486,8 @@ console.log( Lime.prototype ); // undefined
 // -전역 객체
 // 전역 객체는 코드가 실행되기 이전 단계에 자바스크립트 엔진에 의해 생성되는 특수한 객체다.
 // 전역 객체는 클라이언트 사이드 환경(브라우저)에서는 window, 서버 사이드 환경(Node.js)에서는 global 객체를 의미한다.
-// 전역 객체는 표준 빌트인 객체(Object, String, Number, ...)들과 
-// 환경에 따른 호스트 객체(클라이언트 Web API 또는 Node.js의 호스트 API), 
+// 전역 객체는 표준 빌트인 객체(Object, String, Number, ...)들과
+// 환경에 따른 호스트 객체(클라이언트 Web API 또는 Node.js의 호스트 API),
 // 그리고 var 키워드로 선언한 전역 변수와 전역 함수를 프로퍼티로 갖는다.
 
 // 이처럼 객체가 생성되기 이전에 생성자 함수와 프로토타입은 이미 객체화되어 존재한다.
@@ -579,7 +579,7 @@ lee.sayHello(); // Hi! My name is Lee
   function Person(name) {
     this.name = name;
   }
-  
+
   // 프로토타입 메서드
   Person.prototype.sayHello = function() {
     console.log( `Hi! My name is ${this.name}` );
@@ -712,7 +712,7 @@ lee.sayHello(); // Hi! My name is Lee
   Person.prototype.sayHello = function() {
     console.log( `Hi! My name is ${this.name}!!!` );
   };
-  me.sayHello(); // Hi! My name is Lee!!! 19_prototype.js:707 
+  me.sayHello(); // Hi! My name is Lee!!! 19_prototype.js:707
 
   // 프로토타입 메서드 삭제
   delete Person.prototype.sayHello;
@@ -726,7 +726,7 @@ lee.sayHello(); // Hi! My name is Lee
   // 이러한 특징을 활용하여 객체 간의 상속 관계를 동적으로 변경할 수 있다.
   // 프로토타입은 생성자 함수 또는 인스턴스에 의해 교체될 수 있다.
 
-  
+
   // 📌 19.9.1 생성자 함수에 의한 프로토타입의 교체
   // 즉시 실행 함수
   const Person = (
@@ -786,7 +786,7 @@ lee.sayHello(); // Hi! My name is Lee
   console.log( me.constructor ); // ƒ Person(name) { this.name = name; }
   console.log( me.constructor === Person ); // true
   console.log( me.constructor === Object ); // false
-} 
+}
 
 {
   // 📌 19.9.2 인스턴스에 의한 프로토타입의 교체
@@ -816,7 +816,7 @@ lee.sayHello(); // Hi! My name is Lee
   // Object.setPrototypeOf(me, parent);
   // 위 코드는 아래의 코드와 동일하게 동작한다.
   me.__proto__ = parent;
-  
+
   me.sayHello(); // Hi! My name is Lee~~
 
   // "생서자 함수에 의한 프로토타입의 교체"와 마찬가지로 프로토타입으로 교체한 객체에는 constructor 프로퍼티가 없으므로 constructor 프로퍼티와 생성자 함수간의 연결이 파괴된다.
@@ -851,7 +851,7 @@ lee.sayHello(); // Hi! My name is Lee
   // Object.setPrototypeOf(me, parent);
   // 위 코드는 아래의 코드와 동일하게 동작한다.
   me.__proto__ = parent;
-  
+
   me.sayHello(); // Hi! My name is Lee~!
 
   // 🟦 constructor 프로퍼티가 생성자 함수를 가리킨다
@@ -877,15 +877,15 @@ lee.sayHello(); // Hi! My name is Lee
 // 객체 instanceof 생성자함수
 // 🍳 instanceof 🥚
 
-// ❕ 우변의 생성자 함수의 prototype에 바인딩 된 객체가 
+// ❕ 우변의 생성자 함수의 prototype에 바인딩 된 객체가
 // 좌변의 객체의 프로토타입 체인 상에 존재하면 true
 // 그렇지 않은 경우에는 false로 평가된다.
 
-// 🥚의 prototype에 바인딩된 객체가 
+// 🥚의 prototype에 바인딩된 객체가
 // 🍳의 프로토타입 체인 상에 존재하면 true
 {
   console.clear();
-  
+
 
   // 생성자 함수
   function Person(name) {
@@ -931,7 +931,7 @@ lee.sayHello(); // Hi! My name is Lee
 // 그러나 me instanceof Person은 false로 평가된다.
 
 // 이는 Person.prototype이 me 객체의 프로토타입 체인 상에 존재하지 않기 때문이다.
-// ❕ 따라서 프로토타입으로 교체한 parent 객체를 Person 생성자 함수의 prototype 프로퍼티에 바인딩하면 
+// ❕ 따라서 프로토타입으로 교체한 parent 객체를 Person 생성자 함수의 prototype 프로퍼티에 바인딩하면
 // me instanceof Person은 true로 평가될 것이다.
 
 {
@@ -945,7 +945,7 @@ lee.sayHello(); // Hi! My name is Lee
   const parent = {};
 
   // 프로토타입의 교체
-  // Object.setPrototypeOf(me, parent); 
+  // Object.setPrototypeOf(me, parent);
   me.__proto__ = parent;
 
   // Person 생성자 함수와 parent 객체는 연결되어 있지 않다.
@@ -959,11 +959,11 @@ lee.sayHello(); // Hi! My name is Lee
   console.log( me instanceof Person ); // true
 
   // Object.prototype이 me 객체의 프로토타입 체인 상에 존재하므로 true로 평가된다
-  
+
   console.log( me instanceof Object ); // true
 }
 
-// 이처럼 instanceof 연산자는 프로토타입의 constructor 프로퍼티가 가리키는 생성자 함수를 찾는 것이 아니라 
+// 이처럼 instanceof 연산자는 프로토타입의 constructor 프로퍼티가 가리키는 생성자 함수를 찾는 것이 아니라
 // ❕ 생성자 함수의 prototype에 바인딩된 객체가 프로토타입 체인 상에 존재하는지 확인한다.
 
 // .... 건너뜀
@@ -1001,7 +1001,7 @@ lee.sayHello(); // Hi! My name is Lee
   // ❕ Person 생성자 함수 객체가 소유한 프로퍼티/메서드를 정적 프로퍼티/메서드라고 한다.
 
   // ❕ 생성자 함수가 생성한 인스턴스는 자신의 프로토타입 체인에 속한 객체의 프로퍼티/메서드에 접근할 수 있다.
-  // ❕ 하지만 정적 프로퍼티/메서드는 인스턴스의 프로토타입 체인에 속한 객체의 프로퍼티/메서드가 아니므로 인스턴스로 접근할 수 없다. 
+  // ❕ 하지만 정적 프로퍼티/메서드는 인스턴스의 프로토타입 체인에 속한 객체의 프로퍼티/메서드가 아니므로 인스턴스로 접근할 수 없다.
 
   // 앞에서 살펴본 Object.create 메서드는 Object 생성자 함수의 정적 메서드고 Object.prototype.hasOwnProperty 메서드는 Object.prototype의 메서드다.
   // 따라서 Object.create 메서드는 인스턴스, 즉 Object 생성자 함수가 생성한 객체로 호출할 수 없다.
@@ -1043,7 +1043,7 @@ lee.sayHello(); // Hi! My name is Lee
 // 📌 19.13.1 in연산자
 // ❕ in 연산자는 객체 내의 특정 프로퍼티가 존재하는지 여부를 확인한다.
 // in 연사자의 사용법은 다음과 같다
-/// key in object 
+/// key in object
 // key: 프로퍼티 키를 나타내는 문자열, object: 객체로 평가되는 표현
 {
   const person = {
@@ -1066,19 +1066,22 @@ lee.sayHello(); // Hi! My name is Lee
   // Reflect.has 메서드는 in 연산자와 동일하게 동작한다.
   console.log( Reflect.has(person, 'toString') ); // true
 
+
   // 📌 19.13.2 Object.prototype.hasOwnProperty 메서드
   // Object.prototype.hasOwnProperty 메서드를 사용해도 객체에 특정 프로퍼티가 존재하는지 확인할 수 있다.
   console.log( person.hasOwnProperty('name') ); // true
   console.log( person.hasOwnProperty('age') ); // false
 
-  // Object.prototype.hasOwnProperty 메서드는 이름에서 알 수 있듯이 인수로 전달받은 프로퍼티 키가 객체 고유의 프로퍼티 키인 경우에만 true를 반환하고 
+  // Object.prototype.hasOwnProperty 메서드는 이름에서 알 수 있듯이 인수로 전달받은 프로퍼티 키가 객체 고유의 프로퍼티 키인 경우에만 true를 반환하고
   // 상속받은 프로토타입의 프로퍼티 키인 경우 false를 반환한다.
   console.log( person.hasOwnProperty('toString') ); // false
 }
 
+
+
 // 👉 19.14 프로퍼티 열거
 // 📌 19.14.1 for...in 문
-// 객체의 모든 프로퍼티를 순회하며 열ㄹ거enumeration하려면 for...in문을 사용한다.
+// 객체의 모든 프로퍼티를 순회하며 열거(enumeration)하려면 for...in 문을 사용한다.
 // for(변수선언문 in 객체 ) {...}
 {
   const person = {
@@ -1093,11 +1096,12 @@ lee.sayHello(); // Hi! My name is Lee
 
   // for...in 문은 객체의 프로퍼티 개수만큼 수회하며 for...in문의 변수 선언문에서 선언한 변수에 프로퍼티 키를 할당한다.
   // 위 예제의 경우 person 객체에는 2개의 프로퍼티가 있으므로 객체를 2번 순회하면서 프로퍼티 키를 key 변수에 할당한 후 코드 블록을 실행한다.
-  // 첫 번째 순회에서는 프로퍼티 키 'name'을 key 변수에 할당한 후 코드 블록을 실행하고, 두 번째 순회에서는 프로퍼티 키 'address'를 key 변수에 할당한 후 코드 블록을 실행한다.
+  // 첫 번째 순회에서는 프로퍼티 키 'name'을 key 변수에 할당한 후 코드 블록을 실행하고,
+  // 두 번째 순회에서는 프로퍼티 키 'address'를 key 변수에 할당한 후 코드 블록을 실행한다.
 
 
-  // for...in문은 in연산자처럼 순회 대상 객체의 프로퍼티뿐만 아니라 상속받은 프로토타입의 프로퍼티까지 열거한다.
-  // 하지만 위 예제의 경우 toString과 같은 Object.prototype의 프로퍼티가 열거되지 않는다. 
+  // for...in 문은 in 연산자처럼 순회 대상 객체의 프로퍼티뿐만 아니라 상속받은 프로토타입의 프로퍼티까지 열거한다.
+  // 하지만 위 예제의 경우 toString과 같은 Object.prototype의 프로퍼티가 열거되지 않는다.
 
   // in 연산자는 객체가 상속받은 모든 프로토타입의 프로퍼티를 확인한다
   console.log( 'toString' in person ); // true
@@ -1160,12 +1164,12 @@ lee.sayHello(); // Hi! My name is Lee
     if( !object.hasOwnProperty(key) ) {
       continue;
     }
-    console.log( key + ': ' + object[key] ); 
+    console.log( key + ': ' + object[key] );
     // 1: 1
     // 2: 2
     // 3: 3
     // b: b
-    // a: a   
+    // a: a
   }
 
   // 배열에는 for...in 문을 사용하지 말고 일반적인 for 문이나 for...of 문 또는 Array.prototype.forEach 메서드를 사용하기를 권장한다.
@@ -1186,16 +1190,16 @@ lee.sayHello(); // Hi! My name is Lee
   // forEach 메서드는 요소가 아닌 프로퍼티는 제외한다.
   arr.forEach( v => console.log( v ) ); // 1 2 3
 
-  // for...of는 변수 선언문에서 선언한 변수에 키가 아닌 값을 할당한다.
+  // ❕ for...of는 변수 선언문에서 선언한 변수에 키가 아니라 값을 할당한다.
   for( const value of arr ) {
-    console.log( value ); // 1 2 3 
+    console.log( value ); // 1 2 3
   }
 
   // 갑자기 비교...
   // forEach 반복문은 오직 Array 객체에서만 사용 가능하다( ES6부터는 Map, Set 등에서도 지원된다)
   // for...in 반복문은 객체의 프로퍼티를 출력
   // for...of 반복문은 ES6에 추가된 새로운 컬렉션 전용 반복 구문. 컬렉션 객체가 [Symbol.iterator] 속성을 가지고 있어야만 한다.
-  
+
 }
 
 {
@@ -1210,10 +1214,10 @@ lee.sayHello(); // Hi! My name is Lee
     address: 'Seoul',
     __proto__: {age: 20}
   };
-  console.log( Object.keys(person) ); // (2) ['name', 'address']
+  console.log( Object.keys(person) ); // (2) ['name', 'address']
 
   // ES8에서 도입된 Object.values 메서드는 객체 자신의 열거 가능한 프로퍼티 값을 배열로 반환한다.
-  console.log( Object.values(person) ); // (2) ['Lee', 'Seoul']
+  console.log( Object.values(person) ); // (2) ['Lee', 'Seoul']
 
   // ❕ ES8에서 도입된 Object.entries 메서드는 객체 자신의 열거 가능한 프로퍼티 키와 값의 쌍의 배열을 배열에 담아 반환한다.
   console.log( Object.entries(person) ); // [ ['name', 'Lee'], ['address', 'Seoul'] ]
