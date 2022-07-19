@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <ul>
+        <li id="apple">Apple</li>
+        <li id="banana">Banana</li>
+        <li id="orange">Orange</li>
+    </ul>
+
+    <!--
+    DOM API인 document.getElementById는 DOM에서 id가 'apple'인 HTML 요소를 취득한다.
+    아래 코드가 실행되는 시점에는 아직 id가 'apple'인 HTML 요소의 파싱이 완료되어 DOM에 포함되어 있기 때문에
+    정상적으로 동작한다.
+    -->
+    <script>
+        const $apple = document.getElementById('apple');
+        $apple.style.color = 'red';
+    </script>
+</body>
+</html>
