@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <!--
+    <ul>
+        <li id="apple">Apple</li>
+        <li id="banana">Banana</li>
+        <li id="Orange">Orange</li>
+    </ul>
+    <script>
+        // 태그 이름이 li인 요소 노드를 모두 탐색하여 반환한다.
+        // ❕ 탐색된 요소 노드들은 HTMLCollection 객체에 담겨 반환된다.
+        // ❕ HTMLCollection 객체는 유사 배열 객체이면서 이터러블이다.
+        const $elems = document.getElementsByTagName('li');
+
+        console.log($elems);
+        // HTMLCollection(3) [li#apple, li#banana, li#Orange, apple: li#apple, banana: li#banana, Orange: li#Orange]
+
+        // 취득한 모든 요소 노드의 style.color 프로퍼티 값을 변경한다.
+        // HTMLCollection 객체를 배열로 변환하여 순회하며 color 프로퍼티 값을 변경한다.
+        [...$elems].forEach((v, i, arr) => {
+            v.style.color = 'red';
+        });
+    </script>
+    -->
+
+    <!-- HTML 문서의 모든 요소를 취득하려면 getElementsByTagName 메서드의 인수로 '*'을 전달한다. -->
+    <!--
+    <ul>
+        <li id="apple">Apple</li>
+        <li>Banana</li>
+        <li>Orange</li>
+    </ul>
+    <p>Lorem ipsum dolor sit amet.</p>
+    <h1>제목</h1>
+    <script>
+        // 모든 요소 노드를 탐색하여 반환한다.
+        const $all = document.getElementsByTagName('*');
+        console.log($all); // HTMLCollection(11) [html, head, meta, body, ul, li#apple, li, li, p, h1, script, apple: li#apple]
+    </script>
+    -->
+
+    <!--
+    <ul id="fruits">
+        <li>Apple</li>
+        <li>Banana</li>
+        <li>Orange</li>
+    </ul>
+    <ul>
+        <li>HTML</li>
+    </ul>
+    <script>
+        // 태그 이름이 li인 요소 노드를 모두 탐색하여 반환한다.
+        // ❕ 탐색된 요소 노드들은 HTMLCollection 객체에 담겨 반환된다.
+        // ❕ HTMLCollection 객체는 유사 배열 객체이면서 이터러블이다.
+        const $elems = document.getElementsByTagName('li');
+
+        console.log($elems);
+        // HTMLCollection(3) [li#apple, li#banana, li#Orange, apple: li#apple, banana: li#banana, Orange: li#Orange]
+
+        // 취득한 모든 요소 노드의 style.color 프로퍼티 값을 변경한다.
+        // HTMLCollection 객체를 배열로 변환하여 순회하며 color 프로퍼티 값을 변경한다.
+        [...$elems].forEach((v, i, arr) => {
+            v.style.color = 'red';
+        });
+    </script>
+    -->
+
+    <!-- Document.prototype.getElementsByTagName 메서드와 Element.prototype.getElementsByTagName 메서드 -->
+    <!--
+    <ul id="fruits">
+        <li class="fruit">Apple</li>
+        <li class="fruit">Banana</li>
+        <li class="fruit">Orange</li>
+    </ul>
+    <ul>
+        <li>HTML</li>
+    </ul>
+    <script>
+        // DOM 전체에서 태그 이름이 li인 요소 노드를 모두 탐색하여 반환한다.
+        const $lisFromDocument = document.getElementsByTagName('li');
+        console.log($lisFromDocument); // HTMLCollection(4) [li.fruit, li.fruit, li.fruit, li]
+
+        // ul#fruits 요소의 자손 노드 중에서 태그 이름이 li인 요소 노드를 모두 탐색하여 반환한다.
+        const $fruits = document.getElementById('fruits');
+        const $lisFromFruits = $fruits.getElementsByTagName('li');
+        console.log($lisFromFruits); // HTMLCollection(3) [li.fruit, li.fruit, li.fruit]
+
+        // 인수로 전달된 태그 이름을 갖는 요소가 존재하지 않는 경우 getElementsByTagName 메서드는 빈 HTMLCollection 객체를 반환한다.
+        console.log(document.getElementsByTagName('h1')); // HTMLCollection []
+    </script>
+    -->
+</body>
+</html>

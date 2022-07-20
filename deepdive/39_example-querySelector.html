@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <!-- querySelector() -->
+    <!--
+    <ul>
+        <li class="apple">Apple</li>
+        <li class="banana">Banana</li>
+        <li class="Orange">Orange</li>
+        <li class="banana">Banana</li>
+    </ul>
+    <script>
+        // class 어트리뷰트 값이 'banana'인 첫 번째 요소 노드를 탐색하여 반환한다.
+        // 인수로 전달한 CSS 선택자를 만족시키는 요소 노드가 여러 개인 경우 첫 번째 요소 노드만 반환한다.
+        const $elem = document.querySelector('.banana');
+
+        // 취득한 요소 노드의 style.color 프로퍼티 값을 변경한다.
+        $elem.style.color = 'red';
+
+        // 인수로 전달한 CSS 선택자를 만족시키는 요소 노드가 존재하지 않는 경우 null을 반환한다.
+        const $elem2 = document.querySelector('.banana2');
+        console.log($elem2); // null
+
+        // 인수로 전달한 CSS 선택자가 문법에 맞지 않는 경우 DOMException이 에러가 발생한다.
+        // const $elem2 = document.querySelector('#.banana'); // DOMException: Failed to execute 'querySelector' on 'Document': '#.banana' is not a valid selector.
+    </script>
+    -->
+
+    <!-- querySelectorAll() -->
+    <ul>
+        <li class="apple">Apple</li>
+        <li class="banana">Banana</li>
+        <li class="Orange">Orange</li>
+        <li class="banana">Banana</li>
+    </ul>
+    <script>
+        // class 어트리뷰트 값이 'banana'인 모든 요소 노드를 탐색하여 반환한다.
+        const $elems = document.querySelectorAll('.banana');
+        // 취득한 요소 노드들은 NodeList 객체레 담겨 반환된다.
+        console.log($elems); // NodeList(2) [li.banana, li.banana]
+
+        // 취득한 모든 요소 노드의 style.color 프로퍼티 값을 변경하다.
+        // ❕ NodeList는 forEach를 제공한다.
+        $elems.forEach(v => v.style.color = 'red');
+
+        // 인수로 전달된 CSS 선택자를 만족시키는 요소가 존재하지 않는 경우 빈 NodeList 객체를 반환한다.
+        console.log(document.querySelectorAll('p')); // NodeList []
+
+        // 인수로 전달된 CSS 선택자가 문법에 맞지 않는 경우 DOMException이 에러가 발생한다.
+        // console.log(document.querySelectorAll('#.banana')); // DOMException: Failed to execute 'querySelectorAll' on 'Document': '#.banana' is not a valid selector.
+
+        // HTML 문서의 모든 요소를 취득하려면 querySelectorAll 메서드의 인수로 전체 선택자 '*'를 전달한다.
+        console.log(document.querySelectorAll('*'));
+        // NodeList(10) [html, head, meta, body, ul, li.apple, li.banana, li.Orange, li.banana, script]
+
+    </script>
+</body>
+</html>
