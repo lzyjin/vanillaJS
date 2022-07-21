@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>요소 노드의 텍스트 조작</title>
+    </head>
+    <body>
+        <!-- nodeValue -->
+        <!--
+        <div id="foo">Hello</div>
+        <script>
+            // 문서 노드의 nodeValue 프로퍼티를 참조한다.
+            console.log(document.nodeValue); // null
+
+            // 요소 노드의 nodeValue 프로퍼티를 참조한다.
+            const $foo = document.getElementById('foo');
+            console.log($foo.nodeValue); // null
+
+            // 텍스트 노드의 nodeValue 프로퍼티를 참조한다.
+            const $textNode = $foo.firstChild;
+            console.log($textNode.nodeValue); // Hello
+        </script>
+        -->
+
+
+
+        <!-- 요소 노드의 텍스트 변경하기 -->
+        <!--
+        <div id="foo">Hello</div>
+        <script>
+            // 1. #foo 요소 노드의 자식 노드인 텍스트 노드를 취득한다.
+            const $textNode = document.getElementById('foo').firstChild;
+
+            // 3. nodeValue 프로퍼티를 사용하여 텍스트 노드의 값을 변경한다.
+            $textNode.nodeValue = 'World';
+
+            console.log($textNode.nodeValue); // World
+        </script>
+        -->
+
+
+
+        <!-- textContent -->
+        <!--
+        <script>
+            console.log(document.getElementById('foo').textContent); // Hello world!
+        </script>
+        -->
+
+
+
+        <!-- nodeValue 프로퍼티를 사용해 모든 텍스트 취득하기-->
+        <!--
+        <div id="foo">Hello <span>world!</span></div>
+        <script>
+            // #foo 요소 노드는 텍스트 노드가 아니다.
+            console.log(document.getElementById('foo').nodeValue); // null
+
+            // #foo 요소 노드의 자식 노드인 텍스트 노드의 값을 취득한다.
+            console.log(document.getElementById('foo').firstChild.nodeValue); // Hello
+
+            // span 요소 노드의 자식 노드인 텍스트 노드의 값을 취득한다.
+            console.log(document.getElementById('foo').lastChild.firstChild.nodeValue); // world!
+        </script>
+        -->
+
+
+
+        <!-- 요소 노드의 콘텐츠 영역에 자식 요소 노드가 없고 텍스트만 존재할때 텍스트 취득하기 -->
+        <div id="foo">Hello</div>
+        <script>
+            const $foo = document.getElementById('foo');
+
+            // 요소 노드의 콘텐츠 영역에 자식 요소 노드가 없고 텍스트만 존재한다면
+            // firstChild.nodeValue와 textContent 프로퍼티는 같은 결과를 반환한다.
+            console.log($foo.textContent === $foo.firstChild.nodeValue); // true
+
+            // #foo 요소 노드의 모든 자식 노드가 제거되고 할당한 문자열이 텍스트로 추가된다.
+            // 이때 HTML 마크업이 파싱되지 않는다.
+            $foo.textContent = 'Hi <span>there!</span>';
+            // 'Hi <span>there!</span>'가 화면에 나타난다.
+        </script>
+    </body>
+</html>

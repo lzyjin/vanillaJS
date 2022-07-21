@@ -275,23 +275,326 @@
 
 
 // 📌 특정 요소 노드를 취득할 수 있는지 확인
+// Element.prototype.matches 메서드는 인수로 전달한 CSS 선택자를 통해 특정 요소를 취득할 수 있는지 확인한다.
 
+// 예제는 39_example-matches.html 참조
 
+// Element.prototype.matches 메서드는 이벤트 위임을 사용할 때 유용하다.
 
 
 // 📌 HTMLCollection과 NodeList
+// DOM 컬렉션 객체인 HTMLCollection과 NodeList는 DOM API가 여러 개의 결과 값을 반환하기 위한 DOM 컬렉션 객체다.
+// HTMLCollection과 NodeList는 모두 유사 배열 객체이면서 이터러블이다.
+// 따라서 for...of 문으로 순회할 수 있으며 스프레드 문법을 사용하여 간단히 배열로 변환할 수 있다.
 
-
-
+// HTMLCollection과 NodeList의 중요한 특직은 노드 객체의 상태 변화를 실시간으로 반영하는 살아 있는(live) 객체라는 것이다.
+// HTMLCollection은 언제나 live 객체로 동작한다.
+// 단, NodeList는 대부분의 경우 노드 객체의 상태 변화를 실시간으로 반영하지 않고 과거의 정적 상태를 유지하는 non-live 객체로 동작하지만 경우에 따라 live 객체로 동작할 때가 있다.
 
 // 🌷 HTMLCollection
+// getElementsByTagName, getElementsByClassName 메서드가 반환하는 HTMLCollection 객체는
+// 노드 객체의 상태 변화를 실시간으로 반영하는 DOM 컬렉션 객체다.
+// 따라서 HTMLCollection 객체를 살아 있는(live) 객체라고 부르기도 한다.
 
-
+// 예제는 39_example-HTMLCollection.html 참고
 
 
 // 🌷 NodeList
+// HTMLCollection 객체의 부작용을 해결하기 위해 getElementsByTagName, getElementsByClassName 메서드를 사용하는 대신
+// querySelectorAll 메서드를 사용하는 방법도 있다.
+// querySelectorAll 메서드는 DOM 컬렉션 객체인 NodeList 객체를 반환한다.
+// NodeList 객체는 실시간으로 노드 객체의 상태 변경을 반영하지 않는(non-live) 객체다.
 
+{
+    // const $elems = document.querySelectorAll('red');
+    // $elems.forEach(elem => elem.className = 'blue');
+}
+
+// querySelectorAll이 반환하는 NodeList 객체는 NodeList.prototype.forEach 메서드를 상속받아 사용할 수 있다.
+// ❕ NodeList.prototype.forEach 메서드는 Array.prototype.forEach 메서드와 사용방법이 동일하다.
+// NodeList.prototype은 forEach 외에도 item, entried, keys, values 메서드를 제공한다.
+
+// NodeList 객체는 대부분의 경우 노드 객체의 상태 변경을 실시간으로 반영하지 않고 과거의 정적 상태를 유지하는 non-live 객체로 동작한다.
+// ❕ 하지만 childNodes 프로퍼티가 반환하는 NodeList 객체는
+// HTMLCollection 객체와 같이 실시간으로 노드 객체의 상태 변경을 반영하는 live 객체로 동작하므로 주의가 필요하다.
+
+// 예제는 39_example-NodeList.html 참고
+
+// 이처럼 HTMLCollection이나 NodeList 객체는 예상과 다르게 동작할 때가 있어 다루기 까다롭고 실수하기 쉽다.
+// ❕ 따라서 노드 객체의 상태 변경과 상관없이 안전하게 DOM 컬렉션을 사용하려면
+// HTMLCollection이나 NodeList 객체를 배열로 변환하여 사용하는 것을 권장한다.
+//  HTMLCollection과 NodeList 객체가 메서드를 제공하기는 하지만 배열의 고차 함수만큼 다양한 기능을 제공하지는 않는다.
+//  HTMLCollection이나 NodeList 객체를 배열로 변환하면 배열의 유용한 고차 함수(forEach, map, filter, reduce 등)를 사용할 수 있다는 장점이 있다.
+
+//  HTMLCollection과 NodeList 객체는 모두 유사 배열 객체이면서 이터러블이다.
+// 따라서 스프레드 문법이나 Array.from 메서드를 사용하여 간단히 배열로 변환할 수 있다.
+
+// 예제는 39_example-NodeList.html 참고
 
 
 
 // 👉 노드 탐색
+// 요소 노드를 취득한 다음, 취득한 요소 노드를 기점으로 DOM 트리를 옮겨 다니며 부모, 형제, 자식 노드 등을 탐색해야 할 때가 있다.
+
+/*
+<ul id="fruits">
+    <li class="apple">Apple</li>
+    <li class="banana">Banana</li>
+    <li class="orange">Orange</li>
+</ul>
+*/
+
+// ul#fruits 요소는 3개의 자식 요소를 갖는다.
+// 이때 먼저 ul#fruits 요소 노드를 취득한 다음, 자식 노드를 모두 탐색하거나 자식 노드 중 하나만 탐색할 수 있다.
+// li.banana 요소는 2개의 형제 요소와 부모 요소를 갖는다.
+// 이때 먼저 li.banana 요소를 취득한 다음, 형제 노드를 탐색하거나 부모 노드를 탐색할 수 있다.
+
+// 이처럼 DOM 트리 상의 노드를 탐색할 수 있도록 Node, Element 인터페이스는 트리 탐색 프로퍼티를 제공한다.
+
+// ❕ parentNode, previousSibling, firstChild, childNodes 프로퍼티는 Node.prototype이 제공하고,
+// ❕ 프로퍼티 키에 Element가 포함된 previousElementSibling, nextElementSibling과 children 프로퍼티는 Element.prototype이 제공한다.
+
+// 노드 탐색 프로퍼티는 모두 접근자 프로퍼티다.
+// 단, 노드 탐색 프로퍼티는 setter 없이 getter만 존재하며 참조만 가능한 읽기 전용 접근자 프로퍼티다.
+// 읽기 전용 접근자 프로퍼티에 값을 할당하면 아무런 에러 없이 무시된다.
+
+
+// 📌 공백 텍스트 노드
+// 지금까지 언급하지 않았지만 HTML 요소 사이의 스페이스, 탭, 줄바꿈(개행) 등의 공백(white space) 문자는 텍스트 노드를 생성한다.
+// 이를 텍스트 노드라 한다.
+
+/*
+<!DOCTYPE html>
+<html lang="en">
+    <body>
+        <ul id="fruits">
+            <li class="apple">Apple</li>
+            <li class="banana">Banana</li>
+            <li class="orange">Orange</li>
+        </ul>
+    </body>
+</html>
+ */
+
+// 텍스트 에디터에서 HTML 문서에 스페이스 키, 탭 키, 엔터 키 등을 입력하면 공백 문자가 추가된다.
+// 위 HTML 문서에도 공백 문자가 포함되어 있다.
+// 위 HTML 문서는 파싱되어 다음과 같은 DOM을 생성한다.
+
+// 그림 39-12
+
+// 이처럼 HTML 문서의 공백 문자는 공백 텍스트 노드를 생성한다.
+// 따라서 노드를 탐색할 때는 공백 문자가 생성한 공백 텍스트 노드에 주의해야 한다.
+// 다음과 같이 인위적으로 HTML 문서의 공백 문자를 제거하면 공백 텍스트 노드를 생성하지 않는다.
+// 하지만 가독성이 좋지 않으므로 권장하지 않는다.
+
+/*
+    <ul id="fruits"><li
+    class="apple">Apple</li><li
+    class="banana">Banana</li><li
+    class="orange">Orange</li></ul>
+ */
+
+
+// 📌 자식 노드 탐색
+// 자식 노드를 탐색하기 위해서는 다음과 같은 노드 탐색 프로퍼티를 사용한다.
+
+// 프로퍼티                                   설명
+// ---------------------------------------------------------------------------------------------------------------------------
+// Node.prototype.childNodes                자식 노드를 모두 탐색하여 DOM 컬렉션 객체인 NodeList에 담아 반환한다.
+//                                          childNodes 프로퍼티가 반환한 NodeList에는 요소 노드뿐만 아니라 텍스트 노드도 포함되어 있을 수 있다.
+
+// Element.prototype.children               자식 노드 중에서 요소 노드만 모두 탐색하여 DOM 컬렉션 객체인 HTMLCollection 객체에 담아 반환한다.
+//                                          children 프로퍼티가 반환한 HTMLCollection에는 텍스트 노드가 포함되지 않는다.
+
+// Node.prototype.firstChild                첫 번째 자식 노드를 반환한다.
+//                                          firstChild 프로퍼티가 반환한 노드는 텍스트 노드이거나 요소 노드다.
+
+// Node.prototype.lastChild                 마지막 자식 노드를 반환한다.
+//                                          lastChild 프로퍼티가 반환한 노드는 텍스트 노드이거나 요소 노드다.
+
+// Element.prototype.firstElementChild      첫 번째 자식 요소 노드를 반환한다.
+//                                          firstElementChild 프로퍼티는 요소 노드만 반환한다.
+
+// Element.prototype.lastElementChild       마지막 자식 요소 노드를 반환한다.
+//                                          lastElementChild 프로퍼티는 요소 노드만 반환한다.
+
+// 예제는 39_example-nodeTraversing.html 참고
+
+
+// 📌 자식 노드 존재 확인
+// 자식 노드가 존재하는지 확인하려면 Node.prototype.hasChildNodes 메서드를 사용한다.
+// hasChildNodes 메서드는 자식 노드가 존재하면 true, 존재하지 않으면 false를 반환한다.
+// ❕ 단, hasChildNodes 메서드는 childNodes 프로퍼티와 마찬가지로 텍스트 노드를 포함하여 자식 노드의 존재를 확인한다.
+
+// 예제는 39_example-nodeTraversing.html 참고
+
+// ❕ 자식 노드 중에 텍스트 노드가 아닌 요소 노드가 존재하는지 확인하려면 hasChildNodes 메서드 대신
+// children.length 또는 Element 인터페이스의 childElementCount 프로퍼티를 사용한다.
+
+// 예제는 39_example-nodeTraversing.html 참고
+
+
+// 📌 요소 노드의 텍스트 노드 탐색
+// 요소 노드의 텍스트 노드는 요소 노드의 자식 노드다.
+// 따라서 요소 노드의 텍스트 노드는 firstChild 프로퍼티로 접근할 수 있다.
+// firstChild 프로퍼티는 첫 번째 자식 노드를 반환한다.
+// firstChild 프로퍼티가 반환한 노드는 텍스트 노드이거나 요소 노드이다.
+
+// 예제는 39_example-nodeTraversing.html 참고
+
+
+// 📌 부모 노드 탐색
+// 부모 노드를 탐색하려면 Node.prototype.parentNode 프로퍼티를 사용한다.
+// 텍스트 노드는 DOM 트리의 최종단 노드인 리프 노드(leaf node)이므로 부모 노드가 텍스트 노드인 경우는 없다.
+
+// 예제는 39_example-nodeTraversing.html 참고
+
+
+// 📌 형제 노드 탐색
+// 부모 노트가 같은 형제 노드를 탐색하려면 다음과 같은 노드 탐색 프로퍼티를 사용한다.
+// 단 어트리뷰트 노드는 요소 노드와 연결되어 있지만 부모 노드가 같은 형제 노드가 아니기 때문에 반환되지 않는다.
+// 즉, 아래 프로퍼티는 텍스트 노드 또는 요소 노드만 반환한다.
+
+// 프로퍼티 설명
+// -------------------------------------------------------------------------------------------------------------------
+// Node.prototype.previousSibling               부모 노드가 같은 형제 노드 중에서 자신의 이전 형제 노드를 탐색하여 반환한다.
+//                                              previousSibling 프로퍼티가 반환하는 노드는 요소 노드뿐만 아니라 텍스트 노드일 수도 있다.
+
+// Node.prototype.nextSibling                   부모 노드가 같은 형제 노드 중에서 자신의 다음 형제 노드를 탐색하여 반환한다.
+//                                              nextSibling 프로퍼티가 반환하는 노드는 요소 노드뿐만 아니라 텍스트 노드일 수도 있다.
+
+// Element.prototype.previousElementSibling     부모 노드가 같은 형제 노드 중에서 자신의 이전 형제 노드를 탐색하여 반환한다.
+//                                              previousElementSibling 프로퍼티는 요소 노드만 반환한다.
+
+// Element.prototype.nextElementSibling         부모 노드가 같은 형제 노드 중에서 자신의 다음 형제 노드를 탐색하여 반환한다.
+//                                              nextElementSibling 프로퍼티는 요소 노드만 반환한다.
+
+// 예제는 39_example-nodeTraversing.html 참고
+
+
+
+// 👉 노드 정보 취득
+// 노드 객체에 대한 정보를 취득하려면 다음과 같은 노드 정보 프로퍼티를 사용한다.
+
+// 프로퍼티                       설명
+// ------------------------------------------------------------------------------------
+// Node.prototype.nodeType      노드 객체의 종류, 즉 노드 타입을 나타내는 상수를 반환한다.
+//                              노드 타입 상수는 Node에 정의되어 있다.
+//                              - Node.ELEMENT_NODE: 요소 노드 타입을 나타내는 상수 1을 반환.
+//                              - Node.TEXT_NODE: 텍스트 노드 타입을 나타내는 상수 3을 반환.
+//                              - Node.DOCUMENT_NODE: 문서 노드 타입을 나타내는 상수 9를 반환.
+
+// Node.prototype.nodeName      노드의 이름을 문자열로 반환한다.
+//                              - 요소 노드: 대문자 문자열로 태그 이름("UL", "LI" 등)을 반환
+//                              - 텍스트 노드: 문자열 "#text"를 반환
+//                              - 문서 노드: 문자열 "#document"를 반환
+
+// 예제는 39_example-nodeInfo.html 참고
+
+
+
+// 👉 요소 노드의 텍스트 조작
+// 📌 nodeValue
+// 지금까지 살펴본 노드 탐색, 노드 정보 프로퍼티는 모두 읽기 전용 접근자 프로퍼티다.
+// 지금부터 살펴볼 Node.prototype.nodeValue 프로퍼티는 setter와 getter 모두 존재하는 접근자 프로퍼티다.
+// 따라서 nodeValue 프로퍼티는 참조와 할당 모두 가능하다.
+
+// 노드 객체의 nodeValue 프로퍼티를 참조하면 노드 객체의 값을 반환한다.
+// 노드 객체의 값이란 텍스트 노드의 텍스트다.
+// 따라서 텍스트 노드가 아닌 노드, 즉 문서 노드나 요소 노드의 nodeValue 프로퍼티를 참조하면 null을 반환한다.
+
+// 예제는 39_example-nodeValue-textContent.html 참고
+
+// 이처럼 텍스트 노드의 nodeValue 프로퍼티를 참조할 때만 텍스트 노드의 값, 즉 텍스트를 반환한다.
+// 텍스트 노드가 아닌 노드 객체의 nodeValue 프로퍼티를 참조하면 null을 반환하므로 의미가 없다.
+
+// 텍스트 노드의 nodeValue 프로퍼티에 값을 할당하면 텍스트 노드의 값, 즉 텍스트를 변경할 수 있다.
+// 따라서 요소 노드의 텍스트를 변경하려면 다음과 같은 순서의 처리가 필요한다.
+
+// 1. 텍스트를 변경할 요소 노드를 취득한 다음, 취득한 요소 노드의 텍스트 노드를 탐색한다.
+//    텍스트 노드는 요소 노드의 자식 노드이므로 firstChild 프로퍼티를 사용하여 탐색한다.
+// 2. 탐색한 텍스트 노드의 nodeValue 프로퍼티를 사용하여 텍스트 노드의 값을 변경한다.
+
+// 예제 39_example-nodeValue-textContent.html 참고
+
+
+// 📌 textContent
+// Node.prototype.textContent 프로퍼티는 setter와 getter 모두 존재하는 접근자 프로퍼티로서,
+// 요소 노드의 텍스트와 모든 자손 노드의 텍스트를 모두 취득하거나 변경한다.
+
+// 요소 노드의 textContent 프로퍼티를 참조하면 요소 노드의 콘텐츠 영역(시작 태그와 종료 태그 사이) 내의 텍스트를 모두 반환한다.
+// 다시 말해, 요소 노드의 ㅊhildNodes 프로퍼티가 반환한 모든 노드들의 텍스트 노드의 값, 즉 텍스트를 모두 반환한다.
+// 이때 HTML 마크업은 무시된다.
+
+// 예제 39_example-nodeValue-textContent.html 참고
+
+// 앞서 살펴본 nodeValue 프로퍼티를 참조하여도 텍스트를 취득할 수 있었다.
+// 단, 텍스트 노드가 아닌 노드의 nodeValue 프로퍼티는 null을 반환하므로 의미가 없고,
+// 텍스트 노드의 nodeValue 프로퍼티를 참조할 때만 텍스트 노드의 값, 즉 텍스트를 반환한다.
+// 다만 nodeValue 프로퍼티를 사용하면 textContent 프로퍼티를 사용할 때와 비교해서 코드가 더 복잡하다.
+
+// 예제 39_example-nodeValue-textContent.html 참고
+
+// 만약 요소 노드의 콘텐츠 영역에 자식 요소 노드가 없고 텍스트만 존재한다면 firstChild.nodeValue와 textContent 프로퍼티는 같은 결과를 반환한다.
+// 이 경우 textContent 프로퍼티를 사용하는 것이 코드가 더 간단하다.
+
+// 예제 39_example-nodeValue-textContent.html 참고
+
+// 요소 노드의 textContent 프로퍼티에 문자열을 할당하면 요소 노드의 모든 자식 노드가 제거되고 할당한 문자열이 텍스트로 추가된다.
+// ❕ 이때 할당한 문자열에 HTML 마크업이 포함되어 있더라도 문자열 그대로 인식되어 텍스트로 취급된다.
+// 즉, HTML 마크업이 파싱되지 않는다.
+
+// 예제 39_example-nodeValue-textContent.html 참고
+
+// ❕ 참고로 textContent 프로퍼티와 유사한 동작을 하는 innerText 프로퍼티가 있다.
+// ❕ innerText 프로퍼티는 다음과 같은 이유로 사용하지 않는 것이 좋다
+// - innerText 프로퍼티는 CSS에 순종적이다.
+//   예를 들어, innerText 프로퍼티는 CSS에 의해 비표시(visibility: hidden)로 지정된 요소 노드의 텍스트를 반환하지 않는다.
+// - innerText 프로퍼티는 CSS를 고려해야 하므로 textContent 프로퍼티보다 느리다.
+
+
+// 👉 DOM 조작
+// 📌 innerHTML
+// 📌 insertAdjacentHTML 메서드
+// 📌 노드 생성과 추가
+// 🌷 텍스트 노드 생성
+// 🌷 텍스트 노드를 요소 노드의 자식 노드로 추가
+// 🌷 요소 노드를 DOM에 추가
+// 📌 복수의 노드 생성과 추가
+// 📌 노드 삽입
+// 🌷 마지막 노드로 추가
+// 🌷 지정한 위치에 노드 삽입
+// 📌 노드 이동
+// 📌 노드 복사
+// 📌 노드 교체
+// 📌 노드 삭제
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

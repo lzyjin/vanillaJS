@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        .red {
+            color: red;
+        }
+        .blue {
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+
+    <!--
+    <ul id="fruits">
+        <li class="red 1">Apple</li>
+        <li class="red 2">Banana</li>
+        <li class="red 3">Orange</li>
+    </ul>
+    <script>
+        // class 값이 'red'인 요소 노드를 모두 탐색하여 HTMLCollection 객체에 담아 반환한다.
+        const $elems = document.getElementsByClassName('red');
+
+        // 이 시점에 HTMLCollection 객체에는 3개의 요소 노드가 담겨 있다.
+        // console.log($elems); // HTMLCollection(3) [li.red, li.red, li.red]
+
+        // HTMLCollection 객체의 모든 요소의 class 값을 'blue'로 변경하였다.
+        for (let i = 0; i < $elems.length; i++) {
+            $elems[i].className = 'blue';
+            console.log($elems);
+            // HTMLCollection(2) [li.red.2, li.red.3]
+            // HTMLCollection [li.red.2]
+        }
+
+        // HTMLCollection 객체의 요소가 3개에서 1개로 변경되었다.
+        // console.log($elems); // HTMLCollection [li.red]
+    </script>
+    -->
+
+    <!--
+        위 예제는 getElementsByClassName 메서드로 class 값이 'red'인 요소 노드를 모두 취득하고,
+        취득된 모든 요소 노드를 담고 있는 HTMLCollection 객체를 for문으로 순회하며
+        className 프로퍼티를 사용하여 모든 요소의 class 값을 'red'에서 'blue'로 변경한다.
+
+        따라서 위 예제가 에러 없이 실행되면 모든 li 요소의 class 값이 'blue'로 변경되어 모든 li 요소는 CSS에 의해 파란색으로 렌더링될 것이다.
+        하지만 위 예제를 실행해보면 예상대로 동작하지 않는다. 두 번째 li 요소만 class 값이 변경되지 않는다.
+    -->
+
+    <!--
+        $elems.length는 3이므로 for 문의 코드 블록은 3번 반복된다.
+
+        1. 첫 번째 반복 (i === 0)
+        $elems[0]은 첫 번째 li 요소다.
+        이 요소는 className 프로퍼티에 의해 class 값이 'red'에서 'blue'로 변경된다.
+        이때 첫 번째 li 요소는 class 값이 'red'에서 'blue'로 변경되었으므로
+        getElementsByClassName 메서드의 인자로 전달한 'red'와 더는 일치하지 않기 때문에 $elems에서 실시간으로 제거된다.
+        이처럼 HTMLCollection 객체는 실시간으로 노드 객체의 상태 변경을 반영하는 살아있는 DOM 컬렉션 객체다.
+
+        2. 두 번째 반복 (i === 1)
+        첫 번째 반복에서 첫 번째 li 요소는 $elems에서 제거되었다.
+        따라서 $elems[1]은 세 번째 li 요소다.
+        이 세 번째 li 요소의 class 값도 'blue'로 변경되고, 마찬가지로  HTMLCollection 객체인 $elems에서 실시간으로 제외된다.
+
+        3. 세 번째 반복 (i === 2)
+        첫 번째, 두 번째 반복에서 첫 번째, 세 번째 li 요소가 $elems에서 제거되었다.
+        따라서 $elems에는 두 번째 li 요소 노드만 남았다.
+        이때 $elems.length는 1이므로 for 문의 조건식 i < $elems.length 가 false로 평가되어 반복이 종료된다.
+        따라서 $elems에 남아 있는 두 번째 li 요소의 class 값은 변경되지 않는다.
+    -->
+
+    <!--
+        이처럼 HTMLCollection 객체는 실시간으로 노드 객체의 상태 변경을 반영하여 요소를 제거할 수 있기 때문에
+        HTMLCollection 객체를 for 문으로 순회함녀서 노드 객체의 상태를 변경해야 할 때 주의해야 한다.
+        이 문제는 for 문을 역방향으로 순뢰하는 방법으로 회피할 수 있다.
+    -->
+    <!--
+    <ul id="fruits">
+        <li class="red 1">Apple</li>
+        <li class="red 2">Banana</li>
+        <li class="red 3">Orange</li>
+    </ul>
+    <script>
+        const $elems = document.getElementsByClassName('red');
+
+        // console.log($elems); // HTMLCollection(3) [li.red.1, li.red.2, li.red.3]
+
+        // for 문을 역방향으로 순회
+        for (let i = $elems.length - 1; i >= 0; i--) {
+            $elems[i].className = 'blue';
+            console.log($elems);
+            // HTMLCollection(2) [li.red.1, li.red.2]
+            // HTMLCollection [li.red.1]
+            // HTMLCollection []
+        }
+    </script>
+    -->
+
+
+    <!--
+        또는 while 문을 사용하여 HTMLCollection 객체에 노드 객체가 남아 있지 않을 때까지 무한 반복하는 방법으로 회피할 수도 있다.
+    -->
+    <!--
+    <ul id="fruits">
+        <li class="red 1">Apple</li>
+        <li class="red 2">Banana</li>
+        <li class="red 3">Orange</li>
+    </ul>
+    <script>
+        const $elems = document.getElementsByClassName('red');
+
+        // console.log($elems); // HTMLCollection(3) [li.red.1, li.red.2, li.red.3]
+
+        // while 문으로 HTMLCollection에 요소가 남아 있지 않을 때까지 무한 반복
+        let i = 0;
+        while ($elems.length > i) {
+            $elems[i].className = 'blue';
+            console.log($elems);
+            // HTMLCollection(2) [li.red.2, li.red.3]
+            // HTMLCollection [li.red.3]
+            // HTMLCollection []
+        }
+    </script>
+    -->
+
+    <!--
+        ❕ 더 간단한 해결책은 부작용을 발생시키는 HTMLCollection 객체를 사용하지 않는 것이다.
+        유사 배열 객체이면서 이터러블인 HTMLCollection 객체를 배열로 변환하면 부작용을 발생시키는 HTMLCollection 객체를 사용할 필요가 없고
+        유용한 배열의 고차 함수(forEach, map, filter, reduce 등)을 사용할 수 있다.
+    -->
+    <ul id="fruits">
+        <li class="red 1">Apple</li>
+        <li class="red 2">Banana</li>
+        <li class="red 3">Orange</li>
+    </ul>
+    <script>
+        const $elems = document.getElementsByClassName('red');
+
+        // console.log($elems); // HTMLCollection(3) [li.red.1, li.red.2, li.red.3]
+
+        // 유사 배열 객체이면서 이터러블인 HTMLCollection 객체를 배열로 변환하여 순회
+        [...$elems].forEach(v => v.className = 'blue');
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
