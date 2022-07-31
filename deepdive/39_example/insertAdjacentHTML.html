@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <!-- beforebegin -->
+    <div id="foo">
+        <!-- afterbegin -->
+        text
+        <!-- beforeend -->
+    </div>
+    <!-- afterend -->
+
+    <script>
+        const $foo = document.getElementById('foo');
+
+        $foo.insertAdjacentHTML('beforebegin', '<p style="color: red;">beforebegin</p>');
+        $foo.insertAdjacentHTML('afterbegin', '<p style="color: red;">afterbegin</p>');
+        $foo.insertAdjacentHTML('beforeend', '<p style="color: red;">beforeend</p>');
+        $foo.insertAdjacentHTML('afterend', '<p style="color: red;">afterend</p>');
+    </script>
+</body>
+</html>

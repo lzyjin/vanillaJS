@@ -554,22 +554,336 @@
 
 
 // 👉 DOM 조작
+// DOM 조작(DOM manipulation)은 새로운 노드를 생성하여 DOM에 추가하거나, 기존 노드를 삭제 또는 교체하는 것을 말한다.
+// DOM 조작에 의해 DOM에 새로운 노드가 추가되거나 삭제되면 리플로우와 리페인트가 발생하는 원인이 되므로 성능에 영향을 준다.
+// 따라서 복잡한 콘텐츠를 다루는 DOM 조작은 성능 최적화를 위해 주의해서 다루어야 한다.
+
 // 📌 innerHTML
+// Element.prototype.innerHTML 프로퍼티는 setter와 getter 모두 존재하는 접근자 프로퍼티로서 요소 노드의 HTML 마크업을 취득하거나 변경한다.
+// 요소 노드의 innerHTML 프로퍼티를 참조하면 요소 노드의 콘텐츠 영역 (시작 태그와 종료 태그 사이) 내에 포함된 모든 HTML 마크업을 문자열로 반환한다.
+
+// 앞서 살펴본 textContent 프로퍼티를 참조하면 HTML 마크업은 무시하고 텍스트만 반환하지만
+// innerHTML 프로퍼티는 HTML 마크업이 포함된 문자열을 그대로 반환한다.
+
+// 요소 노드의 innerHTML 프로퍼티에 문자열을 할당하면 요소 노드의 모든 자식 노드가 제거되고,
+// 할당한 문자열에 포함되어 있는 HTML 마크업이 파싱되어 요소 노드의 자식 노드로 DOM에 반영된다.
+
+// 예제는 39_example/innerHTML.html 참고
+
+// 이처럼 innerHTML 프로퍼티를 사용하면 HTML 마크업 문자열로 간단히 DOM 조작이 가능하다.
+
+// 예제는 39_example/innerHTML.html 참고
+
+// ❕ 요소 노드의 innerHTML 프로퍼티에 할당한 HTML 마크업 문자열은 렌더링 엔진에 의해 파싱되어 요소 노드의 자식으로 DOM에 반영된다.
+// 이때 사용자로부터 입력받은 데이터를 그대로 innerHTML 프로퍼티에 할당하는 것은
+// 크로스 사이트 스크립팅 공격(XSS: Cross-Site Scripting Attacks)에 취약하므로 위험하다.
+// HTML 마크업 내에 자바스크립트 악성 코드가 포함되어 있다면 피싱 과정에서 그대로 실행될 가능성이 있기 때문이다.
+
+// innerHTML 프로퍼티로 스크립트 태그를 삽입하여 자바스크립트가 실행되도록 하는 예제를 살펴보자.
+
+// 예제는 39_example/innerHTML.html 참고
+
+// 이처럼 innerHTML 프로퍼티를 사용한 DOM 조작은 구현이 간단하고 직관적이라는 장점이 있지만, 크로스 사이트 스크립팅 공격에 취약한 단점도 있다.
+
+// * HTML 새니티제이션(HTML Sanitization)
+// HTML 새니티제이션은 사용자로부터 입력받은 데이터에 의해 발생할 수 있는 크로스 사이트 스크립팅 공격을 예방하기 위해 잠재적 위험을 제거하는 기능을 말한다.
+// 새니티제이션 함수를 직접 구현할 수도 있겠지만, DOMPurify 라이브러리를 사용하는 것을 권장한다.
+// DOMPurify는 다음과 같이 잠재적 위험을 내포한 HTML 마크업을 새니티제이션(살균)하여 잠재적 위험을 제거한다.
+// DOMPurify.sanitize('<img src="x" onerror="alert(document.cookie)">'); // <img src="x">
+
+// innerHTML 프로퍼티의 또 다른 단점은 요소 노드의 innerHTML 프로퍼티에 HTML 마크업 문자열을 할당하는 경우
+// 요소 노드의 모든 자식 노드를 제거하고 할당한 HTML 마크업 문자열을 파싱하여 DOM을 변경한다는 것이다.
+
+// 예제는 39_example/innerHTML.html 참고
+
+/*
+위 예제는 #fruits 요소에 자식 요소 li.banana를 추가한다.
+이때 #fruits 요소의 자식 요소 li.apple은 아무런 변경이 없으므로 다시 생성할 필요가 없다.
+다만 새롭게 추가할 li.banana 요소 노드만 생성하여 #fruits 요소의 자식 요소로 추가하면 된다.
+위 예제는 얼핏 보면 그렇게 동작할 것처럼 보이지만,
+❕ 사실은 #fruits 요소의 모든 자식 노드(li.apple)를 제거하고 새롭게 요소 노드 li.apple과 li.banana를 생성하여 #fruits 요소의 자식 요소로 추가한다.
+
+❕ 이처럼 innerHTML 프로퍼티에 HTML 마크업 문자열을 할당하면 유지되어도 좋은 기존의 자식 노드까지 모두 제거하고
+다시 처음부터 새롭게 자식 노드를 생성하여 DOM에 반영한다.
+
+innerHTML 프로퍼티의 단점은 이뿐만이 아니다.
+❕ innerHTML 프로퍼티는 새로운 요소를 삽입할 때 삽입될 위치를 지정할 수 없다는 단점도 있다.
+
+❕ 이처럼 innerHTML 프로퍼티는 복잡하지 않은 요소를 새롭게 추가할 때 유용하지만
+기존 요소를 제거하지 않으면서 위치를 지정해 새로운 요소를 삽입해야 할 때는 사용하지 않는 것이 좋다.
+*/
+
+
 // 📌 insertAdjacentHTML 메서드
+// Element.prototype.insertAdjacentHTML(position, DOMString) 메서드는 기존 요소를 제거하지 않으면서 위치를 지정해 새로운 요소를 삽입한다.
+// insertAdjacentHTML 메서드는 두 번째 인수로 전달한 HTML 마크업 문자열(DOMString)을 파싱하고 그 결과로 생성된 노드를
+// 첫 번째 인수로 전달한 위치(position)에 삽입하여 DOM에 반영한다.
+// 첫 번째 인수로 전달할 수 있는 문자열은 'beforebegin', 'afterbegin', 'beforeend', 'afterend'의 4가지다.
+
+// beforebegin       afterbegin    beforeend     afterend
+//     ●  <div id="foo">  ●   text      ●     </div>  ●
+
+// 예제는 39_example/insertAdjacentHTML.html 참고
+
+// insertAdjacentHTML 메서드는 기존 요소에는 영향을 주지 않고 새롭게 삽입될 요소만을 파싱하여 자식 요소로 추가하므로,
+// 기존의 자식 노드를 모두 제거하고 다시 처음부터 새롭게 자식 노드를 생성하여 자식 요소로 추가하는 innerHTML 프로퍼티보다 효율적이고 빠르다.
+// 단, innerHTML 프로퍼티와 마찬가지로
+// insertAdjacentHTML 메서드는 HTML 마크업 문자열을 파싱하므로 크로스 사이트 스크립팅 공격에 취약하다는 점은 동일하다.
+
+
 // 📌 노드 생성과 추가
+// 지금까지 살펴본 innerHTML 프로퍼티와 insertAdjacentHTML 메서드는 HTML 마크업 문자열을 파싱하여 노드를 생성하고 DOM에 반영한다.
+// DOM은 노드를 직접 생성/상빙/삭제.치환하는 메서드도 제공한다.
+
+/*
+    <ul id="fruits">
+        <li>apple</li>
+    </ul>
+
+    <script>
+        const $fruits = document.getElementById('fruits');
+
+        // 1. 요소 노드 생성
+        const $li = document.createElement('li');
+
+        // 2. 텍스트 노드 생성
+        const textNode = document.createTextNode('Banana');
+
+        // 3. 텍스트 노드를 $li 요소 노드의 자식 노드로 추가
+        $li.appendChild(textNode);
+
+        // 4. $li 요소 노드를 #fruits 요소 노드의 마지막 자식 노드로 추가
+        $fruits.appendChild($li);
+    </script>
+*/
+
+// 위 예제는 새로운 요소 노드를 생성하고, 텍스트 노드를 생성하여, 요소 노드의 자식 노드로 추가한 다음, 요소 노드를 DOM에 추가한다.
+// 이 과정에 대해 살펴보자.
+
+// 🌷 요소 노드 생성
+// Document.prototype.createElement(tagName) 메서드는 요소 노드를 생성하여 반환한다.
+// createElement 메서드의 매개변수 tagName에는 태그 이름을 나타내는 문자열을 인수로 전달한다.
+
+// const $li = document.createElement('li');
+
+//    |
+//    ul
+//    |
+//    li            li
+//    |
+//  "Apple"
+
+// 위 그림처럼 createElement 메서드로 생성한 요소 노드는 기존 DOM에 추가되지 않고 홀로 존재하는 상태다.
+// 즉, createElement 메서드는 요소 노드를 생성할 뿐 DOM에 추가하지는 않는다.
+// 따라서 이후에 생성된 요소 노드를 DOM에 추가하는 처리가 별도로 필요하다.
+
+// 그리고 createElement 메서드로 생성한 요소 노드는 아무런 자식 노드를 가지고 있지 않다.
+// 따라서 요소 노드의 자식 노드인 텍스트 노드도 없는 상태다.
+
+// 예제는 39_example/appendNode.html 참고
+
+
 // 🌷 텍스트 노드 생성
+// Document.prototype.createTextNode(text) 메서드는 텍스트 노드를 생성하여 반환한다.
+// createTextNode 메서드의 매개변수 text에는 텍스트 노드의 값으로 사용할 문자열을 인수로 전달한다.
+
+// const textNode = document.createTextNode('Banana');
+
+//    |
+//    ul
+//    |
+//    li            li
+//    |
+//  "Apple"      "Banana"
+
+// 텍스트 노드는 요소 노드의 자식 노드다.
+// 하지만 createTextNode 메서드로 생성한 텍스트 노드는 요소 노드의 자식 노드로 추가되지 않고 홀로 존재하는 상태다.
+// 즉, createElement 메서드와 마찬가지로 createTextNode 메서드도 텍스트 노드를 생성할 뿐, 요소 노드에 추가하지는 않는다.
+// 따라서 이후에 생성된 텍스트 노드를 요소 노드에 추가하는 처리가 별도로 필요하다.
+
+// 예제는 39_example/appendNode.html 참고
+
+
 // 🌷 텍스트 노드를 요소 노드의 자식 노드로 추가
+// Node.prototype.appendChild(childNode) 메서드는 매개변수 childNode에게 인수로 전달한 노드를 appendChild 메서드를 호출한 마지막 자식 노드로 추가한다.
+// appendChild 메서드의 인수로 createTextNode 메서드로 생성한 텍스트 노드를 전달하면
+// appendChild 메서드를 호출한 노드의 마지막 자식 노드로 텍스트 노드가 추가된다.
+
+// $li.appendChild(textNode);
+
+//    |
+//    ul
+//    |
+//    li            li
+//    |             |
+//  "Apple"      "Banana"
+
+// 위 그림처럼 appendChild 메서드를 통해 요소 노드와 텍스트 노드는 부자 관계로 연결되었지만 아직 기존 DOM에 추가되지는 않은 상태다.
+// 위 예제처럼 요소 노드에 자식 노드가 하나도 없는 경우에는 텍스트 노드를 생성하여 요소 노드의 자식 노드로 텍스트 노드를 추가하는 것보다
+// textContent 프로퍼티를 사용하는 편이 더욱 간편하다.
+
+// 단, 요소 노드에 자식 노드가 있는 경우 요소 노드의 textContent 프로퍼티에 문자열을 할당하면
+// 요소 노드의 모든 자식 노드가 제거되고 할당한 문자열이 텍스트로 추가되므로 주의해야 한다.
+
+// 예제는 39_example/appendNode.html 참고
+
+
 // 🌷 요소 노드를 DOM에 추가
+// Node.prototype.appendChild 메서드를 사용하여 텍스트 노드와 부자 관계로 연결한 요소 노드를 #fruits 요소 노드의 마지막 자식 요소로 추가한다.
+
+// $fruits.appendChild($li);
+
+// 이 과정에서 비로소 새롭게 생성한 요소 노드가 DOM에 추가된다.
+// 기존의
+
+
 // 📌 복수의 노드 생성과 추가
+// 이번에는 여러 개의 요소 노드를 생성하여 DOM에 추가해 보자.
+
+// 예제는 39_example/appendNode.html 참고
+
+/*
+위 예제는 3개의 요소 노드를 생성하여 DOM에 3번 추가하므로 DOM이 3번 변경된다.
+이때 리플로우와 리페인트가 3번 실행된다.
+DOM을 변경하는 것은 높은 비용이 드는 처리이므로 가급적 횟수를 줄이는 편이 성능에 유리하다.
+따라서 위 예제와 같이 기존 DOM에 요소 노드를 반복적으로 추가하는 것은 비효율적이다.
+ */
+
+// 이처럼 DOM을 여러 번 변경하는 문제를 회피하기 위해 컨테이너 요소를 사용해 보자.
+// 컨테이너 요소를 미리 생성한 다음, DOM에 추가해야 할 3개의 요소 노드를 컨테이너 요소에 자식 노드로 추가하고,
+// 컨테이너 요소를 #fruits 요소에 자식으로 추가한다면 DOM은 한 번만 변경된다.
+
+// 예제는 39_example/appendNode.html 참고
+
+/*
+<ul id="fruits">
+    <div>
+        <li>Apple</li>
+        <li>Banana</li>
+        <li>Orange</li>
+    </div>
+</ul>
+*/
+
+// ❕ 위 예제는 DOM을 한 번만 변경하므로 성능에 유리하기는 하지만 다음과 같이 불필요한 컨테이너 요소(div)가 DOM에 추가되는 부작용이 있다.
+// 이는 바람직하지 않다.
+
+// ❕ 이러한 문제는 DocumentFragment 노드를 통해 해결할 수 있다.
+//  DocumentFragment 노드는 문서, 요소, 어트리뷰트, 텍스트 노드와 같은 노드 객체의 일종으로, 부모 노드가 없어서 기존 DOM과는 별도로 존재한다는 특징이 있다.
+//  DocumentFragment 노드는 위 예제의 컨테이너 요소와 같이 자식 노드들의 부모 노드로서 별도의 서브 DOM을 구성하여 기존 DOM에 추가하기 위한 용도로 사용한다.
+
+//  DocumentFragment 노드는 기존 DOM과는 별도로 존재하므로 DocumentFragment 노드에 자식 노드를 추가하여도 기존 DOM에는 어떠한 변경도 발생하지 않는다.
+//  또한 DocumentFragment 노드를 DOM에 추가하면 자신은 제거되고 자신의 자식 노드만 DOM에 추가된다.
+
+//  Document.prototype.createDocumentFragment 메서드는 비어 있는 DocumentFragment 노드를 생성하여 반환한다.
+
+// 예제는 39_example/appendNode.html 참고
+
+// 먼저 DocumentFragment 노드를 생성하고 DOM에 추가할 요소 노드를 생성하여 DocumentFragment 노드를 기존 DOM에 추가한다.
+// 이때 실제로 DOM 변경이 발생하는 것은 한 번뿐이며 리플로우와 리페인트도 한 번만 실행된다.
+// 따라서 여러 개의 요소 노드를 DOM에 추가하는 경우 DocumentFragment 노드를 사용하는 것이 더 효율적이다.
+
+
 // 📌 노드 삽입
 // 🌷 마지막 노드로 추가
+// Node.prototype.appendChild 메서드는 인수로 전달받은 노드를 자신을 호출한 노드의 마지막 자식 노드로 DOM에 추가한다.
+// 이때 노드를 추가할 위치를 지정할 수 없고 언제나 마지막 자식 노드로 추가한다.
+
 // 🌷 지정한 위치에 노드 삽입
+// Node.prototype.insertBefore(newNode, childNode) 메서드는
+// 첫 번째 인수로 전달받은 노드를 두 번째 인수로 전달받은 노드 앞에 삽입한다.
+
+// ❕ 두 번째 인수로 전달받은 노드는 반드시 insertBefore 메서드를 호출한 노드의 자식 노드이어야 한다.
+// 그렇지 않으면 DOMException 에러가 발생한다.
+
+// ❕ 두 번째 인수로 전달받은 노드가 null이면 첫 번째 인수로 전달받은 노드를 insertBefore 메서드를 호출한 노드의 마지막 자식 노드로 추가된다.
+// 즉, appendChild 메서드처럼 동작한다.
+
+// 예제는 39_example/insertNode.html 참고
+
 // 📌 노드 이동
+// DOM에 이미 존재하는 노드를 appendChild 또는 insertBefore 메서드를 사용하여 DOM에 다시 추가하면 현재 위치에서 노드를 제거하고 새로운 위치에 노드를 추가한다.
+// 즉, 노드가 이동한다.
+
+// 예제는 39_example/insertNode.html 참고
+
+
 // 📌 노드 복사
+// Node.prototype.cloneNode([deep: true | false]) 메서드는 노드의 사본을 생성하여 반환한다.
+// 매개변수 deep에 true를 인수로 전달하면 노드를 깊은 복사하여 모든 자손 노드가 포함된 사본을 생성하고,
+// false를 인수로 전달하거나 생략하면 노드를 얕은 복사하여 노드 자신만의 사본을 생성한다.
+// 얕은 복사로 생성된 요소 노드는 자손 노드를 복사하지 않으므로 텍스트 노드도 없다.
+
+// 예제는 39_example/insertNode.html 참고
+
+
 // 📌 노드 교체
+// Node.prototype.replaceChild(newChild, oldChild) 메서드는 자신을 호출한 노드의 자식 노드를 다른 노드로 교체한다.
+// 첫 번째 매개변수 newChild에는 교체할 새로운 노드를 인수로 전달하고, 두 번째 매개변수 oldChild에는 이미 존재하는 교체될 노드를 인수로 전달한다.
+// oldChild 매개변수에 인수로 전달한 노드는 replaceChild 메서드를 호출한 노드의 자식 노드이어야 한다.
+
+// 즉, replaceChild 메서드는 자신을 호출한 노드의 자식 노드인 oldChild 노드를 newChild 노드로 교체한다.
+// 이때 oldChild 노드는 DOM에서 제거된다.
+
+// 예제는 39_example/insertNode.html 참고
+
+
 // 📌 노드 삭제
+// Node.prototype.removeChild(child) 메서드는 child 매개변수에 인수로 전달한 노드를 DOM에서 삭제한다.
+// 인수로 전달한 노드는 removeChild 메서드를 호출한 노드의 자식 노드이어야 한다.
 
 
+// 👉 어트리뷰트
+// 📌 어트리뷰트 노드와 attributes 프로퍼티
+// HTML 문서의 구성 요소인 HTML 요소는 여러 개의 어트리뷰트(attribute(속성))을 가질 수 있다.
+// HTML 요소의 동작을 제어하기 위한 추가적인 정보를 제공하는 HTML 어트리뷰트는 HTML 요소의 시작 태그에 어트리뷰트이름="어트리뷰트값" 형식으로 정의한다.
+
+// <input id="user" type="text" value="ungmo2">
+
+// 글로벌 어트리뷰트(id, class, style, title, lang, tabindex, draggable, hidden 등)와
+// 이벤트 핸들러 어트리뷰트(onclick, onchange, onfocus, onblur, oninput, onkeypress,
+// onkeydown, onkeyup, onmouseover, onsubmit, onload 등)는 모든 HTML 요소에서 공통적으로 사용할 수 있지만
+// 특정 HTML 요소에만 한정적으로 사용 가능한 어트리뷰트도 있다.
+
+// HTML 문서가 파싱될 때 HTML 요소의 어트리뷰트(이하 HTML 어트리뷰트)는 어트리뷰트 노드로 변환되어 요소 노드와 연결된다.
+// 이때 HTML 어트리뷰트당 하나의 어츠리뷰트 노드가 생성된다.
+// 즉, 위 input 요소는 3개의 어트리뷰트가 있으므로 3개의 어트리뷰트 노드가 생성된다.
+
+// 이때 모든 어트리뷰트 노드의 참조는 유사 배열 객체이자 이터러블인 NamedNodeMap 객체에 담겨서 요소 노드의 attribueds 프로퍼티에 저장된다.
+
+// 따라서 요소 노드의 모든 어트리뷰트 노드는 요소 노드의 Element.prototype.attributes 프로퍼티로 취득할 수 있다.
+// attributes 프로퍼티는 getter만 존재하는 읽기 전용 접근자 프로퍼티이며, 요소 노드의 모든 어트리뷰트의 노드의 참조가 담긴 NamedNodeMap 객체를 반환한다.
+
+// 예제는 39_example/attribute.html 참고
+
+
+// 📌 HTML 어트리뷰트 조작
+// 앞에서 살펴본 바와 같이 요소 노드의 attributes 프로퍼티는 getter만 존재하는 읽기 전용 접근자 프로퍼티이므로
+// HTML 어트리뷰트 값을 취득할 수 있지만 변경할 수는 없다.
+// 또한 attributes.id.value와 같이 attributes 프로퍼티를 통해야만 HTML 어트리뷰트 값을 취득할 수 있기 때문에 불편하다.
+
+// Element.prototype.getAttribute/setAttribute 메서드를 사용하면 attributes 프로퍼티를 통하지 않고
+// 요소 노드에서 메서드를 통해 직접 HTML 어트리뷰트 값을 취득하거나 변경할 수 있어서 편리하다.
+
+// HTML 어트리뷰트 값을 참조하려면 Element.prototype.getAttribute(attribuedName) 메서드를 사용하고,
+// HTML 어트리뷰트 값을 변경하려면 Element.prototype.setAttribute(attribuedName, attributeValue) 메서드를 사용한다.
+
+// ❕ 특정 HTML 어트리뷰트가 존재하는지 확인하려면 Element.prototype.hasAttribute(attributeName) 메서드를 사용하고,
+// 특정 HTML 어트리뷰트를 삭제하려면 Element.prototype.removeAttribute(attributeName) 메서드를 사용한다.
+
+
+// 📌 HTML 어트리뷰트 vs DOM 프로퍼티
+// 🌷 어트리뷰트 노드
+// 🌷 DOM 프로퍼티
+// 🌷 HTML 어트리뷰트와 DOM 프로퍼티의 대응 관계
+// 🌷 DOM 프로퍼티 값의 타입
+// 📌 data 어트리뷰트와 dataset 프로퍼티
+// 📌 인라인 스타일 조작
+// 📌 클래스 조작
+// 🌷 className
+// 🌷 classList
+// 📌 요소에 적용되어 있는 CSS 스타일 참조
+// 👉 DOM 표준
 
 
 

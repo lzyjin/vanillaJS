@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>노드 삽입</title>
+</head>
+<body>
+    <!-- 노드 삽입 - 마지막 노드로 추가 -->
+    <!--
+    <ul id="fruits">
+        <li>Apple</li>
+        <li>Banana</li>
+    </ul>
+    <script>
+        // 요소 노드 생성
+        const $li = document.createElement('li');
+
+        // 텍스트 노드를 $li 요소 노드의 마지막 자식 노드로 추가
+        $li.appendChild(document.createTextNode('Orange'));
+
+        // $li 요소 노드를 #fruits 요소 노드의 마지막 자식 노드로 추가
+        document.getElementById('fruits').appendChild($li);
+    </script>
+    -->
+    <!--
+    결과
+    - Apple
+    - Banana
+    - Orange
+    -->
+
+
+    <!-- 노드 삽입 - 지정한 위치에 노드 삽입 -->
+    <div>test</div>
+    <ul id="fruits">
+        <li>Apple</li>
+        <li>Banana</li>
+    </ul>
+    <script>
+        const $fruits = document.getElementById('fruits');
+
+        // 요소 노드 생성
+        const $li = document.createElement('li');
+
+        // 텍스트 노드를 $li 요소 노드의 마지막 자식 노드로 추가
+        $li.appendChild(document.createTextNode('Orange'));
+
+        // $li 요소 노드를 #fruits 요소 노드의 마지막 자식 요소 앞에 삽입
+        // $fruits.insertBefore($li, $fruits.lastElementChild);
+        // 결과
+        // - Apple
+        // - Orange
+        // - Banana
+
+        // 두 번째 인수로 전달받은 노드는 반드시 #fruits 요소 노드의 자식 노드이어야 한다.
+        // $fruits.insertBefore($li, document.querySelector('div'));
+        // DOMException: Failed to execute 'insertBefore' on 'Node': The node before which the new node is to be inserted is not a child of this node.
+
+        // 두 번째 인수로 전달받은 노드가 null이면 $li 요소를 #fruits 요소 노드의 마지막 자식 노드로 추가
+        $fruits.insertBefore($li, null);
+        // 결과
+        // - Apple
+        // - Banana
+        // - Orange
+    </script>
+
+    <!-- 노드 이동 -->
+    <ul id="animals">
+        <li>dog</li>
+        <li>cat</li>
+        <li>bird</li>
+    </ul>
+    <script>
+        const $animals = document.getElementById('animals');
+
+        // 이미 존재하는 요소 노드를 취득
+        const [$dog, $cat, ] = $animals.children; // 텍스트노드 포함 x
+
+        // 이미 존재하는 $dog 요소 노드를 $animals 요소 노드의 마지막 노드로 이동
+        $animals.appendChild($dog);
+        // 결과
+        // cat
+        // bird
+        // dog
+
+        // 이미 존재하는 $cat 요소 노드를 $animals 요소의 마지막 자식 노드 앞으로 이동
+        $animals.insertBefore($cat, $animals.lastElementChild);
+        // 결과
+        // bird
+        // cat
+        // dog
+    </script>
+
+
+    <!-- 노드 복사 -->
+    <ul id="colors">
+        <li>red</li>
+    </ul>
+    <script>
+        const $colors = document.getElementById('colors');
+        const $red = $fruits.firstElementChild;
+
+        // $red 요소를 얕은 복사하여 사본을 생성. 텍스트 노드가 없는 사본이 생성된다.
+        const $shallowClone = $red.cloneNode();
+        console.log($shallowClone); // <li>red</li>
+
+        // 사본 요소 노드에 텍스트 추가
+        $shallowClone.textContent = 'pink';
+
+        // 사본 요소 노드를 #colors 요소 노드의 마지막 노드를 추가
+        $colors.appendChild($shallowClone);
+
+        // 결과
+        // - red
+        // - pink
+
+        // #colors 요소를 깊은 복사하여 모든 자손 노드가 포함된 사본을 생성
+        const $deepClone = $colors.cloneNode(true);
+
+        // 사본 요소 노드를 #colors 요소 노드의 마지막 노드로 추가
+        $colors.appendChild($deepClone);
+        // - red
+        // - pink
+        //      - red
+        //      - pink
+    </script>
+
+
+    <!-- 노드 교체 -->
+    <ul id="vegetables">
+        <li>carrot</li>
+        <li>lettuce</li>
+    </ul>
+    <script>
+        const $vegetables = document.getElementById('vegetables');
+
+        // 기존 노드와 교체할 요소 노드를 생성
+        const $newChild = document.createElement('li');
+        $newChild.textContent = 'onion';
+
+        // #vegetables 요소 노드의 첫 번째 자식 요소 노드를 $newChild 요소 노드로 교체
+        $vegetables.replaceChild($newChild, $vegetables.firstElementChild);
+
+        // 결과
+        // - onion
+        // - lettuce
+    </script>
+
+
+    <!-- 노드 삭제 -->
+    <ul id="items">
+        <li>pencil</li>
+        <li>note</li>
+    </ul>
+    <script>
+        const $items = document.getElementById('items');
+
+        // #items 요소 노드의 마지막 요소를 DOM에서 삭제
+        $items.removeChild($items.lastElementChild);
+        // 결과
+        // - pencil
+    </script>
+</body>
+</html>
