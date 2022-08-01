@@ -873,17 +873,230 @@ DOM을 변경하는 것은 높은 비용이 드는 처리이므로 가급적 횟
 
 
 // 📌 HTML 어트리뷰트 vs DOM 프로퍼티
+// 요소 노드 객체에는 HTML 어트리뷰트에 대응하는 프로퍼티(이하 DOM 프로퍼티)가 존재한다.
+// 이 DOM 프로퍼티들은 HTML 어트리뷰트 값을 초기값으로 가지고 있다.
+
+// 예를 들어, <input id="user" type="text" value="ungmo2"> 요소가 파싱되어 생성된 요소 노드 객체에는
+// id, type, value 어트리뷰트에 대응하는 id, type, value 프로퍼티가 존재하며,
+// 이 DOM 프로퍼티들은 HTML 어트리뷰트 값을 초기값으로 가지고 있다.
+
+// -> 크롬 브라우저 개발자도구 요소(Elements) > 속성(Properties) 탭에서 확인 가능
+
+// DOM 프로퍼티는 setter와 getter 모두 존재하는 접근자 프로퍼티다.
+// 따라서 DOM 프로퍼티는 참조와 변경이 가능하다.
+
+// 예제는 39_example/attribute.html 참고
+
+// ❕ 이처럼 HTML 어트리뷰트는 다음과 같이 DOM에서 중복 관리되고 있는 것처럼 보인다.
+// 1. 요소 노드의 attributes 프로퍼티에서 관리하는 어트리뷰트 노드
+// 2. HTML 어트리뷰트에 대응하는 요소 노드의 프로퍼티(DOM 프로퍼티)
+
+// HTML 어트리뷰트는 DOM에서 중복 관리되고 있을까? 그렇지 않다. 우선 HTML 어트리뷰트의 역할을 살펴보자.
+
+// ❕ HTML 어트리뷰트의 역할은 HTML 요소의 초기 상태를 지정하는 것이다.
+// 즉, HTML 어트리뷰트 값은 HTML 요소의 초기 상태를 의미하며 이는 변하지 않는다.
+
+// 예를 들어, <input id="user" type="text" value="ungmo2"> 요소의 value 어트리뷰트는 input 요소가 렌더링될 때 입력 필드에 표시할 초기값을 지정한다.
+// 즉, input 요소가 렌더링되면 입력 필드에 초기값으로 지정한 value 어트리뷰트 값 "ungmo2"가 표시된다.
+// 이때 input 요소의 value 어트리뷰트는 어트리뷰트 노드로 변환되어 요소 노드의 attributes 프로퍼티에 저장된다.
+// 이와는 별도로 value 어트리뷰트의 값은 요소 노드의 value 프로퍼티에 할당된다.
+// 따라서 input 요소의 요소 노드가 생성되어 첫 렌더링이 끝난 시점까지 어트리뷰트 노드의 어트리뷰트 값과 요소 노드의 value 프로퍼티에 할당된 값은
+// HTML 어트리뷰트 값과 동일하다.
+
+// 예제는 39_example/attribute.html 참고
+
+// 하지만 첫 렌더링 이후 사용자가 input 요소에 무언가를 입력하기 시작하면 상황이 달라진다.
+
+// 요소 노드는 상태(state)를 가지고 있다.
+// 예를 들어, input 요소 노드는 사용자가 입력 필드에 입력한 값을 상태로 가지고 있으며, checkbox 요소 노드는 사용자가 입력 필드에 입력한 체크 여부를 상태로 가지고 있다.
+// input 요소 노드나 checkbox 요소 노드가 가지고 있는 상태는 사용자의 입력에 의해 변화하는, 살아있는 것이다.
+
+// 사용자가 input 요소의 입력 필드에 'foo'라는 값을 입력한 경우를 생각해보자.
+// 이때 input 요소 노드는 사용자의 입력에 의해 변경된 최신 상태('foo')를 관리해야 하는 것은 물론, HTML 어트리뷰트로 지정한 초기 상태('ungmo2')도 관리해야 한다.
+// 초기 상태 값으 ㄹ관리하지 않으면 웹페이지를 처음 표시하거나 새로고침할 때 초기 상태를 표시할 수 없다.
+
+// ❕ 이처럼 요소 노드는 2개의 상태, 즉 초기 상태와 최신 상태를 관리해야 한다.
+// ❕ 요소 노드의 초기 상태는 어트리뷰트 노드가 관리하며, 요소 노드의 최신 상태는 DOM 프로퍼티가 관리한다.
+
 // 🌷 어트리뷰트 노드
+// HTML 어트리뷰트로 지정한 HTML 요소의 초기 상태는 어트리뷰트 노드에서 관리한다.
+// 어트리뷰트 노드에서 관리하는 어트리뷰트 값은 사용자의 입력에 의해 상태가 변경되어도 변하지 않고 HTML 어트리뷰트로 지정한 HTML 요소의 초기 상태를 그대로 유지한다.
+// 어트리뷰트 노드가 관리하는 초기 상태 값을 취득하거나 변경하렵면 getAttribute/setAttribute 메서드를 사용한다.
+// getAttribute 메서드로 취득한 값은 어트리뷰트 노드에서 관리하는 HTML 요소에 지정한 어트리뷰트 값, 즉 초기 상태 값이다.
+// HTML 요소에 지정한 어트리뷰트 값은 사용자의 입력에 의해 변하지 않으므로 결과는 언제나 동일하다.
+
+// 예제는 39_example/attribute.html 참고
+
 // 🌷 DOM 프로퍼티
+// 사용자가 입력한 최신 상태는 HTML 어트리뷰트에 대응하는 요소 노드의 DOM 프로퍼티가 관리한다.
+// DOM 프로퍼티는 사용자의 입력에 의한 상태 변화에 반응하여 언제나 최신 상태를 유지한다.
+
+// DOM 프로퍼티로 취득한 값은 HTML 요소의 최신 상태 값을 의미한다.
+// 이 최신 상태 값은 사용자의 입력에 의해 언제든지 동적으로 변경되어 최신 상태를 유지한다.
+// 이에 반해, getAttribute 메서드로 취득한 HTML 어트리뷰트 값, 즉 초기 상태 값은 변하지 않고 유지된다.
+
+// 예제는 39_example/attribute.html 참고
+
+// DOM 프로퍼티에 값을 할당하는 것은 HTML 요소의 최신 상태 값을 변경하는 것을 의미한다.
+// 즉, 사용자가 상태를 변경하는 행위와 같다.
+// 이때 HTML 요소에 지정한 어트리뷰트 값에는 어떠한 영향도 주지 않는다.
+
+// 예제 39-79 - 39_example/attribute.html
+
+// 이처럼 HTML 어트리뷰트는 HTML 요소의 초기 상태 값을 관리하고, DOM 프로퍼티는 사용자의 입력에 의해 변경되는 최신 상태를 관리한다.
+// 단, 모든 DOM 프로퍼티가 사용자의 입력에 의해 변경되어 최신 상태를 관리하는 것은 아니다.
+
+// 예를 들어, input 요소의 사용자 입력에 의한 상태 변화는 value 프로퍼티가 관리하고, checkbox 요소의 사용자 입력에 의한 상태 변화는 checked 프로퍼티가 관리한다.
+// 하지만 id 어트리뷰트에 대응하는 id 프로퍼티는 사용자의 입력과 아무런 관계가 없다.
+
+// 따라서 사용자 입력에 의한 상태 변화와 관계없는 id 어트리뷰트와 id 프로퍼티는 사용자 입력에 관계없이 항상 동일한 값을 유지한다.
+// ❕ 즉, id 어트리뷰트 값이 변하면 id 프로퍼티 값도 변하고 그 반대도 마찬가지다.
+
+// 예제 39-80 - 39_example/attribute.html
+
+// 이처럼 사용자 입력에 의한 상태 변화와 관계있는 DOM 프로퍼티만 최신 상태 값을 관리한다.
+// 그 외의 사용자 입력에 의한 상태 변화와 관계없는 어트리뷰트와 DOM 프로퍼티는 항상 동일한 값으로 연동한다.
+
 // 🌷 HTML 어트리뷰트와 DOM 프로퍼티의 대응 관계
+// 대부분의 HTML 어트리뷰트는 HTML 어트리뷰트 이름과 동일한 DOM 프로퍼티와 1:1로 대응한다.
+// 단, 다음과 같이 HTML 어트리뷰트와 DOM 프로퍼티가 언제나 1:1로 대응하는 것은 아니며, HTML 어트리뷰트 이름과 DOM 프로퍼티 키가 반드시 일치하는 것도 아니다.
+
+// - id 어트리뷰트와 id 프로퍼티는 1:1 대응하며, 동일한 값으로 연동한다.
+// - input 요소의 value 어트리뷰트는 value 프로퍼티와 1:1 대응한다. 하지만 value 어트리뷰트는 초기 상태를, value 프로퍼티는 최신 상태를 갖는다.
+// - class 어트리뷰트는 className, classList 프로퍼티와 대응한다.
+// - for 어트리뷰트는 htmlFor 프로퍼티와 1:1 대응한다.
+// - td 요소의 colspan 어트리뷰트는 대응하는 프로퍼티가 존재하지 않는다.
+// - textContent 프로퍼티는 대응하는 어트리뷰트가 존재하지 않는따.
+// - 어트리뷰트 이름은 대소문자를 구별하지 않지만, 대응하는 프로퍼티 키는 카멜 케이스를 다른다. (maxlength -> maxLength)
+
 // 🌷 DOM 프로퍼티 값의 타입
+// getAttribute 메서드로 취득한 어트리뷰트 값은 언제나 문자열이다.
+// 하지만 DOM 프로퍼티로 취득한 최신 상태 값은 문자열이 아닐 수도 있다.
+// 예를 들어, checkbox 요소의 checked 어트리뷰트 값은 문자열이지만, checked 프로퍼티 값은 불리언 타입이다.
+
+// data 어트리뷰트의 값은 HTMLElement.dataset 프로퍼티로 취득할 수 있다.
+// dataset 프로퍼티는 HTML 요소의 모든 data 어트리뷰트의 정보를 제공하는 DOMStringMap 객체를 반환한다.
+// DOMStringMap 객체는 data 어트리뷰트의 data- 접두사 다음에 붙인 임의의 이름을 카멜 케이스로 변환한 프로퍼티를 가지고 있다.
+// 이 프로퍼티로 data 어트리뷰트의 값을 취득하거나 변경할 수 있다.
+
+// 예제 39-81 - 39_example/attribute.html
+
+
 // 📌 data 어트리뷰트와 dataset 프로퍼티
+// data 어트리뷰트와 dataset 프로퍼티를 사용하면 HTML 요소에 정의한 사용자 정의 어트리뷰트와 자바스크립트 간에 데이터를 교환할 수 있다.
+// data 어트리뷰트는 data-user-id, data-role과 같이 data- 접두사 다음에 임의의 이름을 붙여 사용한다.
+
+// 예제 39-82 - 39_example/attribute.html
+
+
+// 👉 스타일
 // 📌 인라인 스타일 조작
+// HTMLElement.prototype.style 프로퍼티는 setter와 getter 모두 존재하는 접근자 프로퍼티로서
+// 요소 노드의 인라인 스타일(inline style)을 취득하거나 추가 또는 변경한다.
+
+// 예제 39-85 - 39_example/style.html
+
+// ❕ style 프로퍼티를 참조하면 CSSStyleDeclaration 타입의 객체를 반환한다.
+// CSSStyleDeclaration 객체는 다양한 CSS 프로퍼티에 대응하는 프로퍼티를 가지고 있으며,
+// 이 프로퍼티에 값을 할당하면 해당 CSS 프로퍼티가 인라인 스타일로 HTML 요소에 추가되거나 변경된다.
+
+// CSS 프로퍼티는 케밥 케이스(cebab-case)를 따른다.
+// 이에 대응하는 CSSStyleDeclaration 객체의 프로퍼티는 카멜 케이스를 따른다.
+// 예를 들어, CSS 프로퍼티 background-color에 대응하는 CSSStyleDeclaration 객체의 프로퍼티 backgroundColor다.
+
+// 케밥 케이스의 CSS 프로퍼티를 그대로 사용하려면 객체의 마침표 표기법 대신 대괄호 표기법을 사용한다.
+
+// 단위 지정이 필요한 CSS 프로퍼티의 값은 반드시 단위를 지정해야 한다.
+// 예를 들어, px, em, % 등의 크기 단위가 필요한 width 프로퍼티에 값을 할당할 때 단위를 생략하면 해당 CSS 프로퍼티는 적용되지 않는다.
+
+// 예제 39-85 - 39_example/style.html
+
+
 // 📌 클래스 조작
+// .으로 시작하는 클래스 선택자를 사용하여 CSS class를 미리 정의한 다음, HTML 요소의 class 어트리뷰트 값을 변경하여 HTML 요소의 스타일을 변경할 수도 있다.
+// 이때 HTML요소의 class 어트리뷰트를 조작하려면 class 어트리뷰트에 대응하는 요소 노드의 DOM 프로퍼티를 사용한다.
+
+// 단, class 어트리뷰트에 대응하는 DOM 프로퍼티는 class가 아니라 className과 classList다.
+// 자바스크립트에서 class는 예약어이기 때문이다.
+
 // 🌷 className
+// Element.prototype.className 프로퍼티는 setter와 getter 모두 존재하는 접근자 프로퍼티로서, HTML 요소의 class 어트리뷰트 값을 취득하거나 변경한다.
+
+// 요소 노드의 className 프로퍼티를 참조하면 class 어트리뷰트 값을 문자열로 반환하고,
+// 요소 노드의 className 프로퍼티에 문자열을 할당하면 class 어트리뷰트 값을 할당한 문자열로 변경한다.
+
+// 예제 39-89 - 39_example/style.html
+
+// className 프로퍼티는 문자열을 반환하므로 공백으로 구분된 여러 개의 클래스를 반환하는 경우 다루기가 불편하다.
+
+
 // 🌷 classList
+// Element.prototype.classList 프로퍼티는 class 어트리뷰트의 정보를 담은 DOMTokenList 객체를 반환한다.
+// classList가 반환하는 DOMTokenList 객체는 HTMLCollection과 NodeList와 같이
+// 노드 객체의 상태 변화를 실시간으로 반영하는 살아 있는(live) 객체다.
+
+// 예제 39-90 - 39_example/style.html
+
+// DOMTokenList 객체는 class 어트리뷰트의 정보를 나타내는 컬렉션 객체로서 유사 배열 객체이면서 이터러블이다.
+// DOMTokenList 객체는 다음과 같이 유용한 메서드들을 제공한다.
+
+// - add(...className), remove(...className), item(index), contains(className), replace(oldClassName, newClassName),
+// toggle(className[, force]), forEach(), entries(), keys(), values(), supports()
+
+// * add(...className)
+// add 메서드는 인수로 전달한 1개 이상의 문자열을 class 어트리뷰트 값으로 추가한다.
+
+// * remove(...className)
+// remove 메서드는 인수로 전달한 1개 이상의 문자열과 일치하는 클래스를 class 어트리뷰트에서 삭제한다.
+// 인수로 전달한 문자열과 일치하는 클래스가 class 어트리뷰트에 없으면 에러 없이 무시된다.
+
+// * item(index)
+// item 메서드는 인수로 전달한 index에 해당하는 클래스를 class 어트리뷰트에서 반환한다.
+// 예를 들어, index가 0이면 첫 번째 클래스를 반환하고, index가 1이면 두 번째 클래스를 반환한다.
+
+// * contains(className)
+// contains 메서드는 인수로 전달한 문자열과 일치하는 클래스가 class 어트리뷰트에 포함되어 있는지 확인한다.
+
+// * replace(oldClassName, newClassName)
+// replace 메서드는 class 어트리뷰트에서 첫 번째 인수로 전달한 문자열을 두 번째 인수로 전달한 문자열로 변경한다.
+
+// * toggle(className[, force])
+// toggle 메서드는 class 어트리뷰트에 인수로 전달한 문자열과 일치하는 클래스가 존재하면 제거하고, 존재하지 않으면 추가한다.
+// 두 번째 인수로 불리언 값으로 평가되는 조건식을 전달할 수 있다.
+// 이때 조건식의 평가 결과가 true이면 class 어트리뷰트에 강제로 첫 번째 인수로 전달받은 문자열을 추가하고,
+// false이면 class 어트리뷰트에서 강제로 첫 번째 인수로 전달받은 문자열을 제거한다.
+
+// 예제 39-91 ~ 39-97 - 39_example/style.html
+
+// 이 밖에도 DOMTokenList 객체는 forEach, entries, keys, values, supports 메서드를 제공한다.
+
+
 // 📌 요소에 적용되어 있는 CSS 스타일 참조
+// ❕ style 프로퍼티는 인라인 스타일만 반환한다.
+// 따라서 클래스를 적용한 스타일이나 상속을 통해 암묵적으로 적용된 스타일은 style 프로퍼티로 참조할 수 없다.
+// HTML 요소에 적용되어 있는 모든 CSS 스타일을 참조해야 할 경우 getComputedStyle 메서드를 사용한다.
+
+// window.getComputedStyle(element[, pseudo]) 메서드는
+// 첫 번째 인수(element)로 전달한 요소 노드에 적용되어 있는 평가된 스타일을 CSSStyleDeclaration 객체에 담아 반환한다.
+// 평가된 스타일(computed style)이란 요소 노드에 적용되어 있는 모든 스타일, 즉 링크 스타일, 임베딩 스타일, 인라인 스타일,
+// 자바스크립트에서 적용한 스타일, 상속된 스타일, 기본(user agent) 스타일 등 모든 스타일이 조합되어 최종적으로 적용된 스타일을 말한다.
+
+// 예제 39-98 - 39_example/style.html
+
+// getComputedStyle 메서드의 두 번째 인수(pseudo)로 ::after, ::before 와 같은 의사 요소를 지정하는 문자열을 전달할 수 있다.
+// 의사 요소가 아닌 일반 요소의 경우 두 번째 인수는 생략한다.
+
+// 예제 39-99 - 39_example/style.html
+
 // 👉 DOM 표준
+// HTML과 DOM 표준은 W3C(World Widw Web Consortium)과 WHATWG(Web Hypertext Application Technology Working Group)이라는
+// 두 단체가 나름대로 협력하면서 공통된 표준을 만들어 왔다.
+
+// 그런데 약 1년 전부터 두 단체가 서로 다른 결과물을 내놓기 시작했다.
+// 별개의 HTML과 DOM 표준을 만드는 것은 이롭지 않으므로
+// 2018년 4월부터 구글, 애플, 마이크로소프트, 모질라로 구성된 4개의 주류 브라우저 벤더사가 주도하는 WHATWG이 단일 표준을 내놓기로 두 단체가 합의했다.
+
+// DOM은 현재 다음과 같이 4개의 레벨(버전)이 있다.
 
 
 
