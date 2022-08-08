@@ -7,7 +7,7 @@
     p { line-height: 1.5; }
     table { border-collapse: collapse; }
     th, td { border: 1px solid #000; padding: 10px; }
-    h1 { margin-top: 100px; }
+    h1 { margin-top: 150px; }
     h2 { margin-top: 50px; }
     pre { background: #eee; padding: 10px; border-radius: 10px; }
   </style>
@@ -742,16 +742,425 @@
     });
   </pre>
 
+  <p>
+    기명 함수를 이벤트 핸들러로 등록할 수 없다면 호출된 함수, 즉 함수 자신을 가리키는 arguments.callee를 사용할 수도 있다.
+  </p>
+  <button id="btn10">Click me!</button>
+  <script>
+    const btn10 = document.getElementById('btn10');
+
+    btn10.addEventListener('click', function () {
+      console.log('button click');
+
+      // 이벤트 핸들러를 제거한다. 따라서 이벤트 핸들러는 단 한 번만 호출된다.
+      // arguments.callee는 호출된 함수, 즉 함수 자신을 가리킨다.
+      btn10.removeEventListener('click', arguments.callee);
+    });
+  </script>
+  <pre>
+    html:
+    &lt;button id="btn10"&gt;Click me!&lt;/button&gt;
+
+
+    script:
+    const btn10 = document.getElementById('btn10');
+
+    btn10.addEventListener('click', function () {
+      console.log('button click');
+
+      // 이벤트 핸들러를 제거한다. 따라서 이벤트 핸들러는 단 한 번만 호출된다.
+      // arguments.callee는 호출된 함수, 즉 함수 자신을 가리킨다.
+      btn10.removeEventListener('click', arguments.callee);
+    });
+  </pre>
+  <p>
+    ❗️ arguments.callee는 코드 최적화를 방해하므로 strict mode에서 사용이 금지된다.
+    따라서 가급적 이벤트 핸들러의 참조를 변수나 자료구조에 저장하여 제거하는 편이 좋다. <br><br>
+
+    이벤트 핸들러 프로퍼티 방식으로 등록한 이벤트 핸들러는 removeEventListener 메서드로 제거할 수 없다.
+    이벤트 핸들러 프로퍼티 방식으로 등록한 이벤트 핸들러를 제거하려면 이벤트 핸들러 프로퍼티에 null을 할당한다.
+  </p>
+  <button id="btn11">Click me!</button>
+  <script>
+    const btn11 = document.getElementById('btn11');
+
+    const funcClick = () => console.log('button click');
+
+    // 이벤트 핸들러 프로퍼티 방식으로 이벤트 핸들러를 등록
+    btn11.onclick = funcClick;
+
+    // removeEventListener 메서드로 이벤트 핸들러를 제거할 수 없다.
+    btn11.removeEventListener('onclick', funcClick);
+
+    // 이벤트 핸들러 프로퍼티에 null을 할당하여 이벤트 핸들러를 제거한다.
+    btn11.onclick = null;
+  </script>
+  <pre>
+    html:
+    &lt;button id="btn11"&gt;Click me!&lt;/button&gt;
+
+
+    script:
+    const btn11 = document.getElementById('btn11');
+
+    const funcClick = () => console.log('button click');
+
+    // 이벤트 핸들러 프로퍼티 방식으로 이벤트 핸들러를 등록
+    btn11.onclick = funcClick;
+
+    // removeEventListener 메서드로 이벤트 핸들러를 제거할 수 없다.
+    btn11.removeEventListener('onclick', funcClick);
+
+    // 이벤트 핸들러 프로퍼티에 null을 할당하여 이벤트 핸들러를 제거한다.
+    btn11.onclick = null;
+
+
+
+    결과:
+    아무것도 출력되지 않는다.
+  </pre>
+
+
 
   <h1>👉 이벤트 객체</h1>
+  <p>
+    이벤트가 발생하면 이벤트에 관련한 다양한 정보를 담고 있는 이벤트 객체가 동적으로 생성된다.
+    생성된 이벤트 객체는 이벤트 핸들러의 첫 번째 인수로 전달된다.
+  </p>
+  <p>아무데나 클릭하세요. 클릭한 곳의 좌표가 표시됩니다.</p>
+  <em class="message"></em>
+  <script>
+    const msg = document.querySelector('.message');
+
+    // 클릭 이벤트에 의해 생성된 이벤트 객체는 이벤트 핸들러의 첫 번째 인수로 전달된다.
+    function showCoords(e) {
+      msg.textContent = `clientX: ${e.clientX}, clientY: ${e.clientY}`;
+    }
+
+    document.onclick = showCoords;
+  </script>
+  <pre>
+    html:
+    &lt;em class="message"&gt;&lt;/em&gt;
+
+
+    script:
+    const msg = document.querySelector('.message');
+
+    // 클릭 이벤트에 의해 생성된 이벤트 객체는 이벤트 핸들러의 첫 번째 인수로 전달된다.
+    function showCoords(e) {
+      msg.textContent = `clientX: ${e.clientX}, clientY: ${e.clientY}`;
+    }
+
+    document.onclick = showCoords;
+  </pre>
+
+  <p>
+    클릭 이벤트에 의해 생성된 이벤트 객체는 이벤트 핸들러의 첫 번째 인수로 전달되어 매개변수 e에 암묵적으로 할당된다.
+    이는 브라우저가 이벤트 핸들러를 호출할 때 이벤트 객체를 인수로 전달하기 때문이다.
+    따라서 이벤트 객체를 전달받으려면 이벤트 핸들러를 정의할 때 이벤트 객체를 전달받을 매개변수를 명시적으로 선언해야 한다.
+    위 예제에서 e라는 이름으로 매개변수를 선언했으나 다른 이름을 사용하여도 상관없다. <br><br>
+
+    이벤트 핸들러 어트리뷰트 방식으로 이벤트 핸들러를 등록했다면 다음과 같이 event를 통해 이벤트 객체를 전달받을 수 있다.
+  </p>
+
+
+  <p>클릭하세요. 클릭한 곳이 좌표가 표시됩니다.</p>
+  <!-- 이벤트 핸들러 어트리뷰트 방식의 경우 event가 아닌 다른 이름으로는 이벤트 객체를 전달받지 못한다. -->
+  <em class="message2"></em>
+  <div style="height: 300px; border: 1px solid #000;" onclick="showCoords2(event)"></div>
+  <script>
+    const msg2 = document.querySelector('.message2');
+
+    // 클릭 이벤트에 의해 생성된 이벤트 객체는 이벤트 핸들러의 첫 번째 인수로 전달된다.
+    function showCoords2(e) {
+      msg2.textContent = `e.clientX: ${e.clientX}, e.clientY: ${e.clientY}`;
+    }
+  </script>
+  <pre>
+    html:
+    &lt;em class="message2"&gt;&lt;/em&gt;
+    &lt;div style="height: 300px; border: 1px solid #000;" onclick="showCoords2(event)"&gt;&lt;/div&gt;
+
+
+    script:
+    const msg2 = document.querySelector('.message2');
+
+    // 클릭 이벤트에 의해 생성된 이벤트 객체는 이벤트 핸들러의 첫 번째 인수로 전달된다.
+    function showCoords2(e) {
+      msg2.textContent = `e.clientX: ${e.clientX}, e.clientY: ${e.clientY}`;
+    }
+  </pre>
+
+  <p>
+    ❗️ 이벤트 핸들러 어트리뷰트 방식의 경우 이벤트 객체를 전달받으려면 이벤트 핸들러의 첫 번째 매개변수 이름이 반드시 event이어야 한다.
+    만약 event가 아닌 다른 이름으로 매개변수를 선언하면 이벤트 객체를 전달받지 못한다. 그 이유는 "이벤트 핸들러 어트리뷰트 방식"에서 살펴본 바와 같이
+    이벤트 핸들러 어트리뷰트 값은 사실 암묵적으로 생성되는 이벤트 핸들러의 함수 몸체를 의미하기 때문이다.
+    즉, onclick="showCoords(event)" 어트리뷰트는 파싱되어 다음과 같은 함수를 암묵적으로 생성하여 onclick 이벤트 핸들러 프로퍼티에 할당한다.
+  </p>
+  <pre>
+    function onclick(event) {
+      showCoords2(event);
+    }
+  </pre>
+  <p>
+    ❗️ 이때 암묵적으로 생성된 onclick 이벤트 핸들러의 첫 번째 매개변수의 이름이 event로 암묵적으로 명명되기 때문에 event가 아닌 다른 이름으로는 이벤트 객체를 전달받지 못한다.
+  </p>
+
   <h2>📌 이벤트 객체의 상속 구조</h2>
+  <p>
+    이벤트가 발생하면 이벤트 타입에 따라 다양한 이벤트 객체가 생성된다. 이벤트 객체는 다음과 같은 상속 구조를 갖는다.
+    <br><br>
+    위 그림의 Event, UIEventm MouseEvent 등 모두는 생성자 함수다. 따라서 다음과 같이 생성자 함수를 호출하여 이벤트 객체를 생성할 수 있다.
+  </p>
+  <script>
+    // Event 생성자 함수를 호출하여 foo 이벤트 타입의 Event 객체를 생성한다.
+    let e = new Event('foo');
+    console.log(e); // Event {isTrusted: false, type: 'foo', target: null, currentTarget: null, eventPhase: 0, …}
+    console.log(e.type); // foo
+    console.log(e instanceof Event); // true
+    console.log(e instanceof Object); // true
+
+    // FocusEvent 생성자 함수를 호출하여 focus 이벤트 타입의 FocusEvent 객체를 생성한다.
+    e = new FocusEvent('focus');
+    console.log(e); // FocusEvent {isTrusted: false, relatedTarget: null, view: null, detail: 0, sourceCapabilities: null, …}
+
+    // MouseEvent 생성자 함수를 호출하여 click 이벤트 타입의 MouseEvent 객체를 생성한다.
+    e = new MouseEvent('click');
+    console.log(e); // MouseEvent {isTrusted: false, screenX: 0, screenY: 0, clientX: 0, clientY: 0, …}
+
+    // KeyboardEvent 생성자 함수를 호출하여 keyup 이벤트 타입의 keyboardEvent 객체를 생성한다.
+    e = new KeyboardEvent('keyup');
+    console.log(e); // KeyboardEvent {isTrusted: false, key: '', code: '', location: 0, ctrlKey: false, …}
+
+    // InputEvent 생성자 함수를 호출하여 change 이벤트 타입의 InputEvent 객체를 생성한다.
+    e = new InputEvent('change');
+    console.log(e); // InputEvent {isTrusted: false, data: null, isComposing: false, inputType: '', dataTransfer: null, …}
+  </script>
+  <p>
+    이처럼 이벤트가 발생하면 암묵적으로 생성되는 이벤트 객체도 생성자 함수에 의해 생성된다.
+    그리고 생성된 이벤트 객체는 생성자 함수와 더불어 생성되는 프로토타입으로 구성된 프로토타입 체인의 일원이 된다.
+    예를 들어, click 이벤트가 발생하면 암묵적으로 생성되는 MouseEvent 타입의 이벤트 객체는 다음과 같은 프로토타입 체인의 일원이 된다.
+    <br><br>
+    이벤트 객체 중 일부는 사용자의 행위에 의해 결정된 것이고, 일부는 자바스크립트 코드에 의해 인위적으로 생성된 것이다.
+    예를 들어, MouseEvent 타입의 이벤트 객체는 사용자가 마우스를 클릭하거나 이동했을 때 생성되는 이벤트 객체이며,
+    CustomEvent 타입의 이벤트 객체는 자바스크립트 코드에 의해 인위적으로 생성한 이벤트 객체다.
+    <br><br>
+    Event 인터페이스는 DOM 내에서 발생한 이벤트에 의해 생성되는 이벤트 객체를 나타낸다.
+    Event 인터페이스에는 모든 이벤트 객체의 공통 프로퍼티가 정의되어 있고,
+    FocusEvent, MouseEvent, KeyboardEvent, WheelEvent 같은 하위 인터페이스에는 이벤트 타입에 따라 고유한 프로퍼티가 정의되어 있다.
+    즉, 다음 예제와 같이 이벤트 객체의 프로퍼티는 발생한 이벤트의 타입에 따라 달라진다.
+  </p>
+  <label for="input-text"></label><input type="text" name="" id="input-text">
+  <label for="input-check"></label><input type="checkbox" name="" id="input-check">
+  <button id="btn12">Click me!</button>
+  <script>
+    const inputText = document.getElementById('input-text');
+    const inputCheck = document.getElementById('input-check');
+    const btn12 = document.getElementById('btn12');
+
+    // load 이벤트가 발생하면 Event 타입의 이벤트 객체가 생성된다.
+    window.onload = console.log;
+    // Event {isTrusted: true, type: 'load', target: document, currentTarget: Window, eventPhase: 2, …}
+
+    // change 이벤트가 발생하면 Event 타입의 이벤트 객체가 생성된다.
+    inputCheck.onchange = console.log;
+    // Event {isTrusted: true, type: 'change', target: input#input-check, currentTarget: input#input-check, eventPhase: 2, …}
+
+    // focus 이벤트가 발생하면 FocusEvent 타입의 이벤트 객체가 생성된다.
+    inputText.onfocus = console.log;
+    // FocusEvent {isTrusted: true, relatedTarget: null, view: Window, detail: 0, sourceCapabilities: InputDeviceCapabilities, …}
+
+    // input 이벤트가 발생하면 InputEvent 타입의 이벤트 객체가 생성된다.
+    inputText.oninput = console.log;
+    // InputEvent {isTrusted: true, data: 'r', isComposing: false, inputType: 'insertText', dataTransfer: null, …}
+
+    // keyup 이벤트가 발생하면 KeyboardEvent 타입의 이벤트 객체가 생성된다.
+    inputText.onkeyup = console.log;
+    // KeyboardEvent {isTrusted: true, key: 'd', code: 'KeyD', location: 0, ctrlKey: false, …}
+
+    // click 이벤트가 발생하면 MouseEvent 타입의 이벤트가 객체가 생성된다.
+    btn12.onclick = console.log;
+    // PointerEvent {isTrusted: true, pointerId: 1, width: 1, height: 1, pressure: 0, …}
+    // Event <- UIEvent <- MouseEvent <- PointerEvent
+  </script>
+  <pre>
+    html:
+    &lt;label for="input-text"&gt;&lt;/label&gt;&lt;input type="text" name="" id="input-text"&gt;
+    &lt;label for="input-check"&gt;&lt;/label&gt;&lt;input type="checkbox" name="" id="input-check"&gt;
+    &lt;button id="btn12"&gt;Click me!&lt;/button&gt;
+
+
+    script:
+    const inputText = document.getElementById('input-text');
+    const inputCheck = document.getElementById('input-check');
+    const btn12 = document.getElementById('btn12');
+
+    // load 이벤트가 발생하면 Event 타입의 이벤트 객체가 생성된다.
+    window.onload = console.log;
+    // Event {isTrusted: true, type: 'load', target: document, currentTarget: Window, eventPhase: 2, …}
+
+    // change 이벤트가 발생하면 Event 타입의 이벤트 객체가 생성된다.
+    inputCheck.onchange = console.log;
+    // Event {isTrusted: true, type: 'change', target: input#input-check, currentTarget: input#input-check, eventPhase: 2, …}
+
+    // focus 이벤트가 발생하면 FocusEvent 타입의 이벤트 객체가 생성된다.
+    inputText.onfocus = console.log;
+    // FocusEvent {isTrusted: true, relatedTarget: null, view: Window, detail: 0, sourceCapabilities: InputDeviceCapabilities, …}
+
+    // input 이벤트가 발생하면 InputEvent 타입의 이벤트 객체가 생성된다.
+    inputText.oninput = console.log;
+    // InputEvent {isTrusted: true, data: 'r', isComposing: false, inputType: 'insertText', dataTransfer: null, …}
+
+    // keyup 이벤트가 발생하면 KeyboardEvent 타입의 이벤트 객체가 생성된다.
+    inputText.onkeyup = console.log;
+    // KeyboardEvent {isTrusted: true, key: 'd', code: 'KeyD', location: 0, ctrlKey: false, …}
+
+    // click 이벤트가 발생하면 MouseEvent 타입의 이벤트가 객체가 생성된다.
+    btn12.onclick = console.log;
+    // PointerEvent {isTrusted: true, pointerId: 1, width: 1, height: 1, pressure: 0, …}
+    // Event <- UIEvent <- MouseEvent <- PointerEvent
+  </pre>
+
+
   <h2>📌 이벤트 객체의 공통 프로퍼티</h2>
+  <p>
+    Event 인터페이스, 즉 Event.prototype에 정의되어 있는 이벤트 관련 프로퍼티는 UIEvent, CustomEvent, MouseEvent 등 모든 파생 이벤트 객체에 상속된다.
+    즉, Event 인터페이스의 이벤트 관련 프로퍼티는 모든 이벤트 객체가 상속받는 공통 프로퍼티다.
+    이벤트 객체의 공통 프로퍼티는 다음과 같다.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>공통 프로퍼티</th>
+        <th>설명</th>
+        <th>타입</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>type</td>
+        <td>이벤트 타입</td>
+        <td>string</td>
+      </tr>
+      <tr>
+        <td>target</td>
+        <td>이벤트를 발생시킨 DOM 요소</td>
+        <td>DOM 요소 노드</td>
+      </tr>
+      <tr>
+        <td>currentTarget</td>
+        <td>이벤트 핸들러가 바인딩된 DOM 요소</td>
+        <td>DOM 요소 노드</td>
+      </tr>
+      <tr>
+        <td>eventPhase</td>
+        <td>
+          이벤트 전파 단계 <br>
+          (0: 이벤트 없음, 1: 캡처링 단계, 2: 타깃 단계, 3: 버블링 단계)
+        </td>
+        <td>number</td>
+      </tr>
+      <tr>
+        <td>bubbles</td>
+        <td>
+          이벤트를 버블링으로 전파하는지 여부. <br>
+          다음 이벤트는 bubbles: false로 버블링하지 않는다. <br>
+          - 포커스 이벤트: focus/blur <br>
+          - 리소스 이벤트: load/unload/abort/error <br>
+          - 마우스 이벤트: mouseenter/mouseleaave
+        </td>
+        <td>boolean</td>
+      </tr>
+      <tr>
+        <td>cancelable</td>
+        <td>
+          preventDefault 메서드를 호출하여 이벤트의 기본 동작을 취소할 수 있는지 여부. <br>
+          다음 이벤트 cancelable: false로 취소할 수 없다. <br>
+          - 포커스 이벤트: focus/blur <br>
+          - 리소스 이벤트: load/unloadd/abort/error<br>
+          - 마우스 이벤트: dblclick/mouseenter/mouseleavee
+        </td>
+        <td>boolean</td>
+      </tr>
+      <tr>
+        <td>defaultPrevented</td>
+        <td>preventDefault 메서드를 호출하여 이벤트를 취소했는지 여부</td>
+        <td>boolean</td>
+      </tr>
+      <tr>
+        <td>isTrusted</td>
+        <td>
+          사용자의 행위에 의해 발생한 이벤트인지 여부. <br>
+          예를 들어, click 메서드 또는 dispatchEvent 메서드를 통해 인위적으로 발생시킨 이벤트인 경우 isTrusted는 false다.
+        </td>
+        <td>boolean</td>
+      </tr>
+      <tr>
+        <td>timeStamp</td>
+        <td>이벤트가 발생한 시각(1970/01/01/00:00:00부터 경과한 밀리초)</td>
+        <td>number</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>예를 들어, 체크박스 요소의 체크 상태가 변경되면 현재 체크 상태를 출력해보도록 하자.</p>
+  <input type="checkbox" name="" id="input-check2">
+  <em class="message3"></em>
+  <script>
+    const inputCheck2 = document.getElementById('input-check2');
+    const msg3 = document.querySelector('.message3');
+
+    // change 이벤트가 발생하면 Event 타입의 이벤트 객체가 생성된다.
+    inputCheck2.onchange = e => {
+      console.log(Object.getPrototypeOf(e) === Event.prototype); // true
+      //
+      console.log(e.target === e.currentTarget); // true
+
+      // e.target은 change 이벤트를 발생시킨 DOM 요소 inputCheck2를 가리키고,
+      // ❗️ e.target.checked는 체크박스 요소의 현재 체크 상태를 나타낸다.
+      msg3.textContent = e.target.checked ? 'on' : 'off';
+    };
+  </script>
+  <pre>
+    html:
+    &lt;input type="checkbox" name="" id="input-check2"&gt;
+    &lt;em class="message3"&gt;&lt;/em&gt;
+
+
+    script:
+    const inputCheck2 = document.getElementById('input-check2');
+    const msg3 = document.querySelector('.message3');
+
+    // change 이벤트가 발생하면 Event 타입의 이벤트 객체가 생성된다.
+    inputCheck2.onchange = e => {
+      console.log(Object.getPrototypeOf(e) === Event.prototype); // true
+
+      // e.target은 change 이벤트를 발생시킨 DOM 요소 inputCheck2를 가리키고,
+      // ❗️ e.target.checked는 체크박스 요소의 현재 체크 상태를 나타낸다.
+      msg3.textContent = e.target.checked ? 'on' : 'off';
+    };
+  </pre>
+  <p>
+    사용자의 입력에 의해 체크박스 요소의 체크 상태가 변경되면 checked 프로퍼티의 값이 변경되고 change 이벤트가 발생한다.
+    이때 Event 타입의 이벤트 객체가 생성된다. 이벤트 객체의 target 프로퍼티는 이벤트를 발생시킨 객체를 나타낸다.
+    따라서 target 프로퍼티가 가리키는 객체는 change 이벤트를 발생시킨 DOM 요소 inputCheck2이고, 이 객체의 checked 프로퍼티는 현재의 체크 상태를 나타낸다.
+    <br><br>
+    이벤트 객체의 currentTarget 프로퍼티는 이벤트 핸들러가 바인딩된 DOM 요소를 가리킨다.
+    위 예제의 경우 이벤트를 발생시킨 DOM 요소와 이벤트 핸들러가 바인딩된 DOM 요소는 모두 inputCheck2다.
+    따라서 이벤트 객체의 target 프로퍼티와 currentTarget 프로퍼티는 동일한 객체 inputCheck2를 가리킨다.
+    <br><br>
+    이처럼 일반적으로 이벤트 객체의 target 프로퍼티와 currentTarget 프로퍼티는 동일한 DOM 요소를 가리키지만, 나중에 살펴볼 이벤트 위임에서는 이벤트
+    객체의 target 프로퍼티와 currentTarget 프로퍼티가 서로 다른 DOM 요소를 가리킬 수 있다. 이에 대해서는 "이벤트 위임"에서 살펴보도록 하자.
+  </p>
+
+
   <h2>📌 마우스 정보 취득</h2>
   <h2>📌 키보드 정보 취득</h2>
   <h1>👉 이벤트 전파</h1>
   <h1>👉 이벤트 위임</h1>
   <h1>👉 DOM 요소의 기본 동작 조작</h1>
-  <h2>📌 DOM 요소의 기본 동작 중단</h2>
+  <h2>📌 DOM 요소의 기본 동작 중단</h2>5
   <h2>📌 이벤트 전파 방지</h2>
   <h1>👉 이벤트 핸들러 내부의 this</h1>
   <h2>📌 이벤트 핸들러 어트리뷰트 방식</h2>
