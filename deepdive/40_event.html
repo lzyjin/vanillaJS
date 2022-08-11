@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>이벤트</title>
+  <meta charset="UTF-8">
+  <title>이벤트</title>
   <style>
     p { line-height: 1.5; }
     table { border-collapse: collapse; }
@@ -11,6 +11,12 @@
     h2 { margin-top: 50px; }
     pre { background: #eee; padding: 10px; border-radius: 10px; }
     .box { width: 100px; height: 100px; background: #fff700; border: 5px solid orange; cursor: pointer;}
+    #fruits4,
+    #fruits5 { display: flex; list-style: none; padding: 0; }
+    #fruits4 li,
+    #fruits5 li { width: 100px; cursor: pointer; }
+    #fruits4 .active,
+    #fruits5 .active { color: red; text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -1536,10 +1542,332 @@
   </p>
 
   <h1>👉 이벤트 위임</h1>
+  <p>
+    사용자가 내비게이션 아이템(li 요소)을 클릭하여 선택하면 현재 선택된 내비게이션 아이템에 active 클래스를 추가하고 그 외의 모든 내비게이션 아이템의
+    active 클래스는 제거하는 다음 예제를 살펴보자.
+  </p>
+  <ul id="fruits4">
+    <li id="apple4" class="active">apple</li>
+    <li id="banana4">banana</li>
+    <li id="orange4">orange</li>
+  </ul>
+  <div>선택된 내비게이션 아이템: <em class="msg5">apple</em></div>
+  <script>
+    const fruits4 = document.getElementById('fruits4');
+    const msg5 = document.querySelector('.msg5');
+
+    // 사용자 클릭에 의해 선택된 내비게이션 아이템(li 요소)에 active 클래스를 추가하고
+    // 그 외의 모든 내비게이션 아이템의 active 클래스를 제거한다.
+    function activate({target}) { // ❗️ 디스트럭처링 할당을 사용 -> event.target만 필요하므로 이것만 전달받을 준비한것
+      console.log(target);
+    // function activate(event) {
+    //   console.log(event);
+      [...fruits4.children].forEach(fruit => {
+        fruit.classList.toggle('active', fruit === target);
+        msg5.textContent = target.id;
+      });
+    }
+
+    // 모든 내비게이션 아이템(li 요소)에 이벤트 핸들러를 등록한다.
+    console.log(document.getElementById('apple4'));
+    document.getElementById('apple4').onclick = activate; // ❗️ activate함수를 호출한게 아니라 함수 자체를 할당한 것
+    document.getElementById('banana4').onclick = activate;
+    document.getElementById('orange4').onclick = activate;
+  </script>
+  <pre>
+    html:
+    &lt;ul id="fruits4"&gt;
+      &lt;li id="apple4"&gt;apple&lt;/li&gt;
+      &lt;li id="banana4"&gt;banana&lt;/li&gt;
+      &lt;li id="oranage4"&gt;oranage&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;div&gt;선택된 내비게이션 아이템: &lt;em class="msg5"&gt;apple&lt;/em&gt;&lt;/div&gt;
+
+
+    script:
+    const fruits4 = document.getElementById('fruits4');
+    const msg5 = document.querySelector('.msg5');
+
+    // 사용자 클릭에 의해 선택된 내비게이션 아이템(li 요소)에 active 클래스를 추가하고
+    // 그 외의 모든 내비게이션 아이템의 active 클래스를 제거한다.
+    function activate({target}) { // ❗️ 디스트럭처링 할당을 사용 -> event.target만 필요하므로 이것만 전달받을 준비한것
+      console.log(target);
+    // function activate(event) {
+    //   console.log(event);
+      [...fruits4.children].forEach(fruit => {
+        fruit.classList.toggle('active', fruit === target);
+        msg5.textContent = target.id;
+      });
+    }
+
+    // 모든 내비게이션 아이템(li 요소)에 이벤트 핸들러를 등록한다.
+    console.log(document.getElementById('apple4'));
+    document.getElementById('apple4').onclick = activate; // ❗️ activate함수를 호출한게 아니라 함수 자체를 할당한 것
+    document.getElementById('banana4').onclick = activate;
+    document.getElementById('orange4').onclick = activate;
+  </pre>
+  <p>
+    위 예제를 살펴보면 모든 내비게이션 아이템(li 요소)이 클릭 이벤트에 반응하도록 모든 내비게이션 아이템에 이벤트 핸들러인 activate를 등록했다.
+    만일 내비게이션 아이템이 100개라면 100개의 이벤트 핸들러를 등록해야 한다.
+    이 경우 많은 DOM 요소에 이벤트 핸들러를 등록하므로 성능 저하의 원인이 될뿐더러 유지보수에도 부적합한 코드를 생상하게 된다. <br><br>
+
+    ❗️ 이벤트 위임(event delegation)은 여러 개의 하위 DOM 요소에 각각 이벤트 핸들러를 등록하는 대신 하나의 상위 DOM 요소에 이벤트 핸들러를 등록하는 방법을 말한다.
+    "이벤트 전파"에서 살펴본 바와 같이 이벤트는 이벤트 타깃은 물론 DOM 요소에서도 캐치할 수 있다.
+    이벤트 위임을 통해 상위 DOM 요소에 이벤트 핸들러를 등록하면 여러 개의 하위 DOM 요소에 이벤트 핸들러를 등록할 필요가 없다.
+    또한 동적으로 하위 DOM 요소를 추가하더라도 일일이 추가된 DOM 요소에 이벤트 핸들러를 등록할 필요가 없다. <br><br>
+
+    이벤트 위임을 사용하여 위 예제를 수정해 보자.
+  </p>
+
+  <ul id="fruits5">
+    <li id="apple5" class="active">apple</li>
+    <li id="banana5">banana</li>
+    <li id="orange5">orange</li>
+  </ul>
+  <div>선택된 내비게이션 아이템: <em class="msg6">apple</em></div>
+  <script>
+    const fruits5 = document.getElementById('fruits5');
+    const msg6 = document.querySelector('.msg6');
+
+    // 사용자 클릭에 의해 선택된 내비게이션 아이템(li 요소)에 active 클래스를 추가하고
+    // 그 외의 모든 내비게이션 아이템의 active 클래스를 제거한다.
+    function activate({target}) {
+      // 이벤트를 발생시킨 요소(target)가 ul#fruits5의 자식 요소가 아니라면 무시한다.
+      // Element.prototype.matches 메서드는 이벤트 위임을 사용할 때 유용하다.
+      // matches() 메서드는 CSS 선택자로 선택될 수 있는지 여부를 불리언 값으로 반환한다.
+      // 요소.matches(selectors)
+      if (!target.matches('#fruits5>li')) {
+        return;
+      }
+
+      [...fruits5.children].forEach(fruit => {
+        fruit.classList.toggle('active', fruit === target);
+        msg6.textContent = target.id;
+      });
+    }
+
+    // ❗️ 이벤트 위임: 상위 요소(ul#fruits5)는 하위 요소의 이벤트를 캐치할 수 있다.
+    fruits5.onclick = activate;
+  </script>
+  <pre>
+    html:
+    &lt;ul id="fruits5"&gt;
+      &lt;li id="apple5"&gt;apple&lt;/li&gt;
+      &lt;li id="banana5"&gt;banana&lt;/li&gt;
+      &lt;li id="oranage5"&gt;oranage&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;div&gt;선택된 내비게이션 아이템: &lt;em class="msg6"&gt;apple&lt;/em&gt;&lt;/div&gt;
+
+
+    script:
+    const fruits5 = document.getElementById('fruits5');
+    const msg6 = document.querySelector('.msg6');
+
+    // 사용자 클릭에 의해 선택된 내비게이션 아이템(li 요소)에 active 클래스를 추가하고
+    // 그 외의 모든 내비게이션 아이템의 active 클래스를 제거한다.
+    function activate({target}) {
+      // 이벤트를 발생시킨 요소(target)가 ul#fruits5의 자식 요소가 아니라면 무시한다.
+      // Element.prototype.matches 메서드는 이벤트 위임을 사용할 때 유용하다.
+      // matches() 메서드는 CSS 선택자로 선택될 수 있는지 여부를 불리언 값으로 반환한다.
+      // 요소.matches(selectors)
+      if (!target.matches('#fruits5>li')) {
+        return;
+      }
+
+      [...fruits5.children].forEach(fruit => {
+        fruit.classList.toggle('active', fruit === target);
+        msg6.textContent = target.id;
+      });
+    }
+
+    // ❗️ 이벤트 위임: 상위 요소(ul#fruits5)는 하위 요소의 이벤트를 캐치할 수 있다.
+    fruits5.onclick = activate;
+  </pre>
+  <p>
+    ❗️ 이벤트 위임을 통해 하위 DOM 요소에서 발생한 이벤트를 처리할 때 주의할 점은 상위 요소에 이벤트 핸들러를 등록하기 때문에
+    이벤트 타깃, 즉 이벤트를 실제로 발생시킨 DOM 요소가 개발자가 기대한 DOM 요소가 아닐 수도 있다는 것이다. <br>
+
+    ❗️ 위 예제의 경우 ul#fruits5 요소에 바인딩된 이벤트 핸들러는 자기 자신은 물론 ul#fruits5 요소의 하위 요소 중에서 클릭 이벤트를 발생시킨 모든 요소에 반응한다. 따라서 이벤트에 반응이 필요한 DOM 요소(위 예제의 경우, '#fruits5>li' 선택자에 의해 선택되는 DOM 요소)에 한정하여 이벤트 핸들러가 실행되도록 이벤트 타깃을 검사할 필요가 있다.
+  </p>
+  <pre>
+    function activate({target}) {
+      // 이벤트를 발생시킨 요소(target)가 ul#fruits5의 자식 요소가 아니라면 무시한다.
+      if (!target.matches('#fruits5>li')) {
+          return;
+      }
+  </pre>
+  <p>
+    일반적으로 이벤트 객체의 target 프로퍼티와 currentTarget 프로퍼티는 동일한 DOM 요소를 가리키지만,
+    이벤트 위임을 통해 상위 DOM 요소에 이벤트를 바인딩한 경우 이벤트 객체의 target 프로퍼티와 currentTarget 프로퍼티가 다른 DOM 요소를 가리킬 수 있다. 위 예제에서는 다음과 같이 fruits5 요소에 이벤트를 바인딩했다.
+  </p>
+  <pre>
+    fruits5.onclick = activate;
+  </pre>
+  <p>
+    ❗️ 이때 이벤트 객체의 currentTarget 프로퍼티는 언제나 변함없이 fruits5 요소를 가리키지만, 이벤트 객체의 target 프로퍼티는 실제로 이벤트를 발생시킨 DOM 요소를 가리킨다.
+    fruits5 요소도 클릭 이벤트를 발생시킬 수 있으므로 이 경우 이벤트 객체의 currentTarget 프로퍼티와 target 프로퍼티는 동일한 fruits5 요소를 가리키지만, fruits5 요소의 하위 요소에서 클릭 이벤트가 발생한 경우 이벤트 객체의 currentTarget 프로퍼티와 target 프로퍼티는 다른 DOM 요소를 가리킨다.
+  </p>
+
+
+
   <h1>👉 DOM 요소의 기본 동작 조작</h1>
-  <h2>📌 DOM 요소의 기본 동작 중단</h2>5
+  <h2>📌 DOM 요소의 기본 동작 중단</h2>
+  <p>
+    DOM 요소는 저마다 기본 동작이 있다.
+    예를 들어, a 요소를 클릭하면 href 어트리뷰트에 지정된 링크로 이동하고, checkbox 또는 radio 요소를 클릭하면 체크 또는 해제된다. <br><br>
+
+    이벤트 객체의 preventDefault 메서드는 이러한 DOM 요소의 기본 동작을 중단시킨다.
+  </p>
+  <a href="https://www.google.com" id="anchor">go</a>
+  <input type="checkbox" id="inputCheckbox">
+  <script>
+    document.getElementById('anchor').onclick = e => {
+      // a 요소의 기본 동작을 중단한다. -> 링크로 이동하지 않는다.
+      e.preventDefault();
+    };
+
+    document.getElementById('inputCheckbox').onclick = e => {
+      // checkbox 요소의 기본 동작을 중단한다. -> 체크되지 않는다.
+      e.preventDefault();
+    };
+  </script>
+  <pre>
+    html:
+    &lt;a href="https://www.google.com" id="anchor"&gt;go&lt;/a&gt;
+    &lt;input type="checkbox" id="inputCheckbox"&gt;
+
+
+    script:
+    document.getElementById('anchor').onclick = e => {
+      // a 요소의 기본 동작을 중단한다. -> 링크로 이동하지 않는다.
+      e.preventDefault();
+    };
+
+    document.getElementById('inputCheckbox').onclick = e => {
+      // checkbox 요소의 기본 동작을 중단한다. -> 체크되지 않는다.
+      e.preventDefault();
+    };
+  </pre>
+
+
   <h2>📌 이벤트 전파 방지</h2>
+  <p>
+    이벤트 객체의 stopPropagation 메서드는 이벤트 전파를 중지시킨다.
+  </p>
+  <div class="container" style="border: 1px solid #000;">
+    <button class="btn1">Button 1</button>
+    <button class="btn2">Button 2</button>
+    <button class="btn3">Button 3</button>
+  </div>
+  <script>
+    // 이벤트 위임. 클릭된 하위 버튼 요소의 color를 변경한다.
+    document.querySelector('.container').onclick = ({target}) => {
+      if (!target.matches('.container>button')) {
+        return;
+      }
+
+      target.style.color = 'red';
+    };
+
+    // ❗️ .btn2 요소는 이벤트를 전파하지 않으므로 상위 요소에서 이벤트를 캐치할 수 없다.
+    document.querySelector('.btn2').onclick = e => {
+      e.stopPropagation(); // 이벤트 전파 중단
+      e.target.style.color = 'blue';
+    };
+
+    // ❗️ 결과 -> 버튼1과 버튼3 색은 빨강이 되고, 버튼2 색깔은 파랑이된다.(버튼2에는 빨강이 적용되지 않는다.)
+  </script>
+  <pre>
+    html:
+    &lt;div class="container" style="border: 1px solid #000;"&gt;
+      &lt;button class="btn1"&gt;Button 1&lt;/button&gt;
+      &lt;button class="btn2"&gt;Button 2&lt;/button&gt;
+      &lt;button class="btn3"&gt;Button 3&lt;/button&gt;
+    &lt;/div&gt;
+
+
+    script:
+    // 이벤트 위임. 클릭된 하위 버튼 요소의 color를 변경한다.
+    document.querySelector('.container').onclick = ({target}) => {
+      if (!target.matches('.container>button')) {
+        return;
+      }
+
+      target.style.color = 'red';
+    };
+
+    // ❗️ .btn2 요소는 이벤트를 전파하지 않으므로 상위 요소에서 이벤트를 캐치할 수 없다.
+    document.querySelector('.btn2').onclick = e => {
+      e.stopPropagation(); // 이벤트 전파 중단
+      e.target.style.color = 'blue';
+    };
+
+    // ❗️ 결과 -> 버튼1과 버튼3 색은 빨강이 되고, 버튼2 색깔은 파랑이된다.(버튼2에는 빨강이 적용되지 않는다.)
+  </pre>
+  <p>
+    위 예제를 살펴보면 상위 DOM 요소인 container 요소에 이벤트를 위임했다.
+    따라서 하위 DOM 요소에서 발생한 클릭 이벤트를 상위  DOM 요소인 container 요소가 캐치하여 이벤트를 처리한다.
+    하지만 하위 요소 중에서 btn2 요소는 자체적으로 이벤트를 처리한다.
+    이때 btn2 요소는 자신이 발생시킨 이벤트가 전파되는 것을 중단하여 자신에게 바인딩된 이벤트 핸들러만 실행되도록 한다.
+    <br><br>
+    이처럼 stopPropagation 메서드는 하위 DOM 요소의 이벤트를 개별적으로 처리하기 위해 이벤트의 전파를 중단시킨다.
+  </p>
+
+
+
   <h1>👉 이벤트 핸들러 내부의 this</h1>
+  <p>
+    다음 예제의 handleClick 함수 내부의 this는 전역 객체 window를 가리킨다.
+  </p>
+  <button onclick="handleClickk()">Click me</button>
+  <script>
+    function handleClickk() {
+      console.log(this); // Window {window: Window, self: Window, document: document, name: '', location: Location, …}
+    }
+  </script>
+  <pre>
+    html:
+    &lt;button onclick="handleClickk()"&gt;Click me&lt;/button&gt;
+
+
+    script:
+    function handleClickk() {
+      console.log(this); // Window {window: Window, self: Window, document: document, name: '', location: Location, …}
+    }
+  </pre>
+  <p>
+    이벤트 핸들러 어트리뷰트의 값으로 지정한 문자열은 사실 암묵적으로 생성되는 이벤트 핸들러의 문이라고 했다.
+    따라서 handleClickk 함수는 이벤트 핸들러에 의해 일반 함수로 호출된다.
+    22장 "this"에서 살펴본 바와 같이 일반 함수로서 호출되는 함수 내부의 this는 전역 객체를 가리킨다.
+    따라서 handleClick 함수 내부의 this는 전역 객체 window를 가리킨다. <br><br>
+
+    ❗️ 단, 이벤트 핸들러를 호출할 때 인수로 전달한 this는 이벤트를 바인딩한 DOM 요소를 가리킨다.
+  </p>
+
+  <button onclick="handleClickkk(this)">Click me</button>
+  <script>
+    function handleClickkk(button) {
+      console.log(button); // <button onclick="handleClickkk(this)">Click me</button> : 이벤트를 바인딩한 button 요소
+      console.log(this); // Window {window: Window, self: Window, document: document, name: '', location: Location, …}
+    }
+  </script>
+  <pre>
+    html:
+    &lt;button onclick="handleClickkk()"&gt;Click me&lt;/button&gt;
+
+
+    script:
+    function handleClickkk() {
+      console.log(button); // &lt;button onclick="handleClickkk()"&gt;Click me&lt;/button&gt; : 이벤트를 바인딩한 button 요소
+      console.log(this); // Window {window: Window, self: Window, document: document, name: '', location: Location, …}
+    }
+  </pre>
+  <p>
+    ❗️ 위 예제에서 handelClickkk 함수에 전달한 this는 암묵적으로 생성된 이벤트 핸들러 내부의 this다.
+    즉, 이벤트 핸들러 어트리뷰트 방식에 의해 암묵적으로 생성된 이벤트 핸들러 내부의 this는 이벤트를 바인딩한 DOM 요소를 가리킨다.
+    이는 이벤트 핸들러 프로퍼티 방식과 동일하다.
+  </p>
+
   <h2>📌 이벤트 핸들러 어트리뷰트 방식</h2>
   <h2>📌 이벤트 핸들러 프로퍼티 방식과 addEventListener 메서드 방식</h2>
   <h1>👉 이벤트 핸들러에 인수 전달</h1>
