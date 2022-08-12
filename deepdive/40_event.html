@@ -317,7 +317,7 @@
     이벤트 핸들러(event handler 또는 event listener)는 이벤트가 발생했을 대 브라우저에 호출을 위임한 함수다.
     다시 말해, 이벤트가 발생하면 브라우저에 의해 호출될 함수가 이벤트 핸들러다.<br><br>
 
-    이벤트가 발생했을 때 브라우저에게 이벤트 핸들러의 호출을 위임하는 것을 이벤트 핸들러 등록이라 한다.
+    ❗️ 이벤트가 발생했을 때 브라우저에게 이벤트 핸들러의 호출을 위임하는 것을 이벤트 핸들러 등록이라 한다.
     이벤트 핸들러를 등록하는 방법은 3가지다.
   </p>
 
@@ -1816,6 +1816,7 @@
 
 
   <h1>👉 이벤트 핸들러 내부의 this</h1>
+  <h2>📌 이벤트 핸들러 어트리뷰트 방식</h2>
   <p>
     다음 예제의 handleClick 함수 내부의 this는 전역 객체 window를 가리킨다.
   </p>
@@ -1868,8 +1869,275 @@
     이는 이벤트 핸들러 프로퍼티 방식과 동일하다.
   </p>
 
-  <h2>📌 이벤트 핸들러 어트리뷰트 방식</h2>
+
   <h2>📌 이벤트 핸들러 프로퍼티 방식과 addEventListener 메서드 방식</h2>
+  <p>
+    ❗️ 이벤트 핸들러 프로퍼티 방식과 addEventListener 메서드 방식 모두 이벤트 핸들러 내부의 this는 이벤트를 바인딩한 DOM 요소를 가리킨다.
+    즉, 이벤트 핸들러 내부의 this는 이벤트 객체의 currentTarget 프로퍼티와 같다.
+  </p>
+  <button class="button1">0</button>
+  <button class="button2">0</button>
+  <script>
+    const button1 = document.querySelector('.button1');
+    const button2 = document.querySelector('.button2');
+
+    // 이벤트 핸들러 프로퍼티 방식
+    button1.onclick = function(e) {
+      console.log(this); // button1 요소
+      console.log(e.currentTarget); // button1 요소
+      console.log(this === e.currentTarget); // true
+
+      // button1의 textContent를 1 증가시킨다.
+      ++this.textContent;
+    };
+
+    // addEventListener 메서드 방식
+    button2.addEventListener('click', function (e) {
+      console.log(this); // button2 요소
+      console.log(e.currentTarget); // button2 요소
+      console.log(this === e.currentTarget); // true
+
+      // button2의 textContent를 1 증가시킨다.
+      ++this.textContent;
+    });
+  </script>
+  <pre>
+    html:
+    &lt;button class="button1"&gt;0&lt;/button&gt;
+    &lt;button class="button2"&gt;0&lt;/button&gt;
+
+
+    script:
+    const button1 = document.querySelector('.button1');
+    const button2 = document.querySelector('.button2');
+
+    // 이벤트 핸들러 프로퍼티 방식
+    button1.onclick = function(e) {
+      console.log(this); // button1 요소
+      console.log(e.currentTarget); // button1 요소
+      console.log(this === e.currentTarget); // true
+
+      // button1의 textContent를 1 증가시킨다.
+      ++this.textContent;
+    };
+
+    // addEventListener 메서드 방식
+    button2.addEventListener('click', function (e) {
+      console.log(this); // button2 요소
+      console.log(e.currentTarget); // button2 요소
+      console.log(this === e.currentTarget); // true
+
+      // button2의 textContent를 1 증가시킨다.
+      ++this.textContent;
+    });
+  </pre>
+
+  <p>
+    화살표 함수로 정의한 이벤트 핸들러 내부의 this는 상위 스코프의 this를 가리킨다.
+    화살표 함수는 함수 자체의 this 바인딩을 갖지 않는다.
+  </p>
+  <button class="button3">0</button>
+  <button class="button4">0</button>
+  <script>
+    const button3 = document.querySelector('.button3');
+    const button4 = document.querySelector('.button4');
+
+    // 이벤트 핸들러 프로퍼티 방식
+    button3.onclick = e => {
+      console.log(this); // Window 객체
+      console.log(e.currentTarget); // button3 요소
+      console.log(this === e.currentTarget); // false
+
+      console.log(this.textContent); // undefined
+
+      // button3의 textContent를 1 증가시킨다.
+      // this는 Window 객체를 가리키므로 Window.textContent에 NaN(undefined + 1)을 할당한다.
+      ++this.textContent;
+    };
+
+    // addEventListener 메서드 방식
+    button4.addEventListener('click', e => {
+      console.log(this); // Window 객체
+      console.log(e.currentTarget); // button4 요소
+      console.log(this === e.currentTarget); // true
+
+      // button4의 textContent를 1 증가시킨다.
+      // this는 Window 객체를 가리키므로 Window.textContent에 NaN(undefined + 1)을 할당한다.
+      ++this.textContent;
+    });
+  </script>
+  <pre>
+    html:
+    &lt;button class="button3"&gt;0&lt;/button&gt;
+    &lt;button class="button4"&gt;0&lt;/button&gt;
+
+
+    const button3 = document.querySelector('.button3');
+    const button4 = document.querySelector('.button4');
+
+    // 이벤트 핸들러 프로퍼티 방식
+    button3.onclick = e => {
+      console.log(this); // Window 객체
+      console.log(e.currentTarget); // button3 요소
+      console.log(this === e.currentTarget); // false
+
+      console.log(this.textContent); // undefined
+
+      // button3의 textContent를 1 증가시킨다.
+      // this는 Window 객체를 가리키므로 Window.textContent에 NaN(undefined + 1)을 할당한다.
+      ++this.textContent;
+    };
+
+    // addEventListener 메서드 방식
+    button4.addEventListener('click', e => {
+      console.log(this); // Window 객체
+      console.log(e.currentTarget); // button4 요소
+      console.log(this === e.currentTarget); // true
+
+      // button4의 textContent를 1 증가시킨다.
+      // this는 Window 객체를 가리키므로 Window.textContent에 NaN(undefined + 1)을 할당한다.
+      ++this.textContent;
+  </pre>
+
+  <p>
+    클래스에서 이벤트 핸들러를 바인딩하는 경우 this에 주의해야 한다.
+    다음 예제를 살펴보자. 다음 예제는 이벤트 핸들러 프로퍼티 방식을 사용하고 있으나, addEventListener 메서드 방식을 사용하는 경우와 동일하다.
+  </p>
+  <button class="button5">0</button>
+  <script>
+    class App {
+      constructor() {
+        this.button = document.querySelector('.button5');
+        this.count = 0;
+
+        // increase 메서드를 이벤트 핸들러를 등록
+        this.button.onclick = this.increase;
+      }
+
+      increase() {
+        // 이벤트 핸들러 increase 내부의 this는 DOM 요소(this.button)를 가리킨다.
+        // 따라서 this.button은 this.button.button과 같다.
+        this.button.textContent = ++this.count;
+      }
+    }
+
+    new App();
+
+    // 버튼5를 클릭하면?
+    // TypeError: Cannot set properties of undefined (setting 'textContent') at HTMLButtonElement.increase
+  </script>
+  <pre>
+    html:
+    &lt;button class="button5"&gt;0&lt;/button&gt;
+
+
+    class App {
+      constructor() {
+        this.button = document.querySelector('.button5');
+        this.count = 0;
+
+        // increase 메서드를 이벤트 핸들러를 등록
+        this.button.onclick = this.increase;
+      }
+
+      increase() {
+        // 이벤트 핸들러 increase 내부의 this는 DOM 요소(this.button)를 가리킨다.
+        // 따라서 this.button은 this.button.button과 같다.
+        this.button.textContent = ++this.count;
+      }
+    }
+
+    new App();
+
+    // 버튼5를 클릭하면?
+    // TypeError: Cannot set properties of undefined (setting 'textContent') at HTMLButtonElement.increase
+  </pre>
+  <p>
+    위 예제의 increase 메서드 내부의 this는 클래스가 생성할 인스턴스를 가리키지 않는다.
+    이벤트 핸들러 내부의 this는 이벤트를 바인딩한 DOM 요소를 가리키기 때문에 increase 메서드 내부의 this는 this.button을 가리킨다.
+    따라서 increase 메서드를 이벤트 핸들러로 바인딩할 때 bind 메서드를 사용해 this를 전달하여 increase 메서드 내부의 this가 클래스가 생성할
+    인스턴스를 가리키도록 해야한다.
+  </p>
+  <button class="button6">0</button>
+  <script>
+    class App2 {
+      constructor() {
+        this.button = document.querySelector('.button6');
+        this.count = 0;
+
+        // increase 메서드를 이벤트 핸들러를 등록
+        // this.button.onclick = this.increase;
+
+        // increase 메서드 내부의 this가 인스턴스를 가리키도록 한다.
+        this.button.onclick = this.increase.bind(this);
+      }
+
+      increase() {
+        this.button.textContent = ++this.count;
+      }
+    }
+
+    new App2();
+
+    // 버튼6를 클릭하면?
+    // 버튼 안의 숫자가 1씩 증가한다.
+  </script>
+  <pre>
+    html:
+    &lt;button class="button6"&gt;0&lt;/button&gt;
+
+
+    script:
+    class App2 {
+      constructor() {
+        this.button = document.querySelector('.button6');
+        this.count = 0;
+
+        // increase 메서드를 이벤트 핸들러를 등록
+        // this.button.onclick = this.increase;
+
+        // increase 메서드 내부의 this가 인스턴스를 가리키도록 한다.
+        this.button.onclick = this.increase.bind(this);
+      }
+
+      increase() {
+        this.button.textContent = ++this.count;
+      }
+    }
+
+    new App2();
+
+    // 버튼6를 클릭하면?
+    // 버튼 안의 숫자가 1씩 증가한다.
+  </pre>
+
+  <p>
+    또는 클래스 필드에 할당한 화살표 함수를 이벤트 핸들러로 등록하여 이벤트 핸들러 내부의 this가 인스턴스를 가리키도록 할 수도 있다.
+    다만 이때 이벤트 핸들러 increase는 프로토타입 메서드가 아닌 인스턴스 메서드가 된다.
+  </p>
+  <button class="button7">0</button>
+  <script>
+    class App3 {
+      constructor() {
+        this.button = document.querySelector('.button7');
+        this.count = 0;
+
+        // 화살표 함수인 increase를 이벤트 핸들러로 등록
+        this.button.onclick = this.increase;
+
+        // 클래스 필드 정의
+        // increase는 인스턴스 메서드이며 내부의 this는 인스턴스를 가리킨다.
+      }
+      increase = () => this.button.textContent = ++this.count;
+    }
+
+    new App3();
+
+    // 버튼6를 클릭하면?
+    // 버튼 안의 숫자가 1씩 증가한다.
+  </script>
+
+
   <h1>👉 이벤트 핸들러에 인수 전달</h1>
   <h1>👉 커스텀 이벤트</h1>
   <h2>📌 커스텀 이벤트 생성</h2>
