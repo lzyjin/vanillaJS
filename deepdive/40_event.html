@@ -915,6 +915,20 @@
   </p>
 
   <h2>📌 이벤트 객체의 상속 구조</h2>
+  <pre>
+
+                     - AnimationEvent   - FocusEvent
+                    ㅣ                  ㅣ                  - DragEvent
+    Object -- Event -- UIEvent ---------- MouseEvent -----ㅣ
+                    ㅣ                  ㅣ                  - WheelEvent
+                     - ClipboardEvent   - KeyboardEvent
+                    ㅣ                  ㅣ
+                     - CustomEvent      - InputEvent
+                    ㅣ                  ㅣ
+                     - ...              - TouchEvent
+                                        ㅣ
+                                         - ...
+  </pre>
   <p>
     이벤트가 발생하면 이벤트 타입에 따라 다양한 이벤트 객체가 생성된다. 이벤트 객체는 다음과 같은 상속 구조를 갖는다.
     <br><br>
@@ -2133,38 +2147,281 @@
 
     new App3();
 
-    // 버튼6를 클릭하면?
+    // 버튼7를 클릭하면?
     // 버튼 안의 숫자가 1씩 증가한다.
   </script>
+  <pre>
+    html:
+    &lt;button class="button7"&gt;0&lt;/button&gt;
+
+
+    class App3 {
+      constructor() {
+        this.button = document.querySelector('.button7');
+        this.count = 0;
+
+        // 화살표 함수인 increase를 이벤트 핸들러로 등록
+        this.button.onclick = this.increase;
+
+        // 클래스 필드 정의
+        // increase는 인스턴스 메서드이며 내부의 this는 인스턴스를 가리킨다.
+      }
+      increase = () => this.button.textContent = ++this.count;
+    }
+
+    new App3();
+
+    // 버튼7를 클릭하면?
+    // 버튼 안의 숫자가 1씩 증가한다.
+  </pre>
+
 
 
   <h1>👉 이벤트 핸들러에 인수 전달</h1>
+  <p>
+    함수에 인수를 전달하려면 함수를 호출할 때 전달해야 한다. 이벤트 핸들러 어트리뷰트 방식은 함수 호출문을 사용할 수 있기 때문에 인수를 전달할 수 있지만
+    이벤트 핸들러 프로퍼티 방식과 addEventListener 메서드 방식의 경우 이벤트 핸들러를 브라우저가 호출하기 때문에 함수 호출문이 아닌 함수 자체를
+    등록해야 한다. 따라서 인수를 전달할 수 없다. 그러나 인수를 전달할 방법이 전혀 없는 것은 아니다. 다음 예제와 같이 이벤트 핸들러 내부에서 함수를
+    호출하면서 인수를 전달할 수 있다.
+  </p>
+  <label>User Name<input type="text" id="inputName"></label>
+  <em class="alertMsg"></em>
+  <script>
+    const MIN_USER_NAME_LENGTH = 5; // 이름 최소 길이
+    const inputName = document.getElementById('inputName');
+    const alertMsg = document.querySelector('.alertMsg');
+
+    const checkUserNameLength = min => {
+      alertMsg.textContent = inputName.value.length < min ? `이름은 ${min}자 이상 입력해 주세요.` : '';
+    };
+
+    // 이벤트 핸들러 내부에서 함수를 호출하면서 인수를 전달한다.
+    inputName.onblur = () => {
+      checkUserNameLength(MIN_USER_NAME_LENGTH);
+    };
+  </script>
+  <pre>
+    html:
+    &lt;label&gt;User Name&lt;input type="text" id="inputName"&gt;&lt;/label&gt;
+    &lt;em class="alertMsg">&lt;/em&gt;
+
+
+    script:
+    const MIN_USER_NAME_LENGTH = 5; // 이름 최소 길이
+    const inputName = document.getElementById('inputName');
+    const alertMsg = document.querySelector('.alertMsg');
+
+    const checkUserNameLength = min => {
+      alertMsg.textContent = inputName.value.length < min ? `이름은 ${min}자 이상 입력해 주세요.` : '';
+    };
+
+    // 이벤트 핸들러 내부에서 함수를 호출하면서 인수를 전달한다.
+    inputName.onblur = () => {
+      checkUserNameLength(MIN_USER_NAME_LENGTH);
+    };
+  </pre>
+
+  <p>❗️ 또는 이벤트 핸들러를 반환하는 함수를 호출하면서 인수를 전달할 수도 있다. </p>
+  <label>User Name <input type="text" id="inputName2"></label>
+  <em class="alertMsg2"></em>
+  <script>
+    const MIN_USER_NAME_LENGTH2 = 5;
+    const inputName2 = document.getElementById('inputName2');
+    const alertMsg2 = document.querySelector('.alertMsg2');
+
+    // 이벤트 핸들러를 반환하는 함수
+    const checkUserNameLength2 = min => e => {
+      alertMsg2.textContent = inputName2.value.length < min ? `이름은 ${min}자 이상 입력해 주세요.` : '';
+    };
+    // ❗️ 위 코드는 아래와 같다.
+    // e => {
+    //     alertMsg2.textContent = inputName2.value.length < min ? `이름은 ${min}자 이상 입력해 주세요.` : '';
+    //   };
+    // 이 함수를 반환한다.
+
+    // const checkUserNameLength2 = min => {
+    //   return e => {
+    //     alertMsg2.textContent = inputName2.value.length < min ? `이름은 ${min}자 이상 입력해 주세요.` : '';
+    //   };
+    // };
+
+
+    // 이벤트 핸들러를 반환하는 함수를 호출하면서 인수를 전달한다.
+    inputName2.onblur = checkUserNameLength2(MIN_USER_NAME_LENGTH2);
+    // ❗️ 위 코드는 아래와 같다.
+    // inputName2.onblur = (e) => {
+    //   alertMsg2.textContent = inputName2.value.length < MIN_USER_NAME_LENGTH2 ? `이름은 ${MIN_USER_NAME_LENGTH2}자 이상 입력해 주세요.` : '';
+    // }
+  </script>
+  <pre>
+    html:
+    &lt;label&gt;User Name &lt;input type="text" id="inputName2"&gt;&lt;/label&gt;
+    &lt;em class="alertMsg2"&gt;&lt;/em&gt;
+
+
+    script:
+    const MIN_USER_NAME_LENGTH2 = 5;
+    const inputName2 = document.getElementById('inputName2');
+    const alertMsg2 = document.querySelector('.alertMsg2');
+
+    // 이벤트 핸들러를 반환하는 함수
+    const checkUserNameLength2 = min => e => {
+      alertMsg2.textContent = inputName2.value.length < min ? `이름은 ${min}자 이상 입력해 주세요.` : '';
+    };
+    // ❗️ 위 코드는 아래와 같다.
+    // e => {
+    //     alertMsg2.textContent = inputName2.value.length < min ? `이름은 ${min}자 이상 입력해 주세요.` : '';
+    //   };
+    // 이 함수를 반환한다.
+
+    // const checkUserNameLength2 = min => {
+    //   return e => {
+    //     alertMsg2.textContent = inputName2.value.length < min ? `이름은 ${min}자 이상 입력해 주세요.` : '';
+    //   };
+    // };
+
+
+    // 이벤트 핸들러를 반환하는 함수를 호출하면서 인수를 전달한다.
+    inputName2.onblur = checkUserNameLength2(MIN_USER_NAME_LENGTH2);
+    // ❗️ 위 코드는 아래와 같다.
+    // inputName2.onblur = (e) => {
+    //   alertMsg2.textContent = inputName2.value.length < MIN_USER_NAME_LENGTH2 ? `이름은 ${MIN_USER_NAME_LENGTH2}자 이상 입력해 주세요.` : '';
+    // }
+  </pre>
+  <p>
+    checkUserNameLength2 함수는 함수를 반환한다. 따라서 inputName2.onblur에는 결국 checkUserNameLength2 함수가 반환하는 함수가 바인딩된다.
+  </p>
+
+
+
   <h1>👉 커스텀 이벤트</h1>
   <h2>📌 커스텀 이벤트 생성</h2>
+  <p>
+    "이벤트 객체의 상속 구조"에서 살펴본 바와 같이 이벤트 객체는 Event, UIEvent, MouseEvent 같은 이벤트 생성자 함수로 생성할 수 있다.
+    <br><br>
+    이벤트가 발생하면 암묵적으로 생성되는 이벤트 객체는 발생한 이벤트의 종류에 따라 이벤트 타입이 결정된다.
+    하지만 Event, UIEvent, MouseEvent 같은 이벤트 생성자 함수를 호출하여 명시적으로 생성한 이벤트 객체는 임의의 이벤트 타입을 지정할 수 있다.
+    이처럼 개발자의 의도로 생성된 이벤트를 커스텀 이벤트라 한다.
+    <br><br>
+    이벤트 생성자 함수는 첫 번째 인수로 이벤트 타입을 나타내는 문자열을 전달받는다.
+    이때 이벤트 타입을 나타내는 문자열은 기존 이벤트 타입을 사용할 수도 있고, 기존 이벤트 타입이 아닌 임의의 문자열을 사용하여 새로운 이벤트 타입을 지정할
+    수도 있다. 이 경우 일반적으로 CustomEvent 이벤트 생성자 함수를 사용한다.
+  </p>
+  <script>
+    // KeyboardEvent 생성자 함수로 keyup 이벤트 타입의 커스텀 이벤트 객체를 생성
+    const keyboardEvent = new KeyboardEvent('keyup');
+    console.log(keyboardEvent.type); // keyup
+
+    // CustomEvent 생성자 함수로 foo 이벤트 타입의 커스텀 이벤트 객체를 생성
+    const customEvent = new CustomEvent('foo');
+    console.log(customEvent.type); // foo
+  </script>
+  <pre>
+    // KeyboardEvent 생성자 함수로 keyup 이벤트 타입의 커스텀 이벤트 객체를 생성
+    const keyboardEvent = new KeyboardEvent('keyup');
+    console.log(keyboardEvent.type); // keyup
+
+    // CustomEvent 생성자 함수로 foo 이벤트 타입의 커스텀 이벤트 객체를 생성
+    const customEvent = new CustomEvent('foo');
+    console.log(customEvent.type); // foo
+  </pre>
+
+  <p>
+    생성된 커스텀 이벤트 객체는 버블링되지 않으며 preventDefault 메서드로 취소할 수도 없다.
+    즉, 커스텀 이벤트 객체는 bubbles와 cancelable 프로퍼티의 값이 false로 기본 설정된다.
+  </p>
+  <script>
+    // MouseEvent 생성자 함수로 click 이벤트 타입의 커스텀 이벤트 객체를 생성
+    const customEvent2 = new MouseEvent('click');
+    console.log(customEvent2.type); // click
+    console.log(customEvent2.bubbles); // false
+    console.log(customEvent2.cancelable); // false
+  </script>
+  <pre>
+    // MouseEvent 생성자 함수로 click 이벤트 타입의 커스텀 이벤트 객체를 생성
+    const customEvent2 = new MouseEvent('click');
+    console.log(customEvent2.type); // click
+    console.log(customEvent2.bubbles); // false
+    console.log(customEvent2.cancelable); // false
+  </pre>
+
+  <p>
+    커스텀 이벤트 객체의 bubbles 또는 cancelable 프로퍼티를 true로 설정하려면 이벤트 생성자 함수의 두 번째 인수로 bubbles 또는 cancelable
+    프로퍼티를 갖는 객체를 전달한다.
+  </p>
+  <script>
+    // MouseEvent 생성자 함수로 click 이벤트 타입의 커스텀 이벤트 객체를 생성
+    const customEvent3 = new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true
+    });
+
+    console.log(customEvent3.bubbles); // true
+    console.log(customEvent3.cancelable); // true
+  </script>
+  <pre>
+    // MouseEvent 생성자 함수로 click 이벤트 타입의 커스텀 이벤트 객체를 생성
+    const customEvent3 = new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true
+    });
+
+    console.log(customEvent3.bubbles); // true
+    console.log(customEvent3.cancelable); // true
+  </pre>
+
+  <p>
+    커스텀 이벤트 객체에는 bubbles 또는 cancelable 프로퍼티뿐만 아니라 이벤트 타입에 따라 가지는 이벤트 고유의 프로퍼티 값을 지정할 수 있다.
+    예를 들어, MouseEvent 생성자 함수로 생성한 마우스 이벤트 객체는 마우스 포인터의 좌표 정보를 나타내는 마우스 이벤트 객체 고유의 프로퍼티
+    screenX/screenY, clientX/clientY, pageX/pageY, offsetX/offsetY와 버튼 정보를 나타내는 프로퍼티 altKey, ctrlKey, shiftKey,
+    button을 갖는다. 이러한 이벤트 객체 고유의 프로퍼티 값을 지정하려면 다음과 같이 이벤트 생성자 함수의 두 번째 인수로 프로퍼티를 전달한다.
+  </p>
+  <script>
+    // MouseEvent 생성자 함수로 click 이벤트 타입의 이벤트 객체를 생성
+    const mouseEvent = new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      clientX: 50,
+      clientY: 100
+    });
+
+    console.log(mouseEvent.clientX); // 50
+    console.log(mouseEvent.clientY); // 100
+
+
+    // KeyboardEvent 생성자 함수로 keyup 이벤트 타입의 커스텀 이벤트 객체를 생성
+    const keyboardEvent2 = new KeyboardEvent('keyup', {
+      key: 'Enter'
+    });
+
+    console.log(keyboardEvent2.key); // Enter
+  </script>
+  <pre>
+    // MouseEvent 생성자 함수로 click 이벤트 타입의 이벤트 객체를 생성
+    const mouseEvent = new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      clientX: 50,
+      clientY: 100
+    });
+
+    console.log(mouseEvent.clientX); // 50
+    console.log(mouseEvent.clientY); // 100
+
+
+    // KeyboardEvent 생성자 함수로 keyup 이벤트 타입의 커스텀 이벤트 객체를 생성
+    const keyboardEvent2 = new KeyboardEvent('keyup', {
+      key: 'Enter'
+    });
+
+    console.log(keyboardEvent2.key); // Enter
+  </pre>
+  <p>
+     이벤트 생성자
+  </p>
+
+
   <h2>📌 커스텀 이벤트 디스패치</h2>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
