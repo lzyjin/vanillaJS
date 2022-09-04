@@ -1711,7 +1711,7 @@
       }
   </pre>
   <p>
-    일반적으로 이벤트 객체의 target 프로퍼티와 currentTarget 프로퍼티는 동일한 DOM 요소를 가리키지만,
+    ❗️ 일반적으로 이벤트 객체의 target 프로퍼티와 currentTarget 프로퍼티는 동일한 DOM 요소를 가리키지만,
     이벤트 위임을 통해 상위 DOM 요소에 이벤트를 바인딩한 경우 이벤트 객체의 target 프로퍼티와 currentTarget 프로퍼티가 다른 DOM 요소를 가리킬 수 있다. 위 예제에서는 다음과 같이 fruits5 요소에 이벤트를 바인딩했다.
   </p>
   <pre>
@@ -1719,7 +1719,8 @@
   </pre>
   <p>
     ❗️ 이때 이벤트 객체의 currentTarget 프로퍼티는 언제나 변함없이 fruits5 요소를 가리키지만, 이벤트 객체의 target 프로퍼티는 실제로 이벤트를 발생시킨 DOM 요소를 가리킨다.
-    fruits5 요소도 클릭 이벤트를 발생시킬 수 있으므로 이 경우 이벤트 객체의 currentTarget 프로퍼티와 target 프로퍼티는 동일한 fruits5 요소를 가리키지만, fruits5 요소의 하위 요소에서 클릭 이벤트가 발생한 경우 이벤트 객체의 currentTarget 프로퍼티와 target 프로퍼티는 다른 DOM 요소를 가리킨다.
+    fruits5 요소도 클릭 이벤트를 발생시킬 수 있으므로 이 경우 이벤트 객체의 currentTarget 프로퍼티와 target 프로퍼티는 동일한 fruits5 요소를 가리키지만,
+    fruits5 요소의 하위 요소에서 클릭 이벤트가 발생한 경우 이벤트 객체의 currentTarget 프로퍼티와 target 프로퍼티는 다른 DOM 요소를 가리킨다.
   </p>
 
 
