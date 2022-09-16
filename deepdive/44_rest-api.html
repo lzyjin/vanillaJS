@@ -266,9 +266,107 @@
 
     </pre>
 
+    <h3>GET 요청</h3>
+    <p>
+        todos 리소스에서 모든 todo를 취득(index) 한다.
+    </p>
+    <p>
+        JSON Server의 루트 폴더(/json-server-exam)에 public 폴더를 생성하고 JSON Server를 중단한 후 재실행한다.
+        그리고 public 폴더에 다음 get_index.html을 추가하고 브라우저에서 http://localhost:3000/get_index.html로 접속한다.
+    </p>
+    <pre>
+        &lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;body&gt;
+                &lt;pre&gt;&lt;/pre&gt;
+                &lt;script&gt;
+                // XMLHttpRequest 객체 생성
+                const xhr = new XMLHttpRequest();
 
+                // HTTP 요청 초기화
+                // todos 리소스에서 모든 todo를 취득(index)
+                xhr.open('GET', '/todos');
 
+                // HTTP 요청 전송
+                xhr.send();
 
+                // load 이벤트는 요청이 성공적으로 완료된 경우 발생한다.
+                xhr.onload = () => {
+                    // status 프로퍼티 값이 200이면 정상적으로 응답된 상태다.
+                    if (xhr.status === 200) {
+                        document.querySelector('pre').textContent = xhr.response;
+                    } else {
+                        console.error('Error', xhr.status, xhr.statusText);
+                    }
+                };
+                &lt;/script&gt;
+            &lt;/body&gt;
+        &lt;/html&gt;
+    </pre>
+    <pre>
+        결과:
+
+        [
+            {
+                "id": 1,
+                "content": "HTML",
+                "completed": false
+            },
+            {
+                "id": 2,
+                "content": "CSS",
+                "completed": true
+            },
+            {
+                "id": 3,
+                "content": "JavaScript",
+                "completed": false
+            }
+        ]
+    </pre>
+
+    <p>
+        todos 리소스에서 id를 사용하여 특정 todos를 취득(retrieve)한다.
+        public 폴더에 다음 get_retrieve.html을 추가하고 브라우저에서 http://localhost:3000/get_retrieve.html로 접속한다.
+    </p>
+    <pre>
+        <!DOCTYPE html>
+            &lt;html&gt;
+            &lt;body&gt;
+                &lt;pre&gt;&lt;/pre&gt;
+                &lt;script&gt;
+                // XMLHttpRequest 객체 생성
+                const xhr = new XMLHttpRequest();
+
+                // HTTP 요청 초기화
+                // todos 리소스에서 id를 사용하여 특정 todo를 취득(retrieve)
+                xhr.open('GET', '/todos/1');
+
+                // HTTP 요청 전송
+                xhr.send();
+
+                // load 이벤트는 요청이 성공적으로 완료된 경우 발생한다.
+                xhr.onload = () => {
+                    // status 프로퍼티 값이 200이면 정상적으로 응답된 상태다.
+                    if (xhr.status === 200) {
+                        document.querySelector('pre').textContent = xhr.response;
+                    } else {
+                        console.error('Error', xhr.status, xhr.statusText);
+                    }
+                };
+                &lt;/script&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;
+    </pre>
+    <pre>
+        결과:
+
+        {
+            "id": 1,
+            "content": "HTML",
+            "completed": false
+        }
+    </pre>
 
 
 
