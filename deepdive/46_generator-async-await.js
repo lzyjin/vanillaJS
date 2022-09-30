@@ -152,13 +152,76 @@
     const generator = genFunc();
 
     console.log(generator.next()); // {value: 1, done: false}
-    console.log(generator.throw('Error!')); // Error! {value: undefined, done: true}
+    // console.log(generator.throw('Error!')); // Error! {value: undefined, done: true}
 }
 
 
 // 👉 제너레이터의 일시 중지와 재개
 // 제너레이터는 yield 키워드와 next 메서드를 통해 실행을 일시 중지했다가 필요한 시점에 다시 재개할 수 있다.
 // 일반 함수는 호출 이후 제어권을 함수가 독점하지만 제너레이터는 함수 호출자에게 제어권을 양도(yield)하여 필요한 시점에 함수 실행을 재개할 수 있다.
+
+// 제너레이터 함수를 호출하면 제너레이터 함수의 코드 블록이 실행되는 것이 아니라 제너레이터 객체를 반환한다고 했다.
+// 이터러블이면서 동시에 이터레이터인 제너레이터 객체는 next 메세드를 갖는다.
+// 제너레이터 객체의 next 메서드를 호출하면 제너레이터 함수의 코드 블록을 실행한다.
+
+// ❗️ 단, 일반 함수처럼 한 번에 코드 블록을 일괄 실행하는 것이 아니라 yield 표현식까지만 실행한다.
+// ❗️ yield 키워드는 제너레이터 함수의 실행을 일시 중지시키거나 yield 키워드 뒤에 오는 표현식의 평가 결과를 제너레이터 함수 호출자에게 반환한다.
+// 다음 예제를 살펴보자.
+{
+    // 제너레이터 함수
+    function* genFunc() {
+        yield 1;
+        yield 2;
+        yield 3;
+    }
+
+    // 제너레이터 함수를 호출하면 제너레이터 객체를 반환한다.
+    // 이터러블이면서 동시에 이터레이터인 제너레이터 객체는 next메서드를 갖는다.
+    const generator = genFunc();
+
+    // 처음 next 메서드를 호출하면 첫 번째 yield 표현식까지 실행되고 일시 중지된다.
+    // next 메서드는 이터레이터 리절트 객체({value, done})를 반환한다.
+    // value 프로퍼티에는 첫 번째 yield 표현식에서 yield된 값 1이 할당된다.
+    // done 프로퍼티에는 제너레이터 함수가 끝까지 실행되었는지를 나타내는 false가 할당된다.
+    console.log(generator.next()); // {value: 1, done: false}
+
+    // 다시 next 메서드를 호출하면 두 번째 yield 표현식까지 실행되고 일시 중지된다.
+    // next 메서드는 이터레이터 리절트 객체({vallue, done})를 반환한다.
+    // value 프로퍼티에는 두 번째 yield 표현식에서 yield된 값 2가 할당된다.
+    // done 프로퍼티에는 제너레이터 함수가 끝까지 실행되었는지를 나타내는 false가 할당된다.
+    console.log(generator.next()); // {value: 2, done: false}
+
+    // 다시 next 메서드를 호출하면 세 번째 yield 표현식까지 실행되고 일시 중지된다.
+    // next 메서드는 이터레이터 리절트 객체({value, done})를 반환한다.
+    // value 프로퍼티에는 세 번째 yield 표현식에서 yield된 값 3이 할당된다.
+    // done 프로퍼티에는 제너레이터 함수가 끝까지 실행되었는지를 나타내는 false가 할당된다.
+    console.log(generator.next()); // {value: 3, done: false}
+
+    // 다시 next 메서드를 호출하면 남은 yield 표현식이 없으므로 제너레이터 함수의 마지막까지 실행한다.
+    // next 메서드는 이터레이터 리절트 객체({value, done})를 반환한다.
+    // value 프로퍼티에는 제너레이터 함수의 반환값 undefined가 할당된다.
+    // done 프로퍼티에는 제너레이터 함수가 끝까지 실행되었음을 나타내는 true가 할당된다.
+    console.log(generator.next()); // {value: undefined, done: true}
+}
+
+// ❗️ 제너레이터 객체의 next 메서드를 호출하면 yield 표현식까지 실행되고 일시 중지(suspend)된다.
+// 이때 함수의 제어권이 호출자로 양도(yield)된다.
+// 이후 필요한 시점에 호출자가 또다시 next 메서드를 호출하면 일시 중지된 코드부터 실행을 재개(resume)하기 시작하여 다음 yield 표현식까지 실행되고 또
+// 다시 일시 중지된다.
+
+// 이때 제너레이터 객체의 next 메서드는 value, done 프로퍼티를 갖는 이터레이터 리절트 객체를 반환한다.
+// next 메서드가 반환한 이터레이터 리절트 객체의 value 프로퍼티에는 yield 표현식에서 yield된 값(yield 키워드 뒤의 값)이 할당되고
+// done 프로퍼티에는 제너레이터 함수가 끝까지 실행되었는지를 나타내는 불리언 값이 할당된다.
+
+// 이처럼 next 메서드를 반복 호출하여 yield 표현식까지 실행과 일시 중지를 반복하다가 제너레이터 함수가 끝까지 실행되면 next 메서드가 반환하는
+// 이터레이터 리절트 객체의 value 프로퍼티에는 제너레이터의 반환값이 할당되고 done 프로퍼티에는 제너레이터 함수가 끝까지 실행되었음을 나타내는 true가 할당된다.
+
+// generator.next() -> yield -> generator.next() -> yield -> ... -> generator.next() -> return
+
+// 이터레이터의 next 메서드와 달리 제너레이터 객체의 next 메서드에는 인수를 전달할 수 있다.
+// 제너레이터 객체의 next 메서드에 전달한 이눗는 제너레이터 함수의 yield 표현식을 할당받는 변수에 할당된다.
+// yield 표현식을 할당받는 변수에 yield 표현식의 평가 결과가 할당되지 않는 것에 주의하기 바란다.
+// 다음 예제를 살펴보자.
 
 
 // 👉 제너레이터의 활용
