@@ -310,7 +310,7 @@ console.log( getStringLength2('hi') ); // 2
 
 // 📌 9.4.2 옵셔널 체이닝 연산자
 // ES11(ECMAScript2020)에 도입된 옵셔널 체이닝 연산자 ?.는 좌항의 피연산자가 null 또는 undefined인 경우 undefined를 반환한다.
-// 그렇지 않으면 우항의 프로퍼티 참조를 이어간다
+// ❗️ 그렇지 않으면 우항의 프로퍼티 참조를 이어간다
 var elem = null;
 var value = elem?.value;
 console.log(value); // undefined
@@ -322,9 +322,19 @@ var value = elem && elem.value;
 console.log(value); // null
 
 // 논리 연산자 &&는 좌항 피연산자가 false로 평가되는 Falsy 값(false, undefined, null, 0, -0, NaN, '')이면 좌항 피연산자를 그대로 반환한다.
-// 하지만 옵셔널 체이닝 연산자 ?.는 좌항 피연산자가 false로 평가되는 Falsy 값(false, undefined, null, 0, -0, NaN, '')이라도 null 또는 undefined이 아니면 우항의 프로퍼티 참조를 이어간다
 var str = '';
-var length = str?.length;
+// 문자열의 길이(length)를 참조한다.
+var length = str && str.length;
+
+// 문자열의 길이(length)를 참조하지 못한다.
+console.log(length); // ''
+
+// 하지만 옵셔널 체이닝 연산자 ?.는 좌항 피연산자가 false로 평가되는 Falsy 값(false, undefined, null, 0, -0, NaN, '')이라도
+// null 또는 undefined이 아니면 우항의 프로퍼티 참조를 이어간
+
+var str2 = '';
+console.log("??",length+1); // 0
+var length = str2?.length;
 console.log(length); // 0
 
 
