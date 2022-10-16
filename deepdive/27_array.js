@@ -310,7 +310,7 @@ console.log(Object.getOwnPropertyDescriptors(sparse));
 // 매개변수 arrayLike: 배열로 변환하고자 하는 유사 배열 객체나 반복 가능한 객체
 // 매개변수 mapFn: 배열의 모든 요소에 대해 호출할 맵핑 함수
 // 매개변수 thisArg: mapFn 실행 시에 this로 사용할 값
-// 유사배열객체 또는 이터러블 객체를 인수로 전달받아 배열로 변환하여 반환한다.
+// ❗️ 유사배열객체 또는 이터러블 객체를 인수로 전달받아 배열로 변환하여 반환한다.
 {
     console.clear();
     console.log(Array.from({ length: 2, 0: 'a', 1: 'b' })); // ['a', 'b']
